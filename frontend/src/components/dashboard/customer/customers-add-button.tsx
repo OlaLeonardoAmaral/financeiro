@@ -5,7 +5,12 @@ import Button from '@mui/material/Button';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
 import CustomersAddModal from './customers-add-modal';
 
-export function AddCustomerButton(): React.JSX.Element {
+interface AddCustomerButtonProps {
+  onAddCustomer: () => void;
+}
+
+
+export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): React.JSX.Element {
   const [openModal, setOpenModal] = useState(false);
 
   return (
@@ -13,7 +18,10 @@ export function AddCustomerButton(): React.JSX.Element {
       <Button onClick={() => setOpenModal(true)} startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
         Add
       </Button>
-      <CustomersAddModal isOpen={openModal} setOpenModal={() => setOpenModal(!openModal)}/>
+      <CustomersAddModal
+        isOpen={openModal}
+        setOpenModal={() => setOpenModal(!openModal)}
+        onAddCustomer={onAddCustomer} />
     </>
   );
 };

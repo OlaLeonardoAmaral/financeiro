@@ -11,6 +11,9 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
+import { DespesasService } from '@/services/api/despesas/DespesasService';
+import { ReceitasService } from '@/services/api/receitas/ReceitasService';
+import { IContas } from '@/services/api/IContas';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -29,49 +32,50 @@ const style = {
 interface CustomersAddModalProps {
     isOpen: boolean;
     setOpenModal: any;
+    onAddCustomer: () => void;
 }
 
 interface CustomProps {
     onChange: (event: { target: { name: string; value: string } }) => void;
     name: string;
-  }
+}
 
 const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
     function NumericFormatCustom(props, ref) {
-      const { onChange, ...other } = props;
-  
-      return (
-        <NumericFormat
-          {...other}
-          getInputRef={ref}
-          onValueChange={(values: any) => {
-            onChange({
-              target: {
-                name: props.name,
-                value: values.value,
-              },
-            });
-          }}
-          thousandSeparator='.'
-          decimalSeparator=','
-          decimalScale={2}
-          fixedDecimalScale
-          prefix="R$"
-          allowNegative={false}
-        />
-      );
-    },
-  );
+        const { onChange, ...other } = props;
 
-export default function CustomersAddModal({ isOpen, setOpenModal }: CustomersAddModalProps): React.JSX.Element {
+        return (
+            <NumericFormat
+                {...other}
+                getInputRef={ref}
+                onValueChange={(values: any) => {
+                    onChange({
+                        target: {
+                            name: props.name,
+                            value: values.value,
+                        },
+                    });
+                }}
+                thousandSeparator='.'
+                decimalSeparator=','
+                decimalScale={2}
+                fixedDecimalScale
+                prefix="R$"
+                allowNegative={false}
+            />
+        );
+    },
+);
+
+export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}: CustomersAddModalProps): React.JSX.Element {
     const [tipoCad, setTipoCad] = React.useState('');
-    
+
     const [values, setValues] = React.useState({
         textmask: '(100) 000-0000',
-        numberformat: '',
-        descricao: '', // Novo estado para o campo "Descrição"
-        observacoes: '', // Novo estado para o campo "Observações"
-      });
+        numberformat: 0,
+        descricao: '',
+        observacoes: '',
+    });
 
     const handleChange = (event: SelectChangeEvent) => {
         setTipoCad(event.target.value as string);
@@ -79,34 +83,43 @@ export default function CustomersAddModal({ isOpen, setOpenModal }: CustomersAdd
 
     const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValues({
-          ...values,
-          [event.target.name]: event.target.value,
+            ...values,
+            [event.target.name]: event.target.value,
         });
-      };
-      
-    // Função para lidar com o clique no botão "Salvar"
+    };
+
+
     const handleSave = () => {
-        const formData = {
+        const formData: Omit<IContas, 'id'> = {
             tipoCad,
-            descricao: values.descricao,
+            titulo: values.descricao,
+            observacao: values.observacoes,
             valor: values.numberformat,
-            observacoes: values.observacoes,
-            dataHora: new Date().toLocaleString()
+            data: new Date().toISOString()
         };
-        console.log(formData);
+
+        if (tipoCad === 'Receita') {
+            ReceitasService.create(formData);
+        } else if (tipoCad === 'Despesa') {
+            DespesasService.create(formData);
+        }
+
+        console.log(formData)
+
+        onAddCustomer();
+
+        // console.log(formData);
         handleCancel();
-    };   
-    
+    };
+
     const handleCancel = () => {
-        // Limpa os valores dos campos
         setTipoCad('');
         setValues({
             textmask: '(100) 000-0000',
-            numberformat: '',
+            numberformat: 0,
             descricao: '',
             observacoes: ''
         });
-        // Fecha o modal
         setOpenModal(false);
     };
 
@@ -137,12 +150,12 @@ export default function CustomersAddModal({ isOpen, setOpenModal }: CustomersAdd
                             </FormControl>
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField 
-                            label="Descrição" 
-                            fullWidth
-                            name="descricao"
-                            value={values.descricao}
-                            onChange={handleChangeValue}
+                            <TextField
+                                label="Descrição"
+                                fullWidth
+                                name="descricao"
+                                value={values.descricao}
+                                onChange={handleChangeValue}
                             />
                         </Grid>
                         <Grid item xs={3}>
@@ -171,7 +184,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal }: CustomersAdd
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <Box sx={{display: 'flex', justifyContent: 'flex-end', gap: '10px'}}>
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                                 <Button variant="contained" color="error" onClick={handleCancel} >
                                     Sair
                                 </Button>
