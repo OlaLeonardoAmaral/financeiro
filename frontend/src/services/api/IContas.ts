@@ -1,5 +1,5 @@
 export interface IContas {
-    id: number,
+    id: string,
     tipoCad: string,
     titulo: string,
     observacao: string,

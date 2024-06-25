@@ -11,7 +11,7 @@ const getAll = async (): Promise<IContas[] | ApiException> => {
     }
 };
 
-const getById = async (id: number): Promise<IContas | ApiException> => {
+const getById = async (id: string): Promise<IContas | ApiException> => {
     try {
         const { data } = await Api().get(`/despesas/${id}`);
         return data;
@@ -29,7 +29,7 @@ const create = async (dataToCreate: Omit<IContas, 'id'>): Promise<IContas | ApiE
     }
  };
 
-const updateById = async (id: number, dataToUpdate: IContas): Promise<IContas | ApiException> => { 
+const updateById = async (id: string, dataToUpdate: IContas): Promise<IContas | ApiException> => { 
     try {
         const { data } = await Api().put<any>(`/despesas/${id}`, dataToUpdate);
         return data;
@@ -38,7 +38,7 @@ const updateById = async (id: number, dataToUpdate: IContas): Promise<IContas | 
     }
 };
 
-const deleteById = async (id: number): Promise<undefined | ApiException> => { 
+const deleteById = async (id: string): Promise<undefined | ApiException> => { 
     try {
         await Api().delete(`/despesas/${id}`);
         return undefined;

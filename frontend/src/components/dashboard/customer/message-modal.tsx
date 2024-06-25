@@ -13,6 +13,8 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format';
 import { Trash } from '@phosphor-icons/react/dist/ssr';
 import { borderRadius, color, display, fontWeight, shadows } from '@mui/system';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { ReceitasService } from '@/services/api/receitas/ReceitasService';
+import { DespesasService } from '@/services/api/despesas/DespesasService';
 
 const style = {
   display: 'flex',
@@ -61,15 +63,31 @@ const styleButtonCancel = {
 interface MessageModalProps {
   isOpen: boolean;
   setOpenModal: () => void;
+  onDeleteCostumer: () => void;
+  selectedId: string;
+  selectedType: string;
   // children: React.ReactNode;
 }
 
-export default function MessageModal({ isOpen, setOpenModal }: MessageModalProps): React.JSX.Element {
+export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, selectedId, selectedType }: MessageModalProps): React.JSX.Element {
 
 
   const handleClose = () => {
     setOpenModal();
   };
+
+  const handleDelete = () => {
+    
+    if(selectedType === 'Receita') {
+      ReceitasService.deleteById(selectedId);
+    } else {
+      DespesasService.deleteById(selectedId);
+    }
+
+    onDeleteCostumer();
+    handleClose();
+
+  }
 
 
   const modalContent = (
@@ -113,7 +131,7 @@ export default function MessageModal({ isOpen, setOpenModal }: MessageModalProps
         <DialogActions sx={{ ...styleDialogActions }}>
           <Button
             autoFocus
-            onClick={handleClose}
+            onClick={handleDelete}
             sx={{ ...styleButtonDelete }}>
             Delete
           </Button>

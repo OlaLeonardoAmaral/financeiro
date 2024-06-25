@@ -66,6 +66,7 @@ export default function Page(): React.JSX.Element {
       <CustomersTable
         count={contas.length}
         rows={contas}
+        onDeleteCustomer={fetchContas}
       />
     </Stack>
   );

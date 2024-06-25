@@ -20,12 +20,17 @@ import MessageModal from './message-modal';
 interface CustomersTableProps {
   count?: number;
   rows?: IContas[];
+  onDeleteCustomer: () => void;
 }
 
 export function CustomersTable({
   count = 0,
   rows = [],
+  onDeleteCustomer,
 }: CustomersTableProps): React.JSX.Element {
+
+  const [selectedId, setSelectedId] = React.useState('');
+  const [selectedType, setSelectedType] = React.useState('');
 
   const [openCustomersModal, setOpenCustomersModal] = React.useState(false);
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
@@ -40,6 +45,12 @@ export function CustomersTable({
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(Number(event.target.value));
     setPage(0);
+  };
+
+  const handleDeleteClick = (id: string, tipo: string) => {
+    setSelectedId(id);
+    setSelectedType(tipo);
+    setOpenMessageModal(true);
   };
 
   return (
@@ -84,7 +95,7 @@ export function CustomersTable({
 
                     <TableCell>
                       <Box sx={{ display: 'flex', gap: 1 }}>
-                        <IconButton aria-label="delete" onClick={() => setOpenMessageModal(true)}>
+                        <IconButton aria-label="delete" onClick={() => handleDeleteClick(row.id, row.tipoCad)}>
                           <TrashSimple size={20} color='#737A78' weight="fill" />
                         </IconButton>
 
@@ -110,10 +121,15 @@ export function CustomersTable({
         page={page}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
-      />      
+      />
       <div>
         <CustomersEditModal isOpen={openCustomersModal} setOpenModal={() => setOpenCustomersModal(!openCustomersModal)} />
-        <MessageModal isOpen={openMessageModal} setOpenModal={() => setOpenMessageModal(!openMessageModal)} />
+        <MessageModal
+          isOpen={openMessageModal}
+          setOpenModal={() => setOpenMessageModal(!openMessageModal)}
+          onDeleteCostumer={onDeleteCustomer}
+          selectedId={selectedId} 
+          selectedType={selectedType}/>
       </div>
     </Card>
 
