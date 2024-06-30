@@ -1,6 +1,6 @@
 'use client';
 
-import { type IContas } from '@/services/api/IContas';
+import { type ITransacao } from '@/services/api/transacoes/ITransacao';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Divider from '@mui/material/Divider';
@@ -19,24 +19,41 @@ import MessageModal from './message-modal';
 
 interface CustomersTableProps {
   count?: number;
-  rows?: IContas[];
+  rows?: ITransacao[];
   onDeleteCustomer: () => void;
+  onEditCustomer: () => void;
 }
+
+
+
 
 export function CustomersTable({
   count = 0,
   rows = [],
   onDeleteCustomer,
+  onEditCustomer,
 }: CustomersTableProps): React.JSX.Element {
 
+  const initialContaState: ITransacao = {
+    id: '',
+    tipo: '',
+    categoria: '',
+    observacao: '',
+    data: '',
+    valor: 0
+  };
+
   const [selectedId, setSelectedId] = React.useState('');
-  const [selectedType, setSelectedType] = React.useState('');
+  const [selectedConta, setSelectedConta] = React.useState<ITransacao>(initialContaState);
 
   const [openCustomersModal, setOpenCustomersModal] = React.useState(false);
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+
+
 
   const handlePageChange = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -47,10 +64,14 @@ export function CustomersTable({
     setPage(0);
   };
 
-  const handleDeleteClick = (id: string, tipo: string) => {
+  const handleDeleteClick = (id: string) => {
     setSelectedId(id);
-    setSelectedType(tipo);
     setOpenMessageModal(true);
+  };
+
+  const handleEditlick = (transacao: ITransacao) => {
+    setSelectedConta(transacao);
+    setOpenCustomersModal(true);
   };
 
   return (
@@ -60,7 +81,7 @@ export function CustomersTable({
           <TableHead>
             <TableRow>
               <TableCell>Tipo</TableCell>
-              <TableCell>Descrição</TableCell>
+              <TableCell>Categoria</TableCell>
               <TableCell>Observações</TableCell>
               <TableCell>Data</TableCell>
               <TableCell>Valor</TableCell>
@@ -74,7 +95,7 @@ export function CustomersTable({
                 return (
                   <TableRow hover key={row.id}>
                     <TableCell>
-                      {row.tipoCad.toUpperCase() === 'RECEITA'
+                      {row.tipo.toUpperCase() === 'RECEITA'
                         ?
                         <ArrowCircleUp size={30} color='#1AA918' weight="fill" />
                         :
@@ -82,7 +103,7 @@ export function CustomersTable({
                     </TableCell>
 
                     <TableCell>
-                      <Typography variant="subtitle2">{row.titulo}</Typography>
+                      <Typography variant="subtitle2">{row.categoria}</Typography>
                     </TableCell>
 
                     <TableCell>{row.observacao}</TableCell>
@@ -95,11 +116,11 @@ export function CustomersTable({
 
                     <TableCell>
                       <Box sx={{ display: 'flex', gap: 1 }}>
-                        <IconButton aria-label="delete" onClick={() => handleDeleteClick(row.id, row.tipoCad)}>
+                        <IconButton aria-label="delete" onClick={() => handleDeleteClick(row.id)}>
                           <TrashSimple size={20} color='#737A78' weight="fill" />
                         </IconButton>
 
-                        <IconButton aria-label="edit" onClick={() => setOpenCustomersModal(true)}>
+                        <IconButton aria-label="edit" onClick={() => handleEditlick(row)}>
                           <PencilSimple size={20} color='#737A78' weight="fill" />
                         </IconButton>
                       </Box>
@@ -123,13 +144,17 @@ export function CustomersTable({
         onRowsPerPageChange={handleRowsPerPageChange}
       />
       <div>
-        <CustomersEditModal isOpen={openCustomersModal} setOpenModal={() => setOpenCustomersModal(!openCustomersModal)} />
+        <CustomersEditModal
+          isOpen={openCustomersModal}
+          setOpenModal={() => setOpenCustomersModal(!openCustomersModal)}
+          onEditCustomer={onEditCustomer}
+          selectedConta={selectedConta}
+        />
         <MessageModal
           isOpen={openMessageModal}
           setOpenModal={() => setOpenMessageModal(!openMessageModal)}
           onDeleteCostumer={onDeleteCustomer}
-          selectedId={selectedId} 
-          selectedType={selectedType}/>
+          selectedId={selectedId} />
       </div>
     </Card>
 

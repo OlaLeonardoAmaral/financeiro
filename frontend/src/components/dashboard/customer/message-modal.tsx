@@ -13,8 +13,7 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format';
 import { Trash } from '@phosphor-icons/react/dist/ssr';
 import { borderRadius, color, display, fontWeight, shadows } from '@mui/system';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { ReceitasService } from '@/services/api/receitas/ReceitasService';
-import { DespesasService } from '@/services/api/despesas/DespesasService';
+import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 
 const style = {
   display: 'flex',
@@ -39,7 +38,7 @@ const styleButtonDelete = {
   boxShadow: '2px 2px 8px -4px rgba(0, 0, 0, 0.5)',
   width: '6rem',
   padding: '6px 10px',
-  borderRadius: '10px',  
+  borderRadius: '10px',
   '&:hover': {
     backgroundColor: '#F11414',
     boxShadow: '2px 2px 8px -4px rgba(0, 0, 0, 0.5)',
@@ -53,7 +52,7 @@ const styleButtonCancel = {
   boxShadow: '2px 2px 8px -4px rgba(0, 0, 0, 0.5)',
   width: '6rem',
   padding: '6px 10px',
-  borderRadius: '10px',  
+  borderRadius: '10px',
   '&:hover': {
     backgroundColor: '#F2F2F2',
     boxShadow: '2px 2px 8px -4px rgba(0, 0, 0, 0.5)',
@@ -65,11 +64,10 @@ interface MessageModalProps {
   setOpenModal: () => void;
   onDeleteCostumer: () => void;
   selectedId: string;
-  selectedType: string;
   // children: React.ReactNode;
 }
 
-export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, selectedId, selectedType }: MessageModalProps): React.JSX.Element {
+export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, selectedId }: MessageModalProps): React.JSX.Element {
 
 
   const handleClose = () => {
@@ -78,14 +76,12 @@ export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, s
 
   const handleDelete = () => {
     
-    if(selectedType === 'Receita') {
-      ReceitasService.deleteById(selectedId);
-    } else {
-      DespesasService.deleteById(selectedId);
-    }
+    TransacoesService.deleteById(selectedId);
 
-    onDeleteCostumer();
-    handleClose();
+    setTimeout(() => {
+      onDeleteCostumer();
+      handleClose();
+    }, 1000);
 
   }
 
@@ -100,7 +96,7 @@ export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, s
 
       <Box sx={{ ...style, width: 800 }}>
         <DialogTitle
-          style={{            
+          style={{
             fontWeight: '800',
             display: 'flex',
             flexDirection: 'column',
@@ -110,7 +106,7 @@ export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, s
             fontSize: '20px',
             gap: '20px'
           }} id="draggable-dialog-title">
-          <Trash size={60} color="#f20707" weight="fill"/>
+          <Trash size={60} color="#f20707" weight="fill" />
           Confirm Delete
         </DialogTitle>
 

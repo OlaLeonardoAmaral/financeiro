@@ -11,6 +11,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
 
+import { type ITransacao } from '@/services/api/transacoes/ITransacao';
+import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
+
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -28,6 +31,8 @@ const style = {
 interface CustomersAddModalProps {
   isOpen: boolean;
   setOpenModal: any;
+  selectedConta: ITransacao;
+  onEditCustomer: () => void;
 }
 
 interface CustomProps {
@@ -62,18 +67,37 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
   },
 );
 
-export default function CustomersEditModal({ isOpen, setOpenModal }: CustomersAddModalProps): React.JSX.Element {
-  const [tipoCad, setTipoCad] = React.useState('');
+
+export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta, onEditCustomer }: CustomersAddModalProps): React.JSX.Element {
+  const [tipo, setTipo] = React.useState(selectedConta.tipo);
+  const [categoria, setCategoria] = React.useState(selectedConta.categoria);
 
   const [values, setValues] = React.useState({
+    id: selectedConta.id,
     textmask: '(100) 000-0000',
-    numberformat: '',
-    descricao: '', 
-    observacoes: '',
+    valor: selectedConta.valor,
+    observacao: selectedConta.observacao,
+    data: selectedConta.data,
   });
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setTipoCad(event.target.value as string);
+  React.useEffect(() => {
+    setTipo(selectedConta.tipo);
+    setCategoria(selectedConta.categoria);
+    setValues({
+      id: selectedConta.id,
+      textmask: '(100) 000-0000',
+      valor: selectedConta.valor,
+      observacao: selectedConta.observacao,
+      data: selectedConta.data,
+    });
+  }, [selectedConta]);
+
+  const handleChangeTipo = (event: SelectChangeEvent) => {
+    setTipo(event.target.value as string);
+  };
+
+  const handleChangeCategoria = (event: SelectChangeEvent) => {
+    setCategoria(event.target.value as string);
   };
 
   const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,25 +107,37 @@ export default function CustomersEditModal({ isOpen, setOpenModal }: CustomersAd
     });
   };
 
+  // Omit<ITransacao, 'id'>
+
   const handleSave = () => {
-    const formData = {
-      tipoCad,
-      descricao: values.descricao,
-      valor: values.numberformat,
-      observacoes: values.observacoes,
-      dataHora: new Date().toLocaleString()
+    const formData: ITransacao = {
+      id: values.id,
+      tipo,
+      categoria: categoria,
+      observacao: values.observacao,
+      data: values.data,
+      valor: Number(values.valor),
     };
-    console.log(formData);
-    handleCancel();
+
+
+    TransacoesService.updateById(selectedConta.id, formData);
+
+
+    setTimeout(() => {
+      onEditCustomer();
+      handleCancel();
+    }, 1000)
   };
 
   const handleCancel = () => {
-    setTipoCad('');
+    setTipo('');
+    setCategoria('');
     setValues({
+      id: '',
       textmask: '(100) 000-0000',
-      numberformat: '',
-      descricao: '',
-      observacoes: ''
+      valor: 0.0,
+      data: '',
+      observacao: ''
     });
     setOpenModal(false);
   };
@@ -122,9 +158,9 @@ export default function CustomersEditModal({ isOpen, setOpenModal }: CustomersAd
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={tipoCad}
+                value={tipo}
                 label="Tipo"
-                onChange={handleChange}
+                onChange={handleChangeTipo}
               >
                 <MenuItem value={'Receita'}>Receita</MenuItem>
                 <MenuItem value={'Despesa'}>Despesa</MenuItem>
@@ -132,20 +168,35 @@ export default function CustomersEditModal({ isOpen, setOpenModal }: CustomersAd
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            <TextField 
-              label="Descrição" 
+            {/* <TextField
+              label="Descrição"
               fullWidth
-              name="descricao"
-              value={values.descricao}
+              name="titulo"
+              value={values.categoria}
               onChange={handleChangeValue}
-            />
+            /> */}
+
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={categoria}
+                label="Categoria"
+                onChange={handleChangeCategoria}
+              >
+                <MenuItem value={'Salario'}>Salario</MenuItem>
+                <MenuItem value={'Conta de Luz'}>Conta de Luz</MenuItem>
+              </Select>
+            </FormControl>
+
           </Grid>
           <Grid item xs={3}>
             <TextField
               label="Valor"
-              value={values.numberformat}
+              value={values.valor}
               onChange={handleChangeValue}
-              name="numberformat"
+              name="valor"
               id="formatted-numberformat-input"
               InputProps={{
                 inputComponent: NumericFormatCustom as any,
@@ -160,13 +211,13 @@ export default function CustomersEditModal({ isOpen, setOpenModal }: CustomersAd
               multiline
               rows={4}
               fullWidth
-              name="observacoes"
-              value={values.observacoes}
+              name="observacao"
+              value={values.observacao}
               onChange={handleChangeValue}
             />
           </Grid>
           <Grid item xs={12}>
-            <Box sx={{display: 'flex', justifyContent: 'flex-end', gap: '10px'}}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
               <Button variant="contained" color="error" onClick={handleCancel} >
                 Cancelar
               </Button>

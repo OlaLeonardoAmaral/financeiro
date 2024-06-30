@@ -1,7 +1,7 @@
-export interface IContas {
+export interface ITransacao {
     id: string,
-    tipoCad: string,
-    titulo: string,
+    tipo: string,
+    categoria: string,
     observacao: string,
     data: string,
     valor: number

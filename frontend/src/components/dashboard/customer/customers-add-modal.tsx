@@ -11,9 +11,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
-import { DespesasService } from '@/services/api/despesas/DespesasService';
-import { ReceitasService } from '@/services/api/receitas/ReceitasService';
-import { IContas } from '@/services/api/IContas';
+import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
+import { ITransacao } from '@/services/api/transacoes/ITransacao';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -68,17 +67,21 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
 );
 
 export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}: CustomersAddModalProps): React.JSX.Element {
-    const [tipoCad, setTipoCad] = React.useState('');
+    const [tipo, setTipo] = React.useState('');
+    const [categoria, setCategoria] = React.useState('');
 
     const [values, setValues] = React.useState({
         textmask: '(100) 000-0000',
         numberformat: 0,
-        descricao: '',
         observacoes: '',
     });
 
-    const handleChange = (event: SelectChangeEvent) => {
-        setTipoCad(event.target.value as string);
+    const handleChangeTipo = (event: SelectChangeEvent) => {
+        setTipo(event.target.value as string);
+    };
+    
+    const handleChangeCategoria = (event: SelectChangeEvent) => {
+        setCategoria(event.target.value as string);
     };
 
     const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,34 +93,29 @@ export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}
 
 
     const handleSave = () => {
-        const formData: Omit<IContas, 'id'> = {
-            tipoCad,
-            titulo: values.descricao,
+        const formData: Omit<ITransacao, 'id'> = {
+            tipo,
+            categoria,
             observacao: values.observacoes,
             valor: values.numberformat,
             data: new Date().toISOString()
         };
-
-        if (tipoCad === 'Receita') {
-            ReceitasService.create(formData);
-        } else if (tipoCad === 'Despesa') {
-            DespesasService.create(formData);
-        }
-
+        
+        TransacoesService.create(formData);        
         console.log(formData)
 
-        onAddCustomer();
-
-        // console.log(formData);
-        handleCancel();
+        setTimeout(() => {
+            onAddCustomer();
+            handleCancel();
+        }, 1000)
     };
 
     const handleCancel = () => {
-        setTipoCad('');
+        setTipo('');
+        setCategoria('');
         setValues({
             textmask: '(100) 000-0000',
-            numberformat: 0,
-            descricao: '',
+            numberformat: 0,            
             observacoes: ''
         });
         setOpenModal(false);
@@ -140,9 +138,9 @@ export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    value={tipoCad}
+                                    value={tipo}
                                     label="Tipo"
-                                    onChange={handleChange}
+                                    onChange={handleChangeTipo}
                                 >
                                     <MenuItem value={'Receita'}>Receita</MenuItem>
                                     <MenuItem value={'Despesa'}>Despesa</MenuItem>
@@ -150,13 +148,19 @@ export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}
                             </FormControl>
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField
-                                label="Descrição"
-                                fullWidth
-                                name="descricao"
-                                value={values.descricao}
-                                onChange={handleChangeValue}
-                            />
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={categoria}
+                                    label="Categoria"
+                                    onChange={handleChangeCategoria}
+                                >
+                                    <MenuItem value={'Salario'}>Salario</MenuItem>
+                                    <MenuItem value={'Conta de Luz'}>Conta de Luz</MenuItem>
+                                </Select>
+                            </FormControl>                            
                         </Grid>
                         <Grid item xs={3}>
                             <TextField

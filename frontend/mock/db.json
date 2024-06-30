@@ -1,4 +1,30 @@
 {
-  "receitas": [],
-  "despesas": []
+  "transacoes": [
+    {
+      "id": "e457",
+      "tipo": "Receita",
+      "categoria": "Salario",
+      "observacao": "xxxx",
+      "data": "2024-06-30T00:10:34.177Z",
+      "valor": 399
+    },
+    {
+      "id": "c687",
+      "tipo": "Receita",
+      "categoria": "Salario",
+      "observacao": "quinto dia util",
+      "valor": "1000.00",
+      "data": "2024-06-30T13:58:52.966Z"
+    }
+  ],
+  "categorias": [
+    {
+      "id": "1",
+      "titulo": "Salário"
+    },
+    {
+      "id": "2",
+      "titulo": "Conta de Luz"
+    }
+  ]
 }
