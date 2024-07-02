@@ -14,6 +14,7 @@ import { AddCustomerButton } from '@/components/dashboard/customer/customers-add
 // import type { Customer } from '@/components/dashboard/customer/customers-table';
 import { ITransacao } from '@/services/api/transacoes/ITransacao';
 import { ApiException } from '@/services/api/ApiException';
+// import { TransacoesService } from '@/services/mockapi/transacoes/TransacoesService';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 
 
@@ -21,22 +22,30 @@ import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 export default function Page(): React.JSX.Element {
 
   const [transacoes, setTransacoes] = React.useState<ITransacao[]>([]);
+  const [total, setTotal] = React.useState(0);
+  const [page, setPage] = React.useState(1);
+  const [limit, setLimit] = React.useState(10);
+  const [totalPages, setTotalPages] = React.useState(1);
 
 
   const fetchContas = () => {
-    TransacoesService.getAll()
+    TransacoesService.listAll()
       .then((result) => {
         if (result instanceof ApiException) {
           alert(result.message);
         } else {
-          setTransacoes(result);
+          setTransacoes(result.transacoes);
+          setTotal(result.total);
+          setPage(result.page);
+          setLimit(result.limit);
+          setTotalPages(result.totalPages);  
+          console.log('feat contas teste', result)        
         }
       })
       .catch((error) => alert(error.message));
-
-      console.log('feat contas teste')
-  };
-
+    };
+    
+    // console.log('feat contas teste', result.transacoes)
 
 
   React.useEffect(() => {
@@ -66,6 +75,13 @@ export default function Page(): React.JSX.Element {
       <CustomersTable
         count={transacoes.length}
         rows={transacoes}
+
+      //   Type 'import("c:/Users/Janaina/Desktop/projeto/financeiro/frontend/src/services/api/transacoes/ITransacao").ITransacao[]' is not assignable to type 'import("c:/Users/Janaina/Desktop/projeto/financeiro/frontend/src/services/mockapi/transacoes/ITransacao").ITransacao[]'.
+      //   Type 'import("c:/Users/Janaina/Desktop/projeto/financeiro/frontend/src/services/api/transacoes/ITransacao").ITransacao' is not assignable to type 'import("c:/Users/Janaina/Desktop/projeto/financeiro/frontend/src/services/mockapi/transacoes/ITransacao").ITransacao'.
+      //     Types of property 'categoria' are incompatible.
+      //       Type 'ICategoria' is not assignable to type 'string'.ts(2322)
+      // customers-table.tsx(22, 3): The expected type comes from property 'rows' which is declared here on type 'IntrinsicAttributes & CustomersTableProps
+
         onDeleteCustomer={fetchContas}
         onEditCustomer={fetchContas}
       />

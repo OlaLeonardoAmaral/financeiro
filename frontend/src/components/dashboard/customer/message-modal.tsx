@@ -13,7 +13,7 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format';
 import { Trash } from '@phosphor-icons/react/dist/ssr';
 import { borderRadius, color, display, fontWeight, shadows } from '@mui/system';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
+import { TransacoesService } from '@/services/mockapi/transacoes/TransacoesServiceMock';
 
 const style = {
   display: 'flex',

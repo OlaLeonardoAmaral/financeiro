@@ -1,8 +1,10 @@
+import { ICategoria } from "./ICategoria";
+
 export interface ITransacao {
     id: string,
     tipo: string,
-    categoria: string,
+    categoria: ICategoria,
     observacao: string,
-    data: string,
+    createdAt: string,
     valor: number
 }

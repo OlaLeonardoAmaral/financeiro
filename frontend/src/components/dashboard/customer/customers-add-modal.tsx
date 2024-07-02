@@ -11,8 +11,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
-import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
-import { ITransacao } from '@/services/api/transacoes/ITransacao';
+import { TransacoesService } from '@/services/mockapi/transacoes/TransacoesServiceMock';
+import { ITransacao } from '@/services/mockapi/transacoes/ITransacao';
 
 const style = {
     position: 'absolute' as 'absolute',

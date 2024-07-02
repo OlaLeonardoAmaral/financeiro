@@ -15,6 +15,14 @@
       "observacao": "quinto dia util",
       "valor": "1000.00",
       "data": "2024-06-30T13:58:52.966Z"
+    },
+    {
+      "id": "f41f",
+      "tipo": "Receita",
+      "categoria": "Salario",
+      "observacao": "",
+      "valor": "999.00",
+      "data": "2024-07-01T18:12:35.691Z"
     }
   ],
   "categorias": [

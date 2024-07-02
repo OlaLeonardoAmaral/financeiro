@@ -37,9 +37,9 @@ export function CustomersTable({
   const initialContaState: ITransacao = {
     id: '',
     tipo: '',
-    categoria: '',
+    categoria: { id: '', titulo: '' },
     observacao: '',
-    data: '',
+    createdAt: '',
     valor: 0
   };
 
@@ -90,7 +90,7 @@ export function CustomersTable({
           </TableHead>
           <TableBody>
             {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
                   <TableRow hover key={row.id}>
@@ -103,12 +103,12 @@ export function CustomersTable({
                     </TableCell>
 
                     <TableCell>
-                      <Typography variant="subtitle2">{row.categoria}</Typography>
+                      <Typography variant="subtitle2">{row.categoria.titulo}</Typography>  {/* Property 'titulo' does not exist on type 'string' */}
                     </TableCell>
 
                     <TableCell>{row.observacao}</TableCell>
 
-                    <TableCell>{row.data}</TableCell>
+                    <TableCell>{new Date(row.createdAt).toLocaleString()}</TableCell>
 
                     <TableCell>
                       {`R$ ${row.valor}`}

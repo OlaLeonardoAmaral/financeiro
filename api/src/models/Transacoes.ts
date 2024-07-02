@@ -37,8 +37,8 @@ class Transacoes extends Model<Transacoes> {
     @Column
     observacao: string;
 
-    @Column(DataType.VIRTUAL)
-    valor: string;
+    @Column
+    valor: number;
 
     @CreatedAt
     createdAt: Date;

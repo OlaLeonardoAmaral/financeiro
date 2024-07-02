@@ -1,37 +1,35 @@
-import { Api } from "../ApiConfig";
-import { ApiException } from "../ApiException";
-import { ICategoria } from "./ICategoria";
-import { ITransacao } from "./ITransacao";
+import { Api } from "../ApiConfigMock";
+import { ApiException } from "../ApiExceptionMock";
+import { ITransacaoMock } from "./ITransacaoMock";
 
-const listAll = async (): Promise<{ transacoes: ITransacao[]; total: number; page: number; limit: number; totalPages: number } | ApiException> => {
+const getAll = async (): Promise<ITransacaoMock[] | ApiException> => {
     try {
-        const { data } = await Api().get('/list?page=1&limit=10');
-        console.log("resresre", data);
+        const { data } = await Api().get('/transacoes');
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Erro ao bustar todos');
     }
 };
 
-const getById = async (id: string): Promise<ITransacao | ApiException> => {
+const getById = async (id: string): Promise<ITransacaoMock | ApiException> => {
     try {
         const { data } = await Api().get(`/transacoes/${id}`);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Erro ao bustar por id');
     }
-};
+ };
 
-const create = async (dataToCreate: Omit<ITransacao, 'id'>): Promise<ITransacao | ApiException> => {
+const create = async (dataToCreate: Omit<ITransacaoMock, 'id'>): Promise<ITransacaoMock | ApiException> => {
     try {
         const { data } = await Api().post<any>('/transacoes', dataToCreate);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Erro ao criar uma receita');
     }
-};
+ };
 
-const updateById = async (id: string, dataToUpdate: Omit<ITransacao, 'id' | 'data'>): Promise<ITransacao | ApiException> => {
+const updateById = async (id: string, dataToUpdate: Omit<ITransacaoMock, 'id' | 'data'>): Promise<ITransacaoMock | ApiException> => { 
     try {
         const { data } = await Api().put<any>(`/transacoes/${id}`, dataToUpdate);
         return data;
@@ -40,7 +38,7 @@ const updateById = async (id: string, dataToUpdate: Omit<ITransacao, 'id' | 'dat
     }
 };
 
-const deleteById = async (id: string): Promise<undefined | ApiException> => {
+const deleteById = async (id: string): Promise<undefined | ApiException> => { 
     try {
         await Api().delete(`/transacoes/${id}`);
         return undefined;
@@ -50,7 +48,7 @@ const deleteById = async (id: string): Promise<undefined | ApiException> => {
 };
 
 export const TransacoesService = {
-    listAll,
+    getAll,
     getById,
     create,
     updateById,
