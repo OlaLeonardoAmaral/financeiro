@@ -3,9 +3,10 @@ import { ApiException } from "../ApiException";
 import { ICategoria } from "./ICategoria";
 import { ITransacao } from "./ITransacao";
 
-const listAll = async (): Promise<{ transacoes: ITransacao[]; total: number; page: number; limit: number; totalPages: number } | ApiException> => {
+const listAll = async (params: {page: number, limit: number}): Promise<{ transacoes: ITransacao[]; total: number; page: number; limit: number; totalPages: number } | ApiException> => {
     try {
-        const { data } = await Api().get('/list?page=1&limit=10');
+        const { page, limit } = params;
+        const { data } = await Api().get(`/list?page=${page}&limit=${limit}`);
         console.log("resresre", data);
         return data;
     } catch (error: any) {

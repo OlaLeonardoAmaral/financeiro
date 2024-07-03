@@ -28,8 +28,8 @@ export default function Page(): React.JSX.Element {
   const [totalPages, setTotalPages] = React.useState(1);
 
 
-  const fetchContas = () => {
-    TransacoesService.listAll()
+  const fetchContas = (page = 1, limit = 10) => {
+    TransacoesService.listAll({ page, limit })
       .then((result) => {
         if (result instanceof ApiException) {
           alert(result.message);
@@ -38,19 +38,26 @@ export default function Page(): React.JSX.Element {
           setTotal(result.total);
           setPage(result.page);
           setLimit(result.limit);
-          setTotalPages(result.totalPages);  
-          console.log('feat contas teste', result)        
+          setTotalPages(result.totalPages);
+          console.log('feat contas teste', result)
         }
       })
       .catch((error) => alert(error.message));
-    };
-    
-    // console.log('feat contas teste', result.transacoes)
+  };
 
 
   React.useEffect(() => {
-    fetchContas();
-  }, []);
+    fetchContas(page, limit);
+  }, [page, limit]);
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage + 1);
+  };
+  
+  const handleRowsPerPageChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1);
+  };  
 
 
   return (
@@ -68,22 +75,19 @@ export default function Page(): React.JSX.Element {
           </Stack> */}
         </Stack>
         <div>
-          <AddCustomerButton onAddCustomer={fetchContas}/>
+          <AddCustomerButton onAddCustomer={() => fetchContas(page, limit)} />
         </div>
       </Stack>
       <CustomersFilters />
       <CustomersTable
-        count={transacoes.length}
+        count={total}
         rows={transacoes}
-
-      //   Type 'import("c:/Users/Janaina/Desktop/projeto/financeiro/frontend/src/services/api/transacoes/ITransacao").ITransacao[]' is not assignable to type 'import("c:/Users/Janaina/Desktop/projeto/financeiro/frontend/src/services/mockapi/transacoes/ITransacao").ITransacao[]'.
-      //   Type 'import("c:/Users/Janaina/Desktop/projeto/financeiro/frontend/src/services/api/transacoes/ITransacao").ITransacao' is not assignable to type 'import("c:/Users/Janaina/Desktop/projeto/financeiro/frontend/src/services/mockapi/transacoes/ITransacao").ITransacao'.
-      //     Types of property 'categoria' are incompatible.
-      //       Type 'ICategoria' is not assignable to type 'string'.ts(2322)
-      // customers-table.tsx(22, 3): The expected type comes from property 'rows' which is declared here on type 'IntrinsicAttributes & CustomersTableProps
-
-        onDeleteCustomer={fetchContas}
-        onEditCustomer={fetchContas}
+        page={page - 1}
+        rowsPerPage={limit}
+        onDeleteCustomer={() => fetchContas(page, limit)}
+        onEditCustomer={() => fetchContas(page, limit)}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}        
       />
     </Stack>
   );

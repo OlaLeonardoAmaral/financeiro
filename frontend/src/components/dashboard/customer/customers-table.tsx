@@ -20,8 +20,12 @@ import MessageModal from './message-modal';
 interface CustomersTableProps {
   count?: number;
   rows?: ITransacao[];
+  page: number;
+  rowsPerPage: number;
   onDeleteCustomer: () => void;
   onEditCustomer: () => void;
+  onPageChange: (newPage: number) => void;
+  onRowsPerPageChange: (newLimit: number) => void;  
 }
 
 
@@ -30,8 +34,12 @@ interface CustomersTableProps {
 export function CustomersTable({
   count = 0,
   rows = [],
+  page,
+  rowsPerPage,
   onDeleteCustomer,
   onEditCustomer,
+  onPageChange,
+  onRowsPerPageChange
 }: CustomersTableProps): React.JSX.Element {
 
   const initialContaState: ITransacao = {
@@ -49,19 +57,13 @@ export function CustomersTable({
   const [openCustomersModal, setOpenCustomersModal] = React.useState(false);
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-
-
 
   const handlePageChange = (event: unknown, newPage: number) => {
-    setPage(newPage);
+    onPageChange(newPage);
   };
 
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(Number(event.target.value));
-    setPage(0);
+    onRowsPerPageChange(Number(event.target.value));
   };
 
   const handleDeleteClick = (id: string) => {
@@ -132,8 +134,8 @@ export function CustomersTable({
           </TableBody>
         </Table>
       </Box>
-
       <Divider />
+
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"

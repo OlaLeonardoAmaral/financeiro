@@ -12,6 +12,7 @@
     "pretest": "NODE_ENV=test sequelize db:migrate && NODE_ENV=test sequelize db:seed:all",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc && nodemon dist/server.js",
+    "dev": "ts-node-dev --files src/server.ts",    
     "rebuild": "npm run build && npm start"
   },
   "keywords": [],
