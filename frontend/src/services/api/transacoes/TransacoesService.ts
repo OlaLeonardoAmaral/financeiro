@@ -2,44 +2,53 @@ import { Api } from "../ApiConfig";
 import { ApiException } from "../ApiException";
 import { ICategoria } from "./ICategoria";
 import { ITransacao } from "./ITransacao";
+import { ITransacaoCreate } from "./ITransicaoCreate";
 
-const listAll = async (params: {page: number, limit: number}): Promise<{ transacoes: ITransacao[]; total: number; page: number; limit: number; totalPages: number } | ApiException> => {
+const listAll = async (params: { page: number, limit: number }): Promise<{ transacoes: ITransacao[]; total: number; page: number; limit: number; totalPages: number } | ApiException> => {
     try {
         const { page, limit } = params;
         const { data } = await Api().get(`/list?page=${page}&limit=${limit}`);
-        console.log("resresre", data);
         return data;
     } catch (error: any) {
-        return new ApiException(error.message || 'Erro ao bustar todos');
+        return new ApiException(error.message || 'Erro ao buscar todos');
     }
 };
 
-const getById = async (id: string): Promise<ITransacao | ApiException> => {
+const listAllCategorias = async (): Promise<ICategoria[] | ApiException> => {
     try {
-        const { data } = await Api().get(`/transacoes/${id}`);
+        const { data } = await Api().get('/categoria');
         return data;
     } catch (error: any) {
-        return new ApiException(error.message || 'Erro ao bustar por id');
+        return new ApiException(error.message || 'Erro ao buscar todas categorias');
     }
 };
 
-const create = async (dataToCreate: Omit<ITransacao, 'id'>): Promise<ITransacao | ApiException> => {
+// const getById = async (id: string): Promise<ITransacao | ApiException> => {
+//     try {
+//         const { data } = await Api().get(`/transacoes/${id}`);
+//         return data;
+//     } catch (error: any) {
+//         return new ApiException(error.message || 'Erro ao bustar por id');
+//     }
+// };
+
+const create = async (dataToCreate: ITransacaoCreate): Promise<ITransacaoCreate | ApiException> => {
     try {
-        const { data } = await Api().post<any>('/transacoes', dataToCreate);
+        const { data } = await Api().post<any>('/add', dataToCreate);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Erro ao criar uma receita');
     }
 };
 
-const updateById = async (id: string, dataToUpdate: Omit<ITransacao, 'id' | 'data'>): Promise<ITransacao | ApiException> => {
-    try {
-        const { data } = await Api().put<any>(`/transacoes/${id}`, dataToUpdate);
-        return data;
-    } catch (error: any) {
-        return new ApiException(error.message || 'Erro ao atualizar uma receita');
-    }
-};
+// const updateById = async (id: string, dataToUpdate: Omit<ITransacao, 'id' | 'data'>): Promise<ITransacao | ApiException> => {
+//     try {
+//         const { data } = await Api().put<any>(`/transacoes/${id}`, dataToUpdate);
+//         return data;
+//     } catch (error: any) {
+//         return new ApiException(error.message || 'Erro ao atualizar uma receita');
+//     }
+// };
 
 const deleteById = async (id: string): Promise<undefined | ApiException> => {
     try {
@@ -52,8 +61,9 @@ const deleteById = async (id: string): Promise<undefined | ApiException> => {
 
 export const TransacoesService = {
     listAll,
-    getById,
+    listAllCategorias,
+    // getById,
     create,
-    updateById,
+    // updateById,
     deleteById,
 };

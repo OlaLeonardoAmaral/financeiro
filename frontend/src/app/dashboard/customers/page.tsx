@@ -25,8 +25,6 @@ export default function Page(): React.JSX.Element {
   const [total, setTotal] = React.useState(0);
   const [page, setPage] = React.useState(1);
   const [limit, setLimit] = React.useState(10);
-  const [totalPages, setTotalPages] = React.useState(1);
-
 
   const fetchContas = (page = 1, limit = 10) => {
     TransacoesService.listAll({ page, limit })
@@ -38,7 +36,6 @@ export default function Page(): React.JSX.Element {
           setTotal(result.total);
           setPage(result.page);
           setLimit(result.limit);
-          setTotalPages(result.totalPages);
           console.log('feat contas teste', result)
         }
       })

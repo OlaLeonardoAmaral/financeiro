@@ -91,8 +91,7 @@ export function CustomersTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
-              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {rows              
               .map((row) => {
                 return (
                   <TableRow hover key={row.id}>

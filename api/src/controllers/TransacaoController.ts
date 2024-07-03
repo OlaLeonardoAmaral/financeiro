@@ -2,6 +2,7 @@
 import { Request, Response } from "express";
 
 import CreateCategoriaService from "../services/TransacaoServices/CreateCategoriaService";
+import ListCategoriaService from "../services/TransacaoServices/ListCategoriaService";
 import CreateTransacaoService from "../services/TransacaoServices/CreateTransacaoService";
 import ListTransacaoService from "../services/TransacaoServices/ListTransacaoService";
 import DeleteTransacaoService from "../services/TransacaoServices/DeleteTransacaoService";
@@ -22,6 +23,11 @@ interface SerializedTransacao { // isso aqui pode ser um DTO
 export const createCategoria = async (req: Request, res: Response): Promise<Response> => {
     const { titulo } = req.body as SerializedCategoria;
     const categoria = await CreateCategoriaService({ titulo });
+    return res.status(200).json(categoria);
+}
+
+export const findAllCategoria = async (req: Request, res: Response): Promise<Response> => {    
+    const categoria = await ListCategoriaService();
     return res.status(200).json(categoria);
 }
 

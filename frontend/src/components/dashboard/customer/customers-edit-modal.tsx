@@ -11,8 +11,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
 
-import { type ITransacao } from '@/services/mockapi/transacoes/ITransacao';
-import { TransacoesService } from '@/services/mockapi/transacoes/TransacoesServiceMock';
+import { ITransacao } from '@/services/api/transacoes/ITransacao';
+import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -77,7 +77,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
     textmask: '(100) 000-0000',
     valor: selectedConta.valor,
     observacao: selectedConta.observacao,
-    data: selectedConta.data,
+    data: selectedConta.createdAt,
   });
 
   React.useEffect(() => {
@@ -88,7 +88,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
       textmask: '(100) 000-0000',
       valor: selectedConta.valor,
       observacao: selectedConta.observacao,
-      data: selectedConta.data,
+      data: selectedConta.createdAt,
     });
   }, [selectedConta]);
 

@@ -11,8 +11,10 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
-import { TransacoesService } from '@/services/mockapi/transacoes/TransacoesServiceMock';
-import { ITransacao } from '@/services/mockapi/transacoes/ITransacao';
+import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
+import { ITransacao } from '@/services/api/transacoes/ITransacao';
+import { ICategoria } from '@/services/api/transacoes/ICategoria';
+import { ITransacaoCreate } from '@/services/api/transacoes/ITransicaoCreate';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -31,6 +33,7 @@ const style = {
 interface CustomersAddModalProps {
     isOpen: boolean;
     setOpenModal: any;
+    categorias: ICategoria[];
     onAddCustomer: () => void;
 }
 
@@ -66,9 +69,12 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
     },
 );
 
-export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}: CustomersAddModalProps): React.JSX.Element {
+export default function CustomersAddModal({ isOpen, setOpenModal, categorias, onAddCustomer }: CustomersAddModalProps): React.JSX.Element {
     const [tipo, setTipo] = React.useState('');
-    const [categoria, setCategoria] = React.useState('');
+    // const [categoria, setCategoria] = React.useState<ICategoria>({ id: '', titulo: '' });
+    // const [categoriaTitulo, setCategoriaTitulo] = React.useState('');    
+    const [categoriaId, setCategoriaId] = React.useState('');    
+
 
     const [values, setValues] = React.useState({
         textmask: '(100) 000-0000',
@@ -79,9 +85,9 @@ export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}
     const handleChangeTipo = (event: SelectChangeEvent) => {
         setTipo(event.target.value as string);
     };
-    
+
     const handleChangeCategoria = (event: SelectChangeEvent) => {
-        setCategoria(event.target.value as string);
+        setCategoriaId(event.target.value as string);
     };
 
     const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,17 +98,16 @@ export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}
     };
 
 
-    const handleSave = () => {
-        const formData: Omit<ITransacao, 'id'> = {
+    const handleSave = () => {        
+
+        const formData: ITransacaoCreate = {
             tipo,
-            categoria,
+            categoriaId,
             observacao: values.observacoes,
             valor: values.numberformat,
-            data: new Date().toISOString()
         };
-        
-        TransacoesService.create(formData);        
-        console.log(formData)
+
+        TransacoesService.create(formData);
 
         setTimeout(() => {
             onAddCustomer();
@@ -112,10 +117,10 @@ export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}
 
     const handleCancel = () => {
         setTipo('');
-        setCategoria('');
+        setCategoriaId('');
         setValues({
             textmask: '(100) 000-0000',
-            numberformat: 0,            
+            numberformat: 0,
             observacoes: ''
         });
         setOpenModal(false);
@@ -144,6 +149,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}
                                 >
                                     <MenuItem value={'Receita'}>Receita</MenuItem>
                                     <MenuItem value={'Despesa'}>Despesa</MenuItem>
+
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -153,14 +159,15 @@ export default function CustomersAddModal({ isOpen, setOpenModal, onAddCustomer}
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    value={categoria}
+                                    value={categoriaId}
                                     label="Categoria"
                                     onChange={handleChangeCategoria}
                                 >
-                                    <MenuItem value={'Salario'}>Salario</MenuItem>
-                                    <MenuItem value={'Conta de Luz'}>Conta de Luz</MenuItem>
+                                    {categorias.map(categoria => {
+                                        return <MenuItem value={categoria.id} key={categoria.id}>{categoria.titulo}</MenuItem>
+                                    })};
                                 </Select>
-                            </FormControl>                            
+                            </FormControl>
                         </Grid>
                         <Grid item xs={3}>
                             <TextField
