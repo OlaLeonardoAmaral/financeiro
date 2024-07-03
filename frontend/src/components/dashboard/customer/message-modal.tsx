@@ -13,7 +13,7 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format';
 import { Trash } from '@phosphor-icons/react/dist/ssr';
 import { borderRadius, color, display, fontWeight, shadows } from '@mui/system';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { TransacoesService } from '@/services/mockapi/transacoes/TransacoesServiceMock';
+import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 
 const style = {
   display: 'flex',
@@ -75,7 +75,6 @@ export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, s
   };
 
   const handleDelete = () => {
-    
     TransacoesService.deleteById(selectedId);
 
     setTimeout(() => {

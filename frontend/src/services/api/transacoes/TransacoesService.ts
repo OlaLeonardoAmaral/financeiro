@@ -43,7 +43,7 @@ const updateById = async (id: string, dataToUpdate: Omit<ITransacao, 'id' | 'dat
 
 const deleteById = async (id: string): Promise<undefined | ApiException> => {
     try {
-        await Api().delete(`/transacoes/${id}`);
+        await Api().delete(`/remove/${id}`);
         return undefined;
     } catch (error: any) {
         return new ApiException(error.message || 'Erro ao apagar o registro');
