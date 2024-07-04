@@ -17,7 +17,7 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
   const [openModal, setOpenModal] = useState(false);
   const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
 
-  const fetchContas = () => {
+  const fetchCategorias = () => {
     TransacoesService.listAllCategorias()
       .then((result) => {
         if (result instanceof ApiException) {
@@ -31,7 +31,7 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
   };
 
   const handleAddClick = () => {
-    fetchContas();
+    fetchCategorias();
     setOpenModal(true);
   }
 

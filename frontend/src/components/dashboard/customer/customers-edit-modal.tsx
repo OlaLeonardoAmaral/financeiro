@@ -11,8 +11,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
 
+import { ITransacaoUpdate } from '@/services/api/transacoes/ITransicaoUpdate';
 import { ITransacao } from '@/services/api/transacoes/ITransacao';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
+import { ICategoria } from '@/services/api/transacoes/ICategoria';
+import { ApiException } from '@/services/api/ApiException';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -31,7 +34,7 @@ const style = {
 interface CustomersAddModalProps {
   isOpen: boolean;
   setOpenModal: any;
-  selectedConta: ITransacao;
+  selectedConta: ITransacao;  
   onEditCustomer: () => void;
 }
 
@@ -70,25 +73,38 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
 
 export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta, onEditCustomer }: CustomersAddModalProps): React.JSX.Element {
   const [tipo, setTipo] = React.useState(selectedConta.tipo);
-  const [categoria, setCategoria] = React.useState(selectedConta.categoria);
+  const [categoria, setCategoria] = React.useState(selectedConta.categoria.id);
+
+
+  const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
+
+  const fetchCategorias = () => {
+    TransacoesService.listAllCategorias()
+      .then((result) => {
+        if (result instanceof ApiException) {
+          alert(result.message);
+        } else {          
+          setCategorias(result);          
+        }
+      })
+      .catch((error) => alert(error.message))
+  };  
 
   const [values, setValues] = React.useState({
-    id: selectedConta.id,
     textmask: '(100) 000-0000',
     valor: selectedConta.valor,
     observacao: selectedConta.observacao,
-    data: selectedConta.createdAt,
   });
 
   React.useEffect(() => {
+    fetchCategorias();
+
     setTipo(selectedConta.tipo);
-    setCategoria(selectedConta.categoria);
+    setCategoria(selectedConta.categoria.id);
     setValues({
-      id: selectedConta.id,
       textmask: '(100) 000-0000',
       valor: selectedConta.valor,
       observacao: selectedConta.observacao,
-      data: selectedConta.createdAt,
     });
   }, [selectedConta]);
 
@@ -107,15 +123,12 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
     });
   };
 
-  // Omit<ITransacao, 'id'>
-
   const handleSave = () => {
-    const formData: ITransacao = {
-      id: values.id,
+
+    const formData: ITransacaoUpdate = {
       tipo,
-      categoria: categoria,
+      categoriaId: categoria,
       observacao: values.observacao,
-      data: values.data,
       valor: Number(values.valor),
     };
 
@@ -133,10 +146,8 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
     setTipo('');
     setCategoria('');
     setValues({
-      id: '',
       textmask: '(100) 000-0000',
       valor: 0.0,
-      data: '',
       observacao: ''
     });
     setOpenModal(false);
@@ -168,14 +179,6 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            {/* <TextField
-              label="Descrição"
-              fullWidth
-              name="titulo"
-              value={values.categoria}
-              onChange={handleChangeValue}
-            /> */}
-
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
               <Select
@@ -185,8 +188,9 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
                 label="Categoria"
                 onChange={handleChangeCategoria}
               >
-                <MenuItem value={'Salario'}>Salario</MenuItem>
-                <MenuItem value={'Conta de Luz'}>Conta de Luz</MenuItem>
+                {categorias.map(categoria => {
+                  return <MenuItem value={categoria.id} key={categoria.id}>{categoria.titulo}</MenuItem>
+                })};
               </Select>
             </FormControl>
 

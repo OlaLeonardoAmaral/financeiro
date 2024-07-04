@@ -16,6 +16,9 @@ import { ArrowCircleDown, ArrowCircleUp, PencilSimple, TrashSimple } from '@phos
 import * as React from 'react';
 import CustomersEditModal from './customers-edit-modal';
 import MessageModal from './message-modal';
+import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
+import { ApiException } from '@/services/api/ApiException';
+import { ICategoria } from '@/services/api/transacoes/ICategoria';
 
 interface CustomersTableProps {
   count?: number;
@@ -57,7 +60,6 @@ export function CustomersTable({
   const [openCustomersModal, setOpenCustomersModal] = React.useState(false);
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
 
-
   const handlePageChange = (event: unknown, newPage: number) => {
     onPageChange(newPage);
   };
@@ -71,7 +73,7 @@ export function CustomersTable({
     setOpenMessageModal(true);
   };
 
-  const handleEditlick = (transacao: ITransacao) => {
+  const handleEditClick = (transacao: ITransacao) => {    
     setSelectedConta(transacao);
     setOpenCustomersModal(true);
   };
@@ -121,7 +123,7 @@ export function CustomersTable({
                           <TrashSimple size={20} color='#737A78' weight="fill" />
                         </IconButton>
 
-                        <IconButton aria-label="edit" onClick={() => handleEditlick(row)}>
+                        <IconButton aria-label="edit" onClick={() => handleEditClick(row)}>
                           <PencilSimple size={20} color='#737A78' weight="fill" />
                         </IconButton>
                       </Box>

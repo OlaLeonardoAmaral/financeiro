@@ -3,6 +3,7 @@ import { ApiException } from "../ApiException";
 import { ICategoria } from "./ICategoria";
 import { ITransacao } from "./ITransacao";
 import { ITransacaoCreate } from "./ITransicaoCreate";
+import { ITransacaoUpdate } from "./ITransicaoUpdate";
 
 const listAll = async (params: { page: number, limit: number }): Promise<{ transacoes: ITransacao[]; total: number; page: number; limit: number; totalPages: number } | ApiException> => {
     try {
@@ -41,14 +42,14 @@ const create = async (dataToCreate: ITransacaoCreate): Promise<ITransacaoCreate 
     }
 };
 
-// const updateById = async (id: string, dataToUpdate: Omit<ITransacao, 'id' | 'data'>): Promise<ITransacao | ApiException> => {
-//     try {
-//         const { data } = await Api().put<any>(`/transacoes/${id}`, dataToUpdate);
-//         return data;
-//     } catch (error: any) {
-//         return new ApiException(error.message || 'Erro ao atualizar uma receita');
-//     }
-// };
+ const updateById = async (id: string, dataToUpdate: ITransacaoUpdate): Promise<ITransacaoUpdate | ApiException> => {
+    try {
+        const { data } = await Api().put<any>(`/update/${id}`, dataToUpdate);
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Erro ao atualizar uma receita');
+    }
+};
 
 const deleteById = async (id: string): Promise<undefined | ApiException> => {
     try {
@@ -64,6 +65,6 @@ export const TransacoesService = {
     listAllCategorias,
     // getById,
     create,
-    // updateById,
+    updateById,
     deleteById,
 };
