@@ -8,6 +8,7 @@ import ListTransacaoService from "../services/TransacaoServices/ListTransacaoSer
 import DeleteTransacaoService from "../services/TransacaoServices/DeleteTransacaoService";
 import UpdateTransacaoService from "../services/TransacaoServices/UpdateTransacaoService";
 import GetTransacaoByIdService from "../services/TransacaoServices/GetTransacaoByIdService";
+import GetTotaisMes from "../services/TransacaoServices/GetTotaisMes";
 
 interface SerializedCategoria {
     titulo: string;
@@ -69,4 +70,10 @@ export const deleteTransacao = async (req: Request, res: Response): Promise<Resp
     const { id } = req.params;
     await DeleteTransacaoService(id);
     return res.status(204).send();
+}
+
+
+export const getTotalisMes = async (req: Request, res: Response): Promise<Response> => {    
+    const totais = await GetTotaisMes();
+    return res.status(200).json(totais);
 }
