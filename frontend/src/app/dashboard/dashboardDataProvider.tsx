@@ -46,7 +46,7 @@ export const DashboardDataProvider: React.FC<DashboardDataProviderProps> = ({ ch
                 const totalReceitaMes = formatNumber(Number(result.totalReceita));
                 const totalDespesaMes = formatNumber(Number(result.totalDespesa));
                 const saldoMes = formatNumber(Number(result.saldo));
-
+               
                 const response = {
                     budget: `R$ ${totalReceitaMes}`,
                     totalCustomers: `R$ ${totalDespesaMes}`,
@@ -55,8 +55,7 @@ export const DashboardDataProvider: React.FC<DashboardDataProviderProps> = ({ ch
                         { name: 'This year', data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20] },
                         { name: 'Last year', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
                     ],
-                    // trafficData: [63, 15, 22],
-                    trafficData: [1, 2, 3],
+                    trafficData: [63, 15, 22],
                 };
 
                 setData(response);
