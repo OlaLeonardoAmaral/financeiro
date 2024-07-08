@@ -74,14 +74,10 @@ export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, s
     setOpenModal();
   };
 
-  const handleDelete = () => {
-    TransacoesService.deleteById(selectedId);
-
-    setTimeout(() => {
-      onDeleteCostumer();
-      handleClose();
-    }, 1000);
-
+  const handleDelete = async () => {
+    await TransacoesService.deleteById(selectedId);
+    onDeleteCostumer();
+    handleClose();
   }
 
 

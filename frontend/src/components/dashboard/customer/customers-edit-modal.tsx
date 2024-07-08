@@ -31,10 +31,10 @@ const style = {
   pb: 3,
 };
 
-interface CustomersAddModalProps {
+interface CustomersEditModalProps {
   isOpen: boolean;
   setOpenModal: any;
-  selectedConta: ITransacao;  
+  selectedConta: ITransacao;
   onEditCustomer: () => void;
 }
 
@@ -71,7 +71,7 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
 );
 
 
-export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta, onEditCustomer }: CustomersAddModalProps): React.JSX.Element {
+export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta, onEditCustomer }: CustomersEditModalProps): React.JSX.Element {
   const [tipo, setTipo] = React.useState(selectedConta.tipo);
   const [categoria, setCategoria] = React.useState(selectedConta.categoria.id);
 
@@ -83,12 +83,12 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
       .then((result) => {
         if (result instanceof ApiException) {
           alert(result.message);
-        } else {          
-          setCategorias(result);          
+        } else {
+          setCategorias(result);
         }
       })
       .catch((error) => alert(error.message))
-  };  
+  };
 
   const [values, setValues] = React.useState({
     textmask: '(100) 000-0000',
@@ -123,7 +123,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
 
     const formData: ITransacaoUpdate = {
       tipo,
@@ -132,14 +132,9 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
       valor: Number(values.valor),
     };
 
-
-    TransacoesService.updateById(selectedConta.id, formData);
-
-
-    setTimeout(() => {
-      onEditCustomer();
-      handleCancel();
-    }, 1000)
+    await TransacoesService.updateById(selectedConta.id, formData);
+    onEditCustomer();
+    handleCancel();
   };
 
   const handleCancel = () => {

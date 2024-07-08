@@ -23,7 +23,7 @@ const formatNumber = (num: number): string => {
     if (num >= 1000) {
         return numeral(num).format('0,0.00');
     } else {
-        return numeral(num).format('R$0.0');
+        return numeral(num).format('0.00');
     }
 };
 

@@ -17,11 +17,11 @@ export default function Page(): React.JSX.Element {
       {(data) => data ? (
         <Grid container spacing={12} columns={9}>
           <Grid lg={3} sm={6} xs={12}>
-            <Budget diff={12} trend="up" sx={{ height: '100%' }} value={data.budget} />
+            <Budget trend="up" sx={{ height: '100%' }} value={data.budget} />
           </Grid>
           
           <Grid lg={3} sm={6} xs={12}>
-            <TotalCustomers diff={16} trend="down" sx={{ height: '100%' }} value={data.totalCustomers} />
+            <TotalCustomers trend="down" sx={{ height: '100%' }} value={data.totalCustomers} />
           </Grid>
 
           <Grid lg={3} sm={6} xs={12}>

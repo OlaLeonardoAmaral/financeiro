@@ -71,10 +71,7 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
 
 export default function CustomersAddModal({ isOpen, setOpenModal, categorias, onAddCustomer }: CustomersAddModalProps): React.JSX.Element {
     const [tipo, setTipo] = React.useState('');
-    // const [categoria, setCategoria] = React.useState<ICategoria>({ id: '', titulo: '' });
-    // const [categoriaTitulo, setCategoriaTitulo] = React.useState('');    
-    const [categoriaId, setCategoriaId] = React.useState('');    
-
+    const [categoriaId, setCategoriaId] = React.useState('');
 
     const [values, setValues] = React.useState({
         textmask: '(100) 000-0000',
@@ -98,7 +95,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
     };
 
 
-    const handleSave = () => {        
+    const handleSave = async () => {
 
         const formData: ITransacaoCreate = {
             tipo,
@@ -107,12 +104,10 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
             valor: values.numberformat,
         };
 
-        TransacoesService.create(formData);
-
-        setTimeout(() => {
-            onAddCustomer();
-            handleCancel();
-        }, 1000)
+        await TransacoesService.create(formData);
+        
+        onAddCustomer();
+        handleCancel();
     };
 
     const handleCancel = () => {
