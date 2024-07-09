@@ -12,8 +12,10 @@ import type { SxProps } from '@mui/material/styles';
 import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
 import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import type { ApexOptions } from 'apexcharts';
+import { EstatisticasService } from '@/services/api/estatisticas/EstatisticasService';
 
 import { Chart } from '@/components/core/chart';
+import { ApiException } from '@/services/api/ApiException';
 
 export interface SalesProps {
   chartSeries: { name: string; data: number[] }[];
@@ -22,27 +24,53 @@ export interface SalesProps {
 
 export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
   const chartOptions = useChartOptions();
+  const [series, setSeries] = React.useState(chartSeries);
+
+
+  const handleSync = async () => {
+    const mesesAno = await EstatisticasService.getTotaisAnoPorMes();
+
+    if (mesesAno instanceof ApiException) {
+      alert(mesesAno.message);
+    } else {
+      const data = new Array(12).fill(0);
+
+      mesesAno.forEach(mes => {
+        const monthIndex = new Date(mes.month).getMonth();
+        data[monthIndex] = mes.total / 1000;
+      });
+
+      const updatedSeries = [
+        {
+          name: 'This year',
+          data,
+        },
+      ];
+      setSeries(updatedSeries);
+    }
+  };
+
 
   return (
     <Card sx={sx}>
       <CardHeader
         action={
-          <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
-            Sync
+          <Button onClick={handleSync} color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
+            Sincronizar
           </Button>
         }
         title="Sales"
       />
-      
+
       <CardContent>
-        <Chart height={350} options={chartOptions} series={chartSeries} type="bar" width="100%" />
+        <Chart height={350} options={chartOptions} series={series} type="bar" width="100%" />
       </CardContent>
-      
+
       <Divider />
-      
+
       <CardActions sx={{ justifyContent: 'flex-end' }}>
         <Button color="inherit" endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} size="small">
-          Overview
+          Relatório
         </Button>
       </CardActions>
     </Card>

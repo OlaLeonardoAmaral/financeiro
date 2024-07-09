@@ -1,4 +1,3 @@
-// components/DashboardDataProvider.tsx
 'use client';
 
 import { ApiException } from '@/services/api/ApiException';
@@ -27,47 +26,55 @@ const formatNumber = (num: number): string => {
     }
 };
 
-
 export const DashboardDataProvider: React.FC<DashboardDataProviderProps> = ({ children }) => {
     const [data, setData] = useState<DashboardData | undefined>(undefined);
 
+    const fetchInitialData = async () => {
+        const mesesAno = await EstatisticasService.getTotaisAnoPorMes();
 
-    useEffect(() => {
+        if (mesesAno instanceof ApiException) {
+            alert(mesesAno.message);
+        } else {
+            const data = new Array(12).fill(0);
 
-        const fetchData = async () => {
+            mesesAno.forEach(mes => {
+                const monthIndex = new Date(mes.month).getMonth();
+                data[monthIndex] = mes.total / 1000;
+            });
+
+            const salesData = [
+                {
+                    name: 'This year',
+                    data,
+                },
+                { name: 'Last year', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+            ];
 
             const result = await EstatisticasService.getTotaisMes();
-
 
             if (result instanceof ApiException) {
                 alert(result.message);
             } else {
-
                 const totalReceitaMes = formatNumber(Number(result.totalReceita));
                 const totalDespesaMes = formatNumber(Number(result.totalDespesa));
                 const saldoMes = formatNumber(Number(result.saldo));
-               
+
                 const response = {
                     budget: `R$ ${totalReceitaMes}`,
                     totalCustomers: `R$ ${totalDespesaMes}`,
                     totalProfit: `R$ ${saldoMes}`,
-                    salesData: [
-                        { name: 'This year', data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20] },
-                        { name: 'Last year', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-                    ],
+                    salesData,
                     trafficData: [63, 15, 22],
                 };
 
                 setData(response);
             }
-        };
+        }
+    };
 
-        fetchData();
+    useEffect(() => {
+        fetchInitialData();
     }, []);
 
-    return (
-        <>
-            {children(data)}
-        </>
-    );
+    return <>{children(data)}</>;
 };

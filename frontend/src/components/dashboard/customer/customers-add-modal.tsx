@@ -15,6 +15,7 @@ import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { ITransacao } from '@/services/api/transacoes/ITransacao';
 import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { ITransacaoCreate } from '@/services/api/transacoes/ITransicaoCreate';
+import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -105,7 +106,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
         };
 
         await TransacoesService.create(formData);
-        
+
         onAddCustomer();
         handleCancel();
     };
@@ -149,7 +150,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                             </FormControl>
                         </Grid>
                         <Grid item xs={6}>
-                            <FormControl fullWidth>
+                            {/* <FormControl fullWidth>
                                 <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -162,7 +163,28 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                                         return <MenuItem value={categoria.id} key={categoria.id}>{categoria.titulo}</MenuItem>
                                     })};
                                 </Select>
-                            </FormControl>
+                            </FormControl> */}
+
+                            <Box sx={{ display: 'flex' }}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={categoriaId}
+                                        label="Categoria"
+                                        onChange={handleChangeCategoria}
+                                        sx={{ borderRadius: '8px 0 0 8px' }}
+                                    >
+                                        {categorias.map(categoria => {
+                                            return <MenuItem value={categoria.id} key={categoria.id}>{categoria.titulo}</MenuItem>
+                                        })};
+                                    </Select>
+                                </FormControl>
+                                <Button variant="contained" size="small" sx={{ borderRadius: '0 8px 8px 0' }}>
+                                    <PlusIcon size={20} weight="bold" />
+                                </Button>
+                            </Box>
                         </Grid>
                         <Grid item xs={3}>
                             <TextField
@@ -192,7 +214,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                         <Grid item xs={12}>
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                                 <Button variant="contained" color="error" onClick={handleCancel} >
-                                    Sair
+                                    Cancelar
                                 </Button>
                                 <Button variant="contained" color="success" onClick={handleSave} >
                                     Salvar

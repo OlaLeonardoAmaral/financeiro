@@ -16,6 +16,9 @@ import { ITransacao } from '@/services/api/transacoes/ITransacao';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { ApiException } from '@/services/api/ApiException';
+import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
+import { IconButton } from '@mui/material';
+import { borderRadius } from '@mui/system';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -174,21 +177,26 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={categoria}
-                label="Categoria"
-                onChange={handleChangeCategoria}
-              >
-                {categorias.map(categoria => {
-                  return <MenuItem value={categoria.id} key={categoria.id}>{categoria.titulo}</MenuItem>
-                })};
-              </Select>
-            </FormControl>
-
+            <Box sx={{ display: 'flex' }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
+                <Select
+                  sx={{ borderRadius: '8px 0 0 8px' }}
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={categoria}
+                  label="Categoria"
+                  onChange={handleChangeCategoria}
+                >
+                  {categorias.map(categoria => {
+                    return <MenuItem value={categoria.id} key={categoria.id}>{categoria.titulo}</MenuItem>
+                  })};
+                </Select>
+              </FormControl>
+              <Button variant="contained" size="small" sx={{ borderRadius: '0 8px 8px 0' }}>
+                <PlusIcon size={20} weight="bold" />
+              </Button>
+            </Box>
           </Grid>
           <Grid item xs={3}>
             <TextField
