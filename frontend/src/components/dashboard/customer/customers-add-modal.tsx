@@ -4,18 +4,16 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { NumericFormat, NumericFormatProps } from 'react-number-format';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
-import { ITransacao } from '@/services/api/transacoes/ITransacao';
 import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { ITransacaoCreate } from '@/services/api/transacoes/ITransicaoCreate';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
+import CategoriaAddModal from './categoria-add-modal';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -73,6 +71,11 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
 export default function CustomersAddModal({ isOpen, setOpenModal, categorias, onAddCustomer }: CustomersAddModalProps): React.JSX.Element {
     const [tipo, setTipo] = React.useState('');
     const [categoriaId, setCategoriaId] = React.useState('');
+    const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
+
+    const handleAddCategoria = () => {
+        setOpenModalAddCategoria(true);
+    }
 
     const [values, setValues] = React.useState({
         textmask: '(100) 000-0000',
@@ -150,21 +153,6 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                             </FormControl>
                         </Grid>
                         <Grid item xs={6}>
-                            {/* <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={categoriaId}
-                                    label="Categoria"
-                                    onChange={handleChangeCategoria}
-                                >
-                                    {categorias.map(categoria => {
-                                        return <MenuItem value={categoria.id} key={categoria.id}>{categoria.titulo}</MenuItem>
-                                    })};
-                                </Select>
-                            </FormControl> */}
-
                             <Box sx={{ display: 'flex' }}>
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
@@ -181,7 +169,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                                         })};
                                     </Select>
                                 </FormControl>
-                                <Button variant="contained" size="small" sx={{ borderRadius: '0 8px 8px 0' }}>
+                                <Button onClick={handleAddCategoria} variant="contained" size="small" sx={{ borderRadius: '0 8px 8px 0' }}>
                                     <PlusIcon size={20} weight="bold" />
                                 </Button>
                             </Box>
@@ -222,7 +210,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                             </Box>
                         </Grid>
                     </Grid>
-
+                  <CategoriaAddModal isOpen={openModalAddCategoria} setOpenModal={() => setOpenModalAddCategoria(!openModalAddCategoria)}/> 
                 </Box>
             </Modal>
         </div>

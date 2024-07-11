@@ -1,6 +1,6 @@
 import { Api } from "../ApiConfig";
 import { ApiException } from "../ApiException";
-import { ICategoria } from "./ICategoria";
+import { ICategoria, ICategoriaCreate } from "./ICategoria";
 import { ITransacao } from "./ITransacao";
 import { ITransacaoCreate } from "./ITransicaoCreate";
 import { ITransacaoUpdate } from "./ITransicaoUpdate";
@@ -23,6 +23,15 @@ const listAllCategorias = async (): Promise<ICategoria[] | ApiException> => {
         return new ApiException(error.message || 'Erro ao buscar todas categorias');
     }
 };
+
+const createCategoria = async (dataToCreate: ICategoriaCreate): Promise<ICategoria | ApiException> => {
+    try {
+        const { data } = await Api().post<ICategoria>('/categoria/add', dataToCreate);
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Erro ao criar uma categoria');
+    }
+}
 
 // const getById = async (id: string): Promise<ITransacao | ApiException> => {
 //     try {
@@ -63,6 +72,7 @@ const deleteById = async (id: string): Promise<undefined | ApiException> => {
 export const TransacoesService = {
     listAll,
     listAllCategorias,
+    createCategoria,
     // getById,
     create,
     updateById,
