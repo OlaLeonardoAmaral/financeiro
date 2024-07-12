@@ -10,8 +10,8 @@ interface SerializedCategoria { // isso aqui pode ser um DTO
 
 const CreateCategoriaService = async (categoria: SerializedCategoria) => {
     try {
-        const { titulo } = await Categorias.create(categoria);
-        return {titulo };
+        const { id, titulo } = await Categorias.create(categoria);
+        return { id, titulo };
     } catch (err: any) {
         console.log(err);
         throw new AppError("Create error", 403);

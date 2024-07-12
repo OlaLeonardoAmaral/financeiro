@@ -19,6 +19,7 @@ import { ApiException } from '@/services/api/ApiException';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
 import { IconButton } from '@mui/material';
 import { borderRadius } from '@mui/system';
+import CategoriaAddModal from './categoria-add-modal';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -77,9 +78,12 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
 export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta, onEditCustomer }: CustomersEditModalProps): React.JSX.Element {
   const [tipo, setTipo] = React.useState(selectedConta.tipo);
   const [categoria, setCategoria] = React.useState(selectedConta.categoria.id);
-
-
   const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
+  const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
+
+  const handleAddCategoria = () => {
+    setOpenModalAddCategoria(true);
+  }
 
   const fetchCategorias = () => {
     TransacoesService.listAllCategorias()
@@ -193,7 +197,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
                   })};
                 </Select>
               </FormControl>
-              <Button variant="contained" size="small" sx={{ borderRadius: '0 8px 8px 0' }}>
+              <Button onClick={handleAddCategoria} variant="contained" size="small" sx={{ borderRadius: '0 8px 8px 0' }}>
                 <PlusIcon size={20} weight="bold" />
               </Button>
             </Box>
@@ -234,6 +238,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
             </Box>
           </Grid>
         </Grid>
+        <CategoriaAddModal isOpen={openModalAddCategoria} setOpenModal={() => setOpenModalAddCategoria(!openModalAddCategoria)} />
       </Box>
     </Modal>
   );
