@@ -17,8 +17,6 @@ import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { ApiException } from '@/services/api/ApiException';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
-import { IconButton } from '@mui/material';
-import { borderRadius } from '@mui/system';
 import CategoriaAddModal from './categoria-add-modal';
 
 const style = {

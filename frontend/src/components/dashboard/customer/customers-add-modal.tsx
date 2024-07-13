@@ -72,10 +72,17 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
     const [tipo, setTipo] = React.useState('');
     const [categoriaId, setCategoriaId] = React.useState('');
     const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
+    const [categoriaList, setCategoriaList] = React.useState<ICategoria[]>(categorias);
+
 
     const handleAddCategoria = () => {
         setOpenModalAddCategoria(true);
     }
+
+    const handleCategoriaCreated = (newCategoria: ICategoria) => {
+        categorias.push(newCategoria);
+        setCategoriaId(newCategoria.id);
+    };
 
     const [values, setValues] = React.useState({
         textmask: '(100) 000-0000',
@@ -210,7 +217,11 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                             </Box>
                         </Grid>
                     </Grid>
-                  <CategoriaAddModal isOpen={openModalAddCategoria} setOpenModal={() => setOpenModalAddCategoria(!openModalAddCategoria)}/> 
+                    <CategoriaAddModal
+                        isOpen={openModalAddCategoria}
+                        setOpenModal={() => setOpenModalAddCategoria(!openModalAddCategoria)}
+                        onCategoriaCreated={handleCategoriaCreated}
+                    />
                 </Box>
             </Modal>
         </div>
