@@ -17,8 +17,6 @@ import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { ApiException } from '@/services/api/ApiException';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
-import { IconButton } from '@mui/material';
-import { borderRadius } from '@mui/system';
 import CategoriaAddModal from './categoria-add-modal';
 
 const style = {
@@ -80,10 +78,16 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
   const [categoria, setCategoria] = React.useState(selectedConta.categoria.id);
   const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
   const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
+  const [categoriaId, setCategoriaId] = React.useState('');
 
   const handleAddCategoria = () => {
     setOpenModalAddCategoria(true);
   }
+
+  const handleCategoriaCreated = (newCategoria: ICategoria) => {
+    categorias.push(newCategoria);
+    setCategoriaId(newCategoria.id);
+};
 
   const fetchCategorias = () => {
     TransacoesService.listAllCategorias()
@@ -238,7 +242,11 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
             </Box>
           </Grid>
         </Grid>
-        <CategoriaAddModal isOpen={openModalAddCategoria} setOpenModal={() => setOpenModalAddCategoria(!openModalAddCategoria)} />
+        <CategoriaAddModal
+        isOpen={openModalAddCategoria} 
+        setOpenModal={() => setOpenModalAddCategoria(!openModalAddCategoria)} 
+        onCategoriaCreated={handleCategoriaCreated}/> 
+       
       </Box>
     </Modal>
   );

@@ -9,11 +9,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 const user = {
-  name: 'Sofia Rivers',
+  name: 'Leonardo Amaral',
   avatar: '/assets/avatar.png',
   jobTitle: 'Senior Developer',
-  country: 'USA',
-  city: 'Los Angeles',
+  country: 'Brasil',
+  city: 'São Paulo',
   timezone: 'GTM-7',
 } as const;
 

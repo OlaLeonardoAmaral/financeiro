@@ -38,7 +38,8 @@ export const DashboardDataProvider: React.FC<DashboardDataProviderProps> = ({ ch
             const data = new Array(12).fill(0);
 
             mesesAno.forEach(mes => {
-                const monthIndex = new Date(mes.month).getMonth();
+                const [ano, mesStr] = mes.month.split('-'); 
+                const monthIndex = parseInt(mesStr, 10) - 1;
                 data[monthIndex] = mes.total / 1000;
             });
 

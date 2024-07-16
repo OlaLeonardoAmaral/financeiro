@@ -20,6 +20,7 @@ import { ApiException } from '@/services/api/ApiException';
 interface CategoriaAddModalProps {
     isOpen: boolean;
     setOpenModal: any;
+    onCategoriaCreated: (categoria: ICategoria) => void; // eu nao quero tirar
 }
 
 const style = {
@@ -36,21 +37,22 @@ const style = {
     pb: 3,
 };
 
-export default function CategoriaAddModal({ isOpen, setOpenModal }: CategoriaAddModalProps): React.JSX.Element {
+export default function CategoriaAddModal({ isOpen, setOpenModal, onCategoriaCreated }: CategoriaAddModalProps): React.JSX.Element {
 
-    const [categoria, setCategoria] = React.useState<ICategoriaCreate>({titulo: ''});
+    const [categoria, setCategoria] = React.useState<ICategoriaCreate>({ titulo: '' });
 
     const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setCategoria({titulo: event.target.value});
+        setCategoria({ titulo: event.target.value });
     };
 
-    const handleSave = async () => {         
+    const handleSave = async () => {
         const response = await TransacoesService.createCategoria(categoria);
 
         if (response instanceof ApiException) {
             alert(response.message);
         } else {
             console.log(JSON.stringify(response));
+            onCategoriaCreated(response);
         }
 
         setOpenModal(false);
