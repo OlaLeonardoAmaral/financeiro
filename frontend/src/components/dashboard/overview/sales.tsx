@@ -16,6 +16,7 @@ import { EstatisticasService } from '@/services/api/estatisticas/EstatisticasSer
 
 import { Chart } from '@/components/core/chart';
 import { ApiException } from '@/services/api/ApiException';
+import { Box, ButtonGroup } from '@mui/material';
 
 export interface SalesProps {
   chartSeries: { name: string; data: number[] }[];
@@ -36,7 +37,8 @@ export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
       const data = new Array(12).fill(0);
 
       mesesAno.forEach(mes => {
-        const monthIndex = new Date(mes.month).getMonth();
+        const [ano, mesStr] = mes.month.split('-');
+        const monthIndex = parseInt(mesStr, 10) - 1;
         data[monthIndex] = mes.total / 1000;
       });
 

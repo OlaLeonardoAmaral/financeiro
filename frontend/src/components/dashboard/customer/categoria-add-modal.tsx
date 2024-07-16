@@ -20,7 +20,7 @@ import { ApiException } from '@/services/api/ApiException';
 interface CategoriaAddModalProps {
     isOpen: boolean;
     setOpenModal: any;
-    onCategoriaCreated: (categoria: ICategoria) => void;
+    onCategoriaCreated: (categoria: ICategoria) => void; // eu nao quero tirar
 }
 
 const style = {

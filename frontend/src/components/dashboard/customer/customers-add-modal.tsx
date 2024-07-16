@@ -14,13 +14,15 @@ import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { ITransacaoCreate } from '@/services/api/transacoes/ITransicaoCreate';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
 import CategoriaAddModal from './categoria-add-modal';
+import { maxWidth, minWidth } from '@mui/system';
 
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    maxWidth: 800,
+    minWidth: 380,
     bgcolor: 'background.paper',
     borderRadius: '10px',
     boxShadow: 24,
@@ -72,8 +74,6 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
     const [tipo, setTipo] = React.useState('');
     const [categoriaId, setCategoriaId] = React.useState('');
     const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
-    const [categoriaList, setCategoriaList] = React.useState<ICategoria[]>(categorias);
-
 
     const handleAddCategoria = () => {
         setOpenModalAddCategoria(true);
@@ -140,10 +140,10 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                 aria-labelledby="parent-modal-title"
                 aria-describedby="parent-modal-description"
             >
-                <Box sx={{ ...style, width: 800 }}>
+                <Box sx={{ ...style }}>
                     <h2 id="parent-modal-title">Cadastro</h2>
                     <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item xs={3}>
+                        <Grid item lg={3} sm={6} xs={12}>
                             <FormControl fullWidth>
                                 <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
                                 <Select
@@ -159,7 +159,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item lg={6} sm={6} xs={12}>
                             <Box sx={{ display: 'flex' }}>
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
@@ -181,7 +181,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                                 </Button>
                             </Box>
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item lg={3} sm={6} xs={6}>
                             <TextField
                                 label="Valor"
                                 value={values.numberformat}
