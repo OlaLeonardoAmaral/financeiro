@@ -86,7 +86,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
 
     const [values, setValues] = React.useState({
         textmask: '(100) 000-0000',
-        numberformat: 0,
+        numberformat: '',
         observacoes: '',
     });
 
@@ -112,7 +112,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
             tipo,
             categoriaId,
             observacao: values.observacoes,
-            valor: values.numberformat,
+            valor: parseFloat(values.numberformat),
         };
 
         await TransacoesService.create(formData);
@@ -126,7 +126,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
         setCategoriaId('');
         setValues({
             textmask: '(100) 000-0000',
-            numberformat: 0,
+            numberformat: '',
             observacoes: ''
         });
         setOpenModal(false);
