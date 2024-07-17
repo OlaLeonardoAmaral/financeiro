@@ -2,6 +2,9 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
   "scripts": {
     "migration:generate": "npx sequelize-cli migration:generate --migrations-path src/database/migrations --name",
     "migration:undo": "npx sequelize-cli db:migrate:undo --migrations-path src/database/migrations",
@@ -11,7 +14,7 @@
     "watch": "tsc -w",
     "pretest": "NODE_ENV=test sequelize db:migrate && NODE_ENV=test sequelize db:seed:all",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && nodemon dist/server.js",
+    "start": "node dist/server.js",
     "dev": "ts-node-dev --files src/server.ts",    
     "rebuild": "npm run build && npm start"
   },
