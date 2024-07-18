@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 const user = {
-  name: 'Leonardo Amaral',
+  name: 'Mayra Amaral',
   avatar: '/assets/avatar.png',
   jobTitle: 'Senior Developer',
   country: 'Brasil',
@@ -39,7 +39,7 @@ export function AccountInfo(): React.JSX.Element {
       <Divider />
       <CardActions>
         <Button fullWidth variant="text">
-          Upload picture
+          Adicionar Avatar
         </Button>
       </CardActions>
     </Card>

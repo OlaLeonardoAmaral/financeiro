@@ -61,7 +61,7 @@ export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
             Sincronizar
           </Button>
         }
-        title="Sales"
+        title="Vendas"
       />
 
       <CardContent>

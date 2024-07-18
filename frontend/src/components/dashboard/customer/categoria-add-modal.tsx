@@ -13,7 +13,7 @@ import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { ICategoria, ICategoriaCreate } from '@/services/api/transacoes/ICategoria';
 import { ITransacaoCreate } from '@/services/api/transacoes/ITransicaoCreate';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
-import { width } from '@mui/system';
+import { height, width } from '@mui/system';
 import { ApiException } from '@/services/api/ApiException';
 
 
@@ -28,7 +28,9 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    maxWidth: '400px',
+    minWidth: '350px',
+    // height: 500,
     bgcolor: 'background.paper',
     borderRadius: '10px',
     boxShadow: 24,
@@ -36,6 +38,13 @@ const style = {
     px: 4,
     pb: 3,
 };
+
+const styleBox = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+}
 
 export default function CategoriaAddModal({ isOpen, setOpenModal, onCategoriaCreated }: CategoriaAddModalProps): React.JSX.Element {
 
@@ -66,20 +75,20 @@ export default function CategoriaAddModal({ isOpen, setOpenModal, onCategoriaCre
                 aria-labelledby="parent-modal-title"
                 aria-describedby="parent-modal-description"
             >
-                <Box sx={{ ...style, width: 500 }}>
+                <Box sx={{ ...style }}>
                     <h2 id="parent-modal-title">Nova Categoria</h2>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ ...styleBox, gap: 1 }}>
                         <TextField
                             id="outlined-basic"
                             label="Categoria"
-                            variant="outlined" sx={{ width: '20rem' }}
+                            variant="outlined" sx={{ width: '100%' }}
                             onChange={handleChangeValue}
                         />
-                        <div>
+                        <Box sx={{ alignSelf: 'flex-end' }}>
                             <Button variant="contained" color="success" onClick={handleSave}>
                                 Salvar
                             </Button>
-                        </div>
+                        </Box>
                     </Box>
                 </Box>
             </Modal>
