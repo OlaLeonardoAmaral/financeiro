@@ -5,4 +5,5 @@ export interface ITransacaoCreate {
     categoriaId: string,
     observacao: string,    
     valor: number
+    data: string;
 }

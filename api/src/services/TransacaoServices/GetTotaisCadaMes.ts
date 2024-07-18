@@ -15,7 +15,7 @@ const GetTotaisCadaMes = async (): Promise<SerializedTotaisCadaMes[]> => {
 
     const results = await Transacoes.findAll({
         attributes: [
-            [Sequelize.fn('DATE_FORMAT', Sequelize.col('createdAt'), '%Y-%m'), 'month'],
+            [Sequelize.fn('DATE_FORMAT', Sequelize.col('data'), '%Y-%m'), 'month'],
             [
                 Sequelize.literal(
                     `SUM(CASE WHEN tipo = 'Receita' THEN valor ELSE 0 END)`
@@ -36,17 +36,17 @@ const GetTotaisCadaMes = async (): Promise<SerializedTotaisCadaMes[]> => {
             ],
         ],
         where: {
-            createdAt: {
+            data: {
                 [Op.gte]: startOfYear,
                 [Op.lt]: endOfYear,
             },
         },
-        group: [Sequelize.fn('DATE_FORMAT', Sequelize.col('createdAt'), '%Y-%m')],
+        group: [Sequelize.fn('DATE_FORMAT', Sequelize.col('data'), '%Y-%m')],
         order: [
             [
                 Sequelize.fn(
                     'DATE_FORMAT',
-                    Sequelize.col('createdAt'),
+                    Sequelize.col('data'),
                     '%Y-%m'
                 ),
                 'ASC',

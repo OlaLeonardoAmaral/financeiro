@@ -14,14 +14,15 @@ import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { ITransacaoCreate } from '@/services/api/transacoes/ITransicaoCreate';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
 import CategoriaAddModal from './categoria-add-modal';
-import { maxWidth, minWidth } from '@mui/system';
+import { IMaskInput } from 'react-imask';
+
 
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    maxWidth: 800,
+    maxWidth: 550,
     minWidth: 380,
     bgcolor: 'background.paper',
     borderRadius: '10px',
@@ -42,6 +43,24 @@ interface CustomProps {
     onChange: (event: { target: { name: string; value: string } }) => void;
     name: string;
 }
+
+const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
+    function TextMaskCustom(props, ref) {
+        const { onChange, ...other } = props;
+        return (
+            <IMaskInput
+                {...other}
+                mask="00/00/0000"
+                definitions={{
+                    '0': /[0-9]/,
+                }}
+                inputRef={ref}
+                onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
+                overwrite
+            />
+        );
+    },
+);
 
 const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
     function NumericFormatCustom(props, ref) {
@@ -70,6 +89,14 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
     },
 );
 
+const getCurrentDateFormatted = () => {
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+};
+
 export default function CustomersAddModal({ isOpen, setOpenModal, categorias, onAddCustomer }: CustomersAddModalProps): React.JSX.Element {
     const [tipo, setTipo] = React.useState('');
     const [categoriaId, setCategoriaId] = React.useState('');
@@ -85,7 +112,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
     };
 
     const [values, setValues] = React.useState({
-        textmask: '(100) 000-0000',
+        textmask: getCurrentDateFormatted(),
         numberformat: '',
         observacoes: '',
     });
@@ -113,6 +140,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
             categoriaId,
             observacao: values.observacoes,
             valor: parseFloat(values.numberformat),
+            data: values.textmask
         };
 
         await TransacoesService.create(formData);
@@ -125,7 +153,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
         setTipo('');
         setCategoriaId('');
         setValues({
-            textmask: '(100) 000-0000',
+            textmask: getCurrentDateFormatted(),
             numberformat: '',
             observacoes: ''
         });
@@ -143,7 +171,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                 <Box sx={{ ...style }}>
                     <h2 id="parent-modal-title">Cadastro</h2>
                     <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item lg={3} sm={6} xs={12}>
+                        <Grid item lg={6} sm={6} xs={12}>
                             <FormControl fullWidth>
                                 <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
                                 <Select
@@ -159,6 +187,26 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                                 </Select>
                             </FormControl>
                         </Grid>
+
+
+                        <Grid item lg={6} sm={6} xs={12}>
+                            <FormControl fullWidth variant="outlined">
+                                <TextField
+                                    label="Data"
+                                    value={values.textmask}
+                                    onChange={handleChangeValue}
+                                    name="textmask"
+                                    id="formatted-text-mask-input"
+                                    variant="outlined"
+                                    fullWidth
+                                    InputProps={{
+                                        inputComponent: TextMaskCustom as any,
+                                    }}
+                                />
+                            </FormControl>
+                        </Grid>
+
+
                         <Grid item lg={6} sm={6} xs={12}>
                             <Box sx={{ display: 'flex' }}>
                                 <FormControl fullWidth>
@@ -181,17 +229,18 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                                 </Button>
                             </Box>
                         </Grid>
-                        <Grid item lg={3} sm={6} xs={6}>
+                        <Grid item lg={6} sm={6} xs={12}>
                             <TextField
                                 label="Valor"
                                 value={values.numberformat}
                                 onChange={handleChangeValue}
                                 name="numberformat"
                                 id="formatted-numberformat-input"
+                                variant="outlined"
+                                fullWidth
                                 InputProps={{
                                     inputComponent: NumericFormatCustom as any,
                                 }}
-                                variant="standard"
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -227,3 +276,5 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
         </div>
     );
 }
+
+

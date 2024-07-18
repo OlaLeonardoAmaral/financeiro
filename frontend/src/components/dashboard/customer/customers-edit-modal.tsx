@@ -18,6 +18,7 @@ import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { ApiException } from '@/services/api/ApiException';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
 import CategoriaAddModal from './categoria-add-modal';
+import { IMaskInput } from 'react-imask';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -46,6 +47,25 @@ interface CustomProps {
   name: string;
 }
 
+const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
+  function TextMaskCustom(props, ref) {
+      const { onChange, ...other } = props;
+      return (
+          <IMaskInput
+              {...other}
+              mask="00/00/0000"
+              definitions={{
+                  '0': /[0-9]/,
+              }}
+              inputRef={ref}
+              onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
+              overwrite
+          />
+      );
+  },
+);
+
+
 const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
   function NumericFormatCustom(props, ref) {
     const { onChange, ...other } = props;
@@ -73,6 +93,14 @@ const NumericFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(
   },
 );
 
+const getCurrentDateFormatted = (data: string) => {
+  const date = new Date(data);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 
 export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta, onEditCustomer }: CustomersEditModalProps): React.JSX.Element {
   const [tipo, setTipo] = React.useState(selectedConta.tipo);
@@ -80,6 +108,12 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
   const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
   const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
   const [categoriaId, setCategoriaId] = React.useState('');
+  
+  const [values, setValues] = React.useState({
+    textmask: getCurrentDateFormatted(selectedConta.data),
+    valor: selectedConta.valor,
+    observacao: selectedConta.observacao,
+  });
 
   const handleAddCategoria = () => {
     setOpenModalAddCategoria(true);
@@ -88,7 +122,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
   const handleCategoriaCreated = (newCategoria: ICategoria) => {
     categorias.push(newCategoria);
     setCategoriaId(newCategoria.id);
-};
+  };
 
   const fetchCategorias = () => {
     TransacoesService.listAllCategorias()
@@ -102,11 +136,6 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
       .catch((error) => alert(error.message))
   };
 
-  const [values, setValues] = React.useState({
-    textmask: '(100) 000-0000',
-    valor: selectedConta.valor,
-    observacao: selectedConta.observacao,
-  });
 
   React.useEffect(() => {
     fetchCategorias();
@@ -114,7 +143,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
     setTipo(selectedConta.tipo);
     setCategoria(selectedConta.categoria.id);
     setValues({
-      textmask: '(100) 000-0000',
+      textmask: getCurrentDateFormatted(selectedConta.data),
       valor: selectedConta.valor,
       observacao: selectedConta.observacao,
     });
@@ -142,6 +171,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
       categoriaId: categoria,
       observacao: values.observacao,
       valor: Number(values.valor),
+      data: values.textmask
     };
 
     await TransacoesService.updateById(selectedConta.id, formData);
@@ -167,7 +197,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
       aria-labelledby="parent-modal-title"
       aria-describedby="parent-modal-description"
     >
-      <Box sx={{ ...style}}>
+      <Box sx={{ ...style }}>
         <h2 id="parent-modal-title">Editar</h2>
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item lg={3} sm={6} xs={12}>
@@ -185,6 +215,27 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
               </Select>
             </FormControl>
           </Grid>
+
+
+          <Grid item lg={3} sm={6} xs={12}>
+            <FormControl fullWidth variant="outlined">
+              <TextField
+                label="Data"
+                value={values.textmask}
+                onChange={handleChangeValue}
+                name="textmask"
+                id="formatted-text-mask-input"
+                variant="outlined"
+                fullWidth
+                InputProps={{
+                  inputComponent: TextMaskCustom as any,
+                }}
+              />
+            </FormControl>
+          </Grid>
+
+
+
           <Grid item lg={6} sm={6} xs={12}>
             <Box sx={{ display: 'flex' }}>
               <FormControl fullWidth>
@@ -207,17 +258,18 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
               </Button>
             </Box>
           </Grid>
-          <Grid item lg={3} sm={6} xs={6}>
+          <Grid item lg={3} sm={6} xs={12}>
             <TextField
               label="Valor"
               value={values.valor}
               onChange={handleChangeValue}
+              fullWidth
               name="valor"
               id="formatted-numberformat-input"
+              variant="outlined"
               InputProps={{
                 inputComponent: NumericFormatCustom as any,
               }}
-              variant="standard"
             />
           </Grid>
           <Grid item xs={12}>
@@ -244,10 +296,10 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
           </Grid>
         </Grid>
         <CategoriaAddModal
-        isOpen={openModalAddCategoria} 
-        setOpenModal={() => setOpenModalAddCategoria(!openModalAddCategoria)} 
-        onCategoriaCreated={handleCategoriaCreated}/> 
-       
+          isOpen={openModalAddCategoria}
+          setOpenModal={() => setOpenModalAddCategoria(!openModalAddCategoria)}
+          onCategoriaCreated={handleCategoriaCreated} />
+
       </Box>
     </Modal>
   );

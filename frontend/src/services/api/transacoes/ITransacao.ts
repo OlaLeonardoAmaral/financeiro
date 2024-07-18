@@ -7,4 +7,5 @@ export interface ITransacao {
     observacao: string,
     createdAt: string,
     valor: number
+    data: string,
 }

@@ -16,9 +16,6 @@ import { ArrowCircleDown, ArrowCircleUp, PencilSimple, TrashSimple } from '@phos
 import * as React from 'react';
 import CustomersEditModal from './customers-edit-modal';
 import MessageModal from './message-modal';
-import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
-import { ApiException } from '@/services/api/ApiException';
-import { ICategoria } from '@/services/api/transacoes/ICategoria';
 
 interface CustomersTableProps {
   count?: number;
@@ -45,17 +42,18 @@ export function CustomersTable({
   onRowsPerPageChange
 }: CustomersTableProps): React.JSX.Element {
 
-  const initialContaState: ITransacao = {
+  const selectedContaData: ITransacao = {
     id: '',
     tipo: '',
     categoria: { id: '', titulo: '' },
     observacao: '',
     createdAt: '',
-    valor: 0
+    valor: 0,
+    data: ''
   };
 
   const [selectedId, setSelectedId] = React.useState('');
-  const [selectedConta, setSelectedConta] = React.useState<ITransacao>(initialContaState);
+  const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);
 
   const [openCustomersModal, setOpenCustomersModal] = React.useState(false);
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
@@ -73,7 +71,8 @@ export function CustomersTable({
     setOpenMessageModal(true);
   };
 
-  const handleEditClick = (transacao: ITransacao) => {    
+  const handleEditClick = (transacao: ITransacao) => {
+    console.log(transacao)    
     setSelectedConta(transacao);
     setOpenCustomersModal(true);
   };
@@ -111,7 +110,7 @@ export function CustomersTable({
 
                     <TableCell>{row.observacao}</TableCell>
 
-                    <TableCell>{new Date(row.createdAt).toLocaleString()}</TableCell>
+                    <TableCell>{new Date(row.data).toLocaleDateString('pt-BR')}</TableCell>
 
                     <TableCell>
                       {`R$ ${row.valor}`}

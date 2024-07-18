@@ -15,7 +15,7 @@ const ListTransacaoService = async ({ page, limit }: ListTransacaoServiceProps) 
         limit,
         offset,
         order: [['createdAt', 'DESC']],
-        attributes: ['id', 'tipo', 'observacao', 'valor', 'createdAt', 'updatedAt'],
+        attributes: ['id', 'data', 'tipo', 'observacao', 'valor', 'createdAt', 'updatedAt'],
         include: [{
             model: Categorias,
             attributes: ['id', 'titulo']

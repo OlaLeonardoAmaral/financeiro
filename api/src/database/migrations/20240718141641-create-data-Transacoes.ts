@@ -8,7 +8,7 @@ module.exports = {
     });
 
     await queryInterface.sequelize.query(
-      `UPDATE transacoes SET data = createdAt`
+      `UPDATE Transacoes SET data = createdAt`
     );
 
     await queryInterface.changeColumn("Transacoes", "data", {
