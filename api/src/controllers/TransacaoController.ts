@@ -20,6 +20,7 @@ interface SerializedTransacao { // isso aqui pode ser um DTO
     categoriaId: string;
     observacao: string;
     valor: number;
+    data?: Date;
 }
 
 export const createCategoria = async (req: Request, res: Response): Promise<Response> => {
@@ -34,8 +35,8 @@ export const findAllCategoria = async (req: Request, res: Response): Promise<Res
 }
 
 export const createTransacao = async (req: Request, res: Response): Promise<Response> => {
-    const { tipo, categoriaId, observacao, valor } = req.body as SerializedTransacao;
-    const transacao = await CreateTransacaoService({ tipo, categoriaId, observacao, valor });
+    const { tipo, categoriaId, observacao, valor, data } = req.body as SerializedTransacao;
+    const transacao = await CreateTransacaoService({ tipo, categoriaId, observacao, valor, data });
     return res.status(200).json(transacao);
 }
 
@@ -61,9 +62,9 @@ export const getTransacaoById = async (req: Request, res: Response): Promise<Res
 }
 
 export const updateTransacao = async (req: Request, res: Response): Promise<Response> => {
-    const { tipo, categoriaId, observacao, valor } = req.body as SerializedTransacao;
+    const { tipo, categoriaId, observacao, valor, data } = req.body as SerializedTransacao;
     const { id } = req.params;
-    const transacao = await UpdateTransacaoService(id, { tipo, categoriaId, observacao, valor });
+    const transacao = await UpdateTransacaoService(id, { tipo, categoriaId, observacao, valor, data });
     return res.status(200).json(transacao);
 }
 

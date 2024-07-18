@@ -24,6 +24,10 @@ class Transacoes extends Model<Transacoes> {
     @Column(DataType.UUID)
     id: string;
 
+    @Default(DataType.NOW)
+    @Column(DataType.DATE)
+    data: Date;
+
     @ForeignKey(() => Categorias)
     @Column(DataType.UUID)
     categoriaId: string;

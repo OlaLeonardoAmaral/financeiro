@@ -7,7 +7,7 @@
   },
   "scripts": {
     "migration:generate": "npx sequelize-cli migration:generate --migrations-path src/database/migrations --name",
-    "migration:undo": "npx sequelize-cli db:migrate:undo --migrations-path src/database/migrations",
+    "migration:undo": "npx sequelize-cli db:migrate:undo --migrations-path dist/database/migrations",
     "migrate": "npx sequelize db:migrate",
     "seed": "npx sequelize db:seed:all",
     "build": "tsc",
