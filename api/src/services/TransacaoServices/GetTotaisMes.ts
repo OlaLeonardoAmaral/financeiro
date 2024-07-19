@@ -23,7 +23,7 @@ const GetTotaisMes = async () => {
             'tipo',
         ],
         where: {
-            createdAt: {
+            data: {
                 [Op.gte]: startOfMonth,
                 [Op.lte]: endOfMonth,
             },

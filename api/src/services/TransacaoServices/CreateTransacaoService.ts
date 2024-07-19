@@ -1,18 +1,20 @@
 import AppError from "../../errors/AppError";
 import Transacoes from "../../models/Transacoes";
-import moment from "moment";
+import moment from "moment-timezone";
 
-interface SerializedTransacao { 
+interface SerializedTransacao {
     tipo: string;
     categoriaId: string;
     observacao: string;
     valor: number;
-    data?: Date;
+    data?: string;
 }
 
 const CreateTransacaoService = async (transacao: SerializedTransacao) => {
     try {
-        let createdAtDate = transacao.data ? moment(transacao.data, "DD/MM/YYYY").toDate() : new Date();
+        let createdAtDate = transacao.data
+            ? moment.tz(transacao.data, "DD/MM/YYYY", "America/Sao_Paulo").utc().toDate() // Converta para UTC
+            : moment().utc().toDate(); // Use UTC para a data atual
 
         const novaTransacao = await Transacoes.create({
             ...transacao,

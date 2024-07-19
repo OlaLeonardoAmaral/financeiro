@@ -20,7 +20,7 @@ interface SerializedTransacao { // isso aqui pode ser um DTO
     categoriaId: string;
     observacao: string;
     valor: number;
-    data?: Date;
+    data?: string;
 }
 
 export const createCategoria = async (req: Request, res: Response): Promise<Response> => {

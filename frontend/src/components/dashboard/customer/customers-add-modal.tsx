@@ -143,6 +143,8 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
             data: values.textmask
         };
 
+
+
         await TransacoesService.create(formData);
 
         onAddCustomer();
