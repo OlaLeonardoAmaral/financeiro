@@ -102,7 +102,7 @@ export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, s
             gap: '20px'
           }} id="draggable-dialog-title">
           <Trash size={60} color="#f20707" weight="fill" />
-          Confirm Delete
+          Confirmar Exclusão
         </DialogTitle>
 
         <DialogContent
@@ -115,7 +115,7 @@ export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, s
             padding: '0px 24px',
           }}>
           <DialogContentText>
-            Are you sure you want to delete this item?
+            Tem certeza de que deseja excluir este item?
           </DialogContentText>
         </DialogContent>
 
@@ -124,12 +124,12 @@ export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, s
             autoFocus
             onClick={handleDelete}
             sx={{ ...styleButtonDelete }}>
-            Delete
+            Excluir
           </Button>
           <Button
             onClick={handleClose}
             sx={{ ...styleButtonCancel }}>
-            Cancel
+            Cancelar
           </Button>
         </DialogActions>
       </Box>

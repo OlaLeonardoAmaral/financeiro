@@ -25,9 +25,10 @@ export default function Page(): React.JSX.Element {
   const [total, setTotal] = React.useState(0);
   const [page, setPage] = React.useState(1);
   const [limit, setLimit] = React.useState(10);
+  const [categoria, setCategoria] = React.useState('');
 
-  const fetchContas = (page = 1, limit = 10) => {
-    TransacoesService.listAll({ page, limit })
+  const fetchContas = (page = 1, limit = 10, categoria = '') => {
+    TransacoesService.listAll({ page, limit, categoria })
       .then((result) => {
         if (result instanceof ApiException) {
           alert(result.message);
@@ -36,26 +37,28 @@ export default function Page(): React.JSX.Element {
           setTotal(result.total);
           setPage(result.page);
           setLimit(result.limit);
-          console.log('feat contas teste', result)
         }
       })
       .catch((error) => alert(error.message));
   };
 
-
   React.useEffect(() => {
-    fetchContas(page, limit);
-  }, [page, limit]);
+    fetchContas(page, limit, categoria);
+  }, [page, limit, categoria]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage + 1);
   };
-  
+
   const handleRowsPerPageChange = (newLimit: number) => {
     setLimit(newLimit);
     setPage(1);
-  };  
+  };
 
+  const handleFilterChange = (categoria: string) => {
+    setCategoria(categoria);
+    setPage(1);
+  };
 
   return (
     <Stack spacing={3}>
@@ -67,7 +70,7 @@ export default function Page(): React.JSX.Element {
           <AddCustomerButton onAddCustomer={() => fetchContas(page, limit)} />
         </div>
       </Stack>
-      <CustomersFilters />
+      <CustomersFilters onFilterChange={handleFilterChange} /> {/* quero que seja possivel fazer pesquisa das transacoes*/}
       <CustomersTable
         count={total}
         rows={transacoes}
@@ -76,7 +79,7 @@ export default function Page(): React.JSX.Element {
         onDeleteCustomer={() => fetchContas(page, limit)}
         onEditCustomer={() => fetchContas(page, limit)}
         onPageChange={handlePageChange}
-        onRowsPerPageChange={handleRowsPerPageChange}        
+        onRowsPerPageChange={handleRowsPerPageChange}
       />
     </Stack>
   );

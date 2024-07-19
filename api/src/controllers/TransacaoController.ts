@@ -43,8 +43,9 @@ export const createTransacao = async (req: Request, res: Response): Promise<Resp
 export const listTransacao = async (req: Request, res: Response): Promise<Response> => {
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1; 
     const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10; 
+    const categoria = req.query.categoria as string;
 
-    const { transacoes, total } = await ListTransacaoService({ page, limit });
+    const { transacoes, total } = await ListTransacaoService({ page, limit, categoria });
     const totalPages = Math.ceil(total / limit);
     return res.status(200).json({
         transacoes,

@@ -72,7 +72,6 @@ export function CustomersTable({
   };
 
   const handleEditClick = (transacao: ITransacao) => {
-    console.log(transacao)    
     setSelectedConta(transacao);
     setOpenCustomersModal(true);
   };
@@ -105,7 +104,7 @@ export function CustomersTable({
                     </TableCell>
 
                     <TableCell>
-                      <Typography variant="subtitle2">{row.categoria.titulo}</Typography>  {/* Property 'titulo' does not exist on type 'string' */}
+                      <Typography variant="subtitle2">{row.categoria.titulo}</Typography>
                     </TableCell>
 
                     <TableCell>{row.observacao}</TableCell>

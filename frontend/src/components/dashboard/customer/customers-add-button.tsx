@@ -23,7 +23,6 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
         if (result instanceof ApiException) {
           alert(result.message);
         } else {
-          console.log(result);
           setCategorias(result);
         }
       })

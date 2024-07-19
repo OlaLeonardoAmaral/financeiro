@@ -5,10 +5,15 @@ import { ITransacao } from "./ITransacao";
 import { ITransacaoCreate } from "./ITransicaoCreate";
 import { ITransacaoUpdate } from "./ITransicaoUpdate";
 
-const listAll = async (params: { page: number, limit: number }): Promise<{ transacoes: ITransacao[]; total: number; page: number; limit: number; totalPages: number } | ApiException> => {
+const listAll = async (params: { page: number, limit: number, categoria: string }): Promise<{ transacoes: ITransacao[]; total: number; page: number; limit: number; totalPages: number } | ApiException> => {
     try {
-        const { page, limit } = params;
-        const { data } = await Api().get(`/list?page=${page}&limit=${limit}`);
+        const { page, limit, categoria } = params;
+        const queryParams = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+        if (categoria) {
+            queryParams.append('categoria', categoria);
+        }
+
+        const { data } = await Api().get(`/list?${queryParams.toString()}`);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Erro ao buscar todos');
