@@ -25,7 +25,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  maxWidth: 800,
+  maxWidth: 550,
   minWidth: 380,
   bgcolor: 'background.paper',
   borderRadius: '10px',
@@ -49,19 +49,19 @@ interface CustomProps {
 
 const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
   function TextMaskCustom(props, ref) {
-      const { onChange, ...other } = props;
-      return (
-          <IMaskInput
-              {...other}
-              mask="00/00/0000"
-              definitions={{
-                  '0': /[0-9]/,
-              }}
-              inputRef={ref}
-              onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
-              overwrite
-          />
-      );
+    const { onChange, ...other } = props;
+    return (
+      <IMaskInput
+        {...other}
+        mask="00/00/0000"
+        definitions={{
+          '0': /[0-9]/,
+        }}
+        inputRef={ref}
+        onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
+        overwrite
+      />
+    );
   },
 );
 
@@ -108,7 +108,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
   const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
   const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
   const [categoriaId, setCategoriaId] = React.useState('');
-  
+
   const [values, setValues] = React.useState({
     textmask: getCurrentDateFormatted(selectedConta.data),
     valor: selectedConta.valor,
@@ -200,7 +200,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
       <Box sx={{ ...style }}>
         <h2 id="parent-modal-title">Editar</h2>
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item lg={3} sm={6} xs={12}>
+          <Grid item lg={6} sm={6} xs={12}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
               <Select
@@ -217,7 +217,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
           </Grid>
 
 
-          <Grid item lg={3} sm={6} xs={12}>
+          <Grid item lg={6} sm={6} xs={12}>
             <FormControl fullWidth variant="outlined">
               <TextField
                 label="Data"
@@ -258,7 +258,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
               </Button>
             </Box>
           </Grid>
-          <Grid item lg={3} sm={6} xs={12}>
+          <Grid item lg={6} sm={6} xs={12}>
             <TextField
               label="Valor"
               value={values.valor}
