@@ -154,7 +154,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
   };
 
   const handleChangeCategoria = (event: SelectChangeEvent) => {
-    setCategoria(event.target.value as string);
+    setCategoriaId(event.target.value as string);
   };
 
   const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -244,7 +244,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
                   sx={{ borderRadius: '8px 0 0 8px' }}
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={categoria}
+                  value={categoriaId}
                   label="Categoria"
                   onChange={handleChangeCategoria}
                 >

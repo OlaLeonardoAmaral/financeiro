@@ -13,19 +13,20 @@ import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist
 import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import type { ApexOptions } from 'apexcharts';
 import { EstatisticasService } from '@/services/api/estatisticas/EstatisticasService';
+import Skeleton from '@mui/material/Skeleton';
 
 import { Chart } from '@/components/core/chart';
 import { ApiException } from '@/services/api/ApiException';
 import { Box, ButtonGroup } from '@mui/material';
 
 export interface SalesProps {
-  chartSeries: { name: string; data: number[] }[];
   sx?: SxProps;
+  loading: boolean;
 }
 
-export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
+export function Sales({ sx, loading }: SalesProps): React.JSX.Element {
   const chartOptions = useChartOptions();
-  const [series, setSeries] = React.useState(chartSeries);
+  const [series, setSeries] = React.useState<{ name: string; data: number[] }[]>([]);
 
 
   const handleSync = async () => {
@@ -44,13 +45,18 @@ export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
 
       const updatedSeries = [
         {
-          name: 'This year',
+          name: 'Esse ano',
           data,
         },
       ];
+
       setSeries(updatedSeries);
     }
   };
+
+  React.useEffect(() => {
+    handleSync();
+  }, [])
 
 
   return (
@@ -64,9 +70,17 @@ export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
         title="Vendas"
       />
 
-      <CardContent>
-        <Chart height={350} options={chartOptions} series={series} type="bar" width="100%" />
-      </CardContent>
+      {loading
+        ? (
+          <div style={{display: 'flex', justifyContent: 'center', marginBottom: "20px"}}>
+            <Skeleton variant='rounded' animation='wave' width="90%" height="10rem"/>
+          </div>
+        )
+        : (
+          <CardContent>
+            <Chart height={350} options={chartOptions} series={series} type="bar" width="100%" />
+          </CardContent>
+        )}
 
       <Divider />
 

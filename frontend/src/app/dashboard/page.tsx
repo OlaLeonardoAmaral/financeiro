@@ -15,29 +15,29 @@ import { Stack, Typography } from '@mui/material';
 export default function Page(): React.JSX.Element {
   return (
     <DashboardDataProvider>
-      {(data) => data ? (
+      {(data, loading) => (
         <Grid container spacing={12} columns={9}>
 
           <Grid lg={3} sm={6} xs={12}>
-            <Budget trend="up" sx={{ height: '100%' }} value={data.budget} />
+            <Budget trend="up" sx={{ height: '100%' }} value={data?.budget || ''} loading={loading}/>
           </Grid>
 
           <Grid lg={3} sm={6} xs={12}>
-            <TotalCustomers trend="down" sx={{ height: '100%' }} value={data.totalCustomers} />
+            <TotalCustomers trend="down" sx={{ height: '100%' }} value={data?.totalCustomers || ''} loading={loading}/>
           </Grid>
 
           <Grid lg={3} sm={6} xs={12}>
-            <TotalProfit sx={{ height: '100%' }} value={data.totalProfit} />
+            <TotalProfit sx={{ height: '100%' }} value={data?.totalProfit} loading={loading}/>
           </Grid>
 
           <Grid lg={9} md={6} xs={12} >
             <Sales
-              chartSeries={data.salesData}
               sx={{ height: '100%' }}
+              loading={loading}
             />
           </Grid>
         </Grid>
-      ) : null}
+      )}
     </DashboardDataProvider>
   );
 }

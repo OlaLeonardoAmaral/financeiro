@@ -10,12 +10,11 @@ interface DashboardData {
     budget: string;
     totalCustomers: string;
     totalProfit: string;
-    salesData: { name: string; data: number[] }[];
     trafficData: number[];
 }
 
 interface DashboardDataProviderProps {
-    children: (data: DashboardData | undefined) => React.ReactNode;
+    children: (data: DashboardData | undefined, loading: boolean) => React.ReactNode;
 }
 
 const formatNumber = (num: number): string => {
@@ -28,31 +27,15 @@ const formatNumber = (num: number): string => {
 
 export const DashboardDataProvider: React.FC<DashboardDataProviderProps> = ({ children }) => {
     const [data, setData] = useState<DashboardData | undefined>(undefined);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const fetchInitialData = async () => {
-        const mesesAno = await EstatisticasService.getTotaisAnoPorMes();
+        setLoading(true);
+        const result = await EstatisticasService.getTotaisMes();
 
-        if (mesesAno instanceof ApiException) {
-            alert(mesesAno.message);
+        if (result instanceof ApiException) {
+            alert(result.message);
         } else {
-            const data = new Array(12).fill(0);
-
-            mesesAno.forEach(mes => {
-                const [ano, mesStr] = mes.month.split('-'); 
-                const monthIndex = parseInt(mesStr, 10) - 1;
-                data[monthIndex] = mes.total / 1000;
-            });
-
-            const salesData = [
-                {
-                    name: 'This year',
-                    data,
-                },
-                { name: 'Last year', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-            ];
-
-            const result = await EstatisticasService.getTotaisMes();
-
             if (result instanceof ApiException) {
                 alert(result.message);
             } else {
@@ -64,11 +47,11 @@ export const DashboardDataProvider: React.FC<DashboardDataProviderProps> = ({ ch
                     budget: `R$ ${totalReceitaMes}`,
                     totalCustomers: `R$ ${totalDespesaMes}`,
                     totalProfit: `R$ ${saldoMes}`,
-                    salesData,
                     trafficData: [63, 15, 22],
                 };
 
                 setData(response);
+                setLoading(false);
             }
         }
     };
@@ -77,5 +60,5 @@ export const DashboardDataProvider: React.FC<DashboardDataProviderProps> = ({ ch
         fetchInitialData();
     }, []);
 
-    return <>{children(data)}</>;
+    return <>{children(data, loading)}</>;
 };

@@ -15,6 +15,7 @@ import { ITransacaoCreate } from '@/services/api/transacoes/ITransicaoCreate';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
 import CategoriaAddModal from './categoria-add-modal';
 import { IMaskInput } from 'react-imask';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 
 const style = {
@@ -101,6 +102,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
     const [tipo, setTipo] = React.useState('');
     const [categoriaId, setCategoriaId] = React.useState('');
     const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
     const handleAddCategoria = () => {
         setOpenModalAddCategoria(true);
@@ -134,7 +136,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
 
 
     const handleSave = async () => {
-
+        setLoading(true);
         const formData: ITransacaoCreate = {
             tipo,
             categoriaId,
@@ -143,10 +145,8 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
             data: values.textmask
         };
 
-
-
         await TransacoesService.create(formData);
-
+        setLoading(false);
         onAddCustomer();
         handleCancel();
     };
@@ -226,7 +226,11 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                                         })};
                                     </Select>
                                 </FormControl>
-                                <Button onClick={handleAddCategoria} variant="contained" size="small" sx={{ borderRadius: '0 8px 8px 0' }}>
+                                <Button
+                                    onClick={handleAddCategoria}
+                                    variant="contained"
+                                    size="small"
+                                    sx={{ borderRadius: '0 8px 8px 0' }}>
                                     <PlusIcon size={20} weight="bold" />
                                 </Button>
                             </Box>
@@ -262,9 +266,15 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
                                 <Button variant="contained" color="error" onClick={handleCancel} >
                                     Cancelar
                                 </Button>
-                                <Button variant="contained" color="success" onClick={handleSave} >
+
+                                <LoadingButton
+                                    loading={loading}
+                                    variant="contained"
+                                    color="success"
+                                    onClick={handleSave} >
                                     Salvar
-                                </Button>
+                                </LoadingButton>
+
                             </Box>
                         </Grid>
                     </Grid>

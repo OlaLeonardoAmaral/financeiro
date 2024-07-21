@@ -7,19 +7,22 @@ import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { ArrowDown as ArrowDownIcon } from '@phosphor-icons/react/dist/ssr/ArrowDown';
 import { ArrowUp as ArrowUpIcon } from '@phosphor-icons/react/dist/ssr/ArrowUp';
-import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
-import { ReceiptX } from '@phosphor-icons/react/dist/ssr';
+import Skeleton from '@mui/material/Skeleton';
 
 export interface TotalCustomersProps {
   diff?: number;
   trend: 'up' | 'down';
   sx?: SxProps;
   value: string;
+  loading: boolean;
 }
 
-export function TotalCustomers({ diff, trend, sx, value }: TotalCustomersProps): React.JSX.Element {
+export function TotalCustomers({ diff, trend, sx, value, loading }: TotalCustomersProps): React.JSX.Element {
   const TrendIcon = trend === 'up' ? ArrowUpIcon : ArrowDownIcon;
   const trendColor = trend === 'up' ? 'var(--mui-palette-success-main)' : 'var(--mui-palette-error-main)';
+
+
+
 
   return (
     <Card sx={sx}>
@@ -27,16 +30,29 @@ export function TotalCustomers({ diff, trend, sx, value }: TotalCustomersProps):
         <Stack spacing={2}>
           <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
             <Stack spacing={1}>
-              <Typography color="text.secondary" variant="overline">
-                Despesas
-              </Typography>
-              <Typography variant="h4">{value}</Typography>
+              {loading
+                ? (<>
+                  <Skeleton variant="text" animation="wave" width={200} height={30} />
+                  <Skeleton variant="text" animation="wave" width={200} height={50} />
+                </>)
+                : (<>
+                  <Typography color="text.secondary" variant="overline">
+                    Despesas
+                  </Typography>
+                  <Typography variant="h4">{value}</Typography>
+                </>)}
             </Stack>
-            <Avatar sx={{ backgroundColor: 'var(--mui-palette-error-main)', height: '56px', width: '56px' }}>
-              <ArrowDownIcon fontSize="var(--icon-fontSize-lg)" />
-            </Avatar>
+
+            {loading
+              ? (<Skeleton variant="circular" animation="wave" sx={{minHeight: '50px', minWidth: '50px'}}/>)
+              : (
+                <Avatar sx={{ backgroundColor: 'var(--mui-palette-error-main)', height: '56px', width: '56px' }}>
+                  <ArrowDownIcon fontSize="var(--icon-fontSize-lg)" />
+                </Avatar>
+              )}
           </Stack>
-          {diff ? (
+
+          {/* {diff ? (
             <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
               <Stack sx={{ alignItems: 'center' }} direction="row" spacing={0.5}>
                 <TrendIcon color={trendColor} fontSize="var(--icon-fontSize-md)" />
@@ -48,9 +64,9 @@ export function TotalCustomers({ diff, trend, sx, value }: TotalCustomersProps):
                 Since last month
               </Typography>
             </Stack>
-          ) : null}
+          ) : null} */}
         </Stack>
-      </CardContent>
-    </Card>
+      </CardContent >
+    </Card >
   );
 }
