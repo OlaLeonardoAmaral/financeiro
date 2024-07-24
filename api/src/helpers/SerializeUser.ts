@@ -1,10 +1,11 @@
 import User from "../models/User";
 
 interface SerializedUser {
-  id: number;
+  id: string;
   name: string;
   email: string;
-  profile?: string;
+  firstName: string;
+  secondName: string;
   tokenVersion?: number;
 }
 export const SerializeUser = (user: User): SerializedUser => {
@@ -12,7 +13,8 @@ export const SerializeUser = (user: User): SerializedUser => {
     id: user.id,
     name: user.name,
     email: user.email,
-    profile: user?.profile,
+    firstName: user.firstName,
+    secondName: user.secondName,
     tokenVersion: user?.tokenVersion,
   };
 };

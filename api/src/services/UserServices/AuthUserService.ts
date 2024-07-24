@@ -7,7 +7,7 @@ import {
 import { SerializeUser } from "../../helpers/SerializeUser";
 
 interface SerializedUser {
-  id: number;
+  id: string;
   name: string;
   email: string;
   profile?: string;

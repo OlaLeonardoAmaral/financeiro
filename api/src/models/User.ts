@@ -20,16 +20,9 @@ import { hash, compare } from "bcryptjs";
 @Table
 class User extends Model<User> {
     @PrimaryKey
-    @AutoIncrement
-    @Column
-    id: number;
-
-    // @ForeignKey(() => Companies)
-    // @Column
-    // companyId: number;
-
-    // @BelongsTo(() => Companies)
-    // company: Companies;
+    @Default(DataType.UUIDV4)
+    @Column(DataType.UUID)
+    id: string;
 
     @Column
     name: string;
@@ -47,12 +40,17 @@ class User extends Model<User> {
     @Column
     tokenVersion: number;
 
-    // @Default("admin")
-    @Column
-    profile: string;
+    // @Column
+    // profile: string;
 
     // @Column
     // profilePic: string;
+
+    @Column
+    firstName: string;
+    
+    @Column
+    secondName: string;
 
     @CreatedAt
     createdAt: Date;

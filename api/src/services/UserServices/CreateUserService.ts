@@ -6,15 +6,16 @@ import User from "../../models/User";
 
 interface SerializedUser {
     name: string;
-    profile: string;
+    firstName: string;
+    secondName: string;
     email: string;
     password: string;
 }
 
 const CreateUserService = async (user: SerializedUser) => {
     try {
-        const { name, email, profile, passwordHash } = await User.create(user);
-        return { name, email, profile, passwordHash };
+        const { name, email, firstName, secondName, passwordHash } = await User.create(user);
+        return { name, email,  firstName, secondName, passwordHash };
     } catch (err: any) {
         console.log(err);
         throw new AppError("Create error", 403);

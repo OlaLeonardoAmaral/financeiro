@@ -5,8 +5,8 @@ import transacoesRouters from "./TransacoesRoutes";
 
 const routers = Router();
 
-// routers.use("/auth", authRoutes);
-// routers.use(userRouters);
+routers.use("/auth", authRoutes);
+routers.use(userRouters);
 routers.use("/transacoes", transacoesRouters);
 
 

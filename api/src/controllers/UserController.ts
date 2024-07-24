@@ -8,6 +8,7 @@ import GetUserByIdService from "../services/UserServices/GetUserByIdService";
 import UpdateUserService from "../services/UserServices/UpdateUserService";
 
 import { getIO } from "../libs/socket";
+import SignUpUserService from "../services/UserServices/SignUpUserService";
 
 
 type IndexQuery = {
@@ -16,13 +17,12 @@ type IndexQuery = {
     limit?: string | number;
 };
 
-// pageNumber e limit serão utilizados quando a paginação de usuários for criada
-
 interface SerializedUser {
-    id: Number;
+    id: string;
     name: string;
     email: string;
-    profile: string;
+    firstName: string;
+    secondName: string;
     password: string;
 }
 
@@ -34,8 +34,8 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
 };
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
-    const { name, email, profile, password } = req.body as SerializedUser;
-    const user = await CreateUserService({ name, profile, email, password });
+    const { name, email, firstName, secondName, password } = req.body as SerializedUser;
+    const user = await SignUpUserService({ name,  firstName, secondName, email, password });
     return res.status(200).json(user);
 }
 
@@ -47,8 +47,8 @@ export const show = async (req: Request, res: Response): Promise<Response> => {
 
 export const update = async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
-    const { name, email, profile, password } = req.body as SerializedUser;
-    const user = await UpdateUserService(Number(id), { name, profile, email, password });
+    const { name, email, firstName, secondName, password } = req.body as SerializedUser;
+    const user = await UpdateUserService(id, { name, email, firstName, secondName, password });
     const io = getIO();
     io.emit("user", { action: "update", user });
     return res.json(user);
