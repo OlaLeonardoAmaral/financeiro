@@ -1,24 +1,13 @@
 'use client';
 
 import type { User } from '@/types/user';
-
-function generateToken(): string {
-  const arr = new Uint8Array(12);
-  window.crypto.getRandomValues(arr);
-  return Array.from(arr, (v) => v.toString(16).padStart(2, '0')).join('');
-}
-
-const user = {
-  id: 'USR-000',
-  avatar: '/assets/avatar.png',
-  firstName: 'Mayra',
-  lastName: 'Amaral',
-  email: 'mayra@financeiro.io',
-} satisfies User;
+import { AuthService } from '@/services/api/auth/AuthService';
+import { ApiException } from '@/services/api/ApiException';
+import { jwtDecode } from 'jwt-decode';
 
 export interface SignUpParams {
   firstName: string;
-  lastName: string;
+  secondName: string;
   email: string;
   password: string;
 }
@@ -37,15 +26,36 @@ export interface ResetPasswordParams {
 }
 
 class AuthClient {
-  async signUp(_: SignUpParams): Promise<{ error?: string }> {
-    // Make API request
+  private _user?: User;
 
-    // We do not handle the API, so we'll just generate a token and store it in localStorage.
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
 
-    return {};
+  async signUp(params: SignUpParams): Promise<{ error?: string }> {
+
+    try {
+      const userToCreate = {
+        email: params.email,
+        password: params.password,
+        name: `${params.firstName} ${params.secondName}`,
+        firstName: params.firstName,
+        secondName: params.secondName
+      };
+
+      const response = await AuthService.signUp(userToCreate);
+
+      if (response instanceof ApiException) {
+        return { error: response.message };
+      }
+
+      const token = response.token;
+      localStorage.setItem('custom-auth-token', token);
+      this._user = response.user;
+
+      return {};
+    } catch (error: any) {
+      return { error: error.message || 'Failed to sign up' }
+    }
   }
+
 
   async signInWithOAuth(_: SignInWithOAuthParams): Promise<{ error?: string }> {
     return { error: 'Social authentication not implemented' };
@@ -54,14 +64,15 @@ class AuthClient {
   async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
     const { email, password } = params;
 
-    // Make API request
+    const response = await AuthService.singIn(email, password);
 
-    // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'mayra@financeiro.io' || password !== '123456') {
-      return { error: 'Invalid credentials' };
+    console.log(response)
+
+    if (response instanceof ApiException) {
+      return { error: response.message };
     }
 
-    const token = generateToken();
+    const token = response.token;
     localStorage.setItem('custom-auth-token', token);
 
     return {};
@@ -76,21 +87,28 @@ class AuthClient {
   }
 
   async getUser(): Promise<{ data?: User | null; error?: string }> {
-    // Make API request
-
-    // We do not handle the API, so just check if we have a token in localStorage.
     const token = localStorage.getItem('custom-auth-token');
 
     if (!token) {
       return { data: null };
     }
 
-    return { data: user };
+    const decodedToken = jwtDecode<any>(token);
+
+    if (decodedToken) {
+      this._user = {
+        id: decodedToken.id,
+        name: decodedToken.username,
+        firstName: decodedToken.firstName,
+        secondName: decodedToken.secondName,
+        email: decodedToken.email,
+      };
+    }
+    return { data: this._user };
   }
 
   async signOut(): Promise<{ error?: string }> {
     localStorage.removeItem('custom-auth-token');
-
     return {};
   }
 }

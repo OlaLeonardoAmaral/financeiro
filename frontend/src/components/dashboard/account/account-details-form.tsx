@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Select from '@mui/material/Select';
 import Grid from '@mui/material/Unstable_Grid2';
+import { useUser } from '@/hooks/use-user';
 
 const states = [
   { value: 'alabama', label: 'Alabama' },
@@ -22,6 +23,8 @@ const states = [
 ] as const;
 
 export function AccountDetailsForm(): React.JSX.Element {
+  const { user } = useUser();
+
   return (
     <form
       onSubmit={(event) => {
@@ -36,27 +39,27 @@ export function AccountDetailsForm(): React.JSX.Element {
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Primeiro Nome</InputLabel>
-                <OutlinedInput defaultValue="Mayra" label="Primeiro nome" name="firstName" />
+                <OutlinedInput defaultValue={user?.firstName} label="Primeiro nome" name="firstName" />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Segundo nome</InputLabel>
-                <OutlinedInput defaultValue="Amaral" label="Segundo nome" name="lastName" />
+                <OutlinedInput defaultValue={user?.secondName} label="Segundo nome" name="lastName" />
               </FormControl>
             </Grid>
             <Grid md={6} xs={12}>
               <FormControl fullWidth required>
                 <InputLabel>Email</InputLabel>
-                <OutlinedInput defaultValue="mayra@financeiro.io" label="Email" name="email" />
+                <OutlinedInput defaultValue={user?.email} label="Email" name="email" />
               </FormControl>
             </Grid>
-            <Grid md={6} xs={12}>
+            {/* <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Celular</InputLabel>
                 <OutlinedInput label="Celular" name="phone" type="tel" />
               </FormControl>
-            </Grid>
+            </Grid> */}
             {/* <Grid md={6} xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Estado</InputLabel>

@@ -47,7 +47,7 @@ export function UserProvider({ children }: UserProviderProps): React.JSX.Element
     checkSession().catch((err) => {
       logger.error(err);
     });
-  }, []);
+  }, [checkSession]);
 
   return <UserContext.Provider value={{ ...state, checkSession }}>{children}</UserContext.Provider>;
 }
