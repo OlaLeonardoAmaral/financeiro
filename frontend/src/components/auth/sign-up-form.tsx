@@ -21,18 +21,20 @@ import { z as zod } from 'zod';
 import { paths } from '@/paths';
 import { authClient } from '@/lib/auth/client';
 import { useUser } from '@/hooks/use-user';
+import { AuthService } from '@/services/api/auth/AuthService';
+import { ApiException } from '@/services/api/ApiException';
 
 const schema = zod.object({
-  firstName: zod.string().min(1, { message: 'First name is required' }),
-  lastName: zod.string().min(1, { message: 'Last name is required' }),
-  email: zod.string().min(1, { message: 'Email is required' }).email(),
-  password: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
-  terms: zod.boolean().refine((value) => value, 'You must accept the terms and conditions'),
+  firstName: zod.string().min(1, { message: 'O primeiro nome é obrigatório' }),
+  secondName: zod.string().min(1, { message: 'O sobrenome é obrigatório' }),
+  email: zod.string().min(1, { message: 'O email é obrigatório' }).email({message: 'Formato de email inválido'}),
+  password: zod.string().min(6, { message: 'A senha deve ter pelo menos 6 caracteres' }),
+  // terms: zod.boolean().refine((value) => value, 'Você deve aceitar os termos e condições'),
 });
 
 type Values = zod.infer<typeof schema>;
 
-const defaultValues = { firstName: '', lastName: '', email: '', password: '', terms: false } satisfies Values;
+const defaultValues = { firstName: '', secondName: '', email: '', password: '', /*terms: false*/ } satisfies Values;
 
 export function SignUpForm(): React.JSX.Element {
   const router = useRouter();
@@ -60,11 +62,8 @@ export function SignUpForm(): React.JSX.Element {
         return;
       }
 
-      // Refresh the auth state
       await checkSession?.();
 
-      // UserProvider, for this case, will not refresh the router
-      // After refresh, GuestGuard will handle the redirect
       router.refresh();
     },
     [checkSession, router, setError]
@@ -73,11 +72,11 @@ export function SignUpForm(): React.JSX.Element {
   return (
     <Stack spacing={3}>
       <Stack spacing={1}>
-        <Typography variant="h4">Sign up</Typography>
+        <Typography variant="h4">Cadastre-se</Typography>
         <Typography color="text.secondary" variant="body2">
-          Already have an account?{' '}
+          Já tem uma conta?{' '}
           <Link component={RouterLink} href={paths.auth.signIn} underline="hover" variant="subtitle2">
-            Sign in
+            Entrar
           </Link>
         </Typography>
       </Stack>
@@ -88,19 +87,19 @@ export function SignUpForm(): React.JSX.Element {
             name="firstName"
             render={({ field }) => (
               <FormControl error={Boolean(errors.firstName)}>
-                <InputLabel>First name</InputLabel>
-                <OutlinedInput {...field} label="First name" />
+                <InputLabel>Primeiro nome</InputLabel>
+                <OutlinedInput {...field} label="Primeiro nome" />
                 {errors.firstName ? <FormHelperText>{errors.firstName.message}</FormHelperText> : null}
               </FormControl>
             )}
           />
           <Controller
             control={control}
-            name="lastName"
+            name="secondName"
             render={({ field }) => (
               <FormControl error={Boolean(errors.firstName)}>
-                <InputLabel>Last name</InputLabel>
-                <OutlinedInput {...field} label="Last name" />
+                <InputLabel>Segundo nome</InputLabel>
+                <OutlinedInput {...field} label="Segundo nome" />
                 {errors.firstName ? <FormHelperText>{errors.firstName.message}</FormHelperText> : null}
               </FormControl>
             )}
@@ -110,8 +109,8 @@ export function SignUpForm(): React.JSX.Element {
             name="email"
             render={({ field }) => (
               <FormControl error={Boolean(errors.email)}>
-                <InputLabel>Email address</InputLabel>
-                <OutlinedInput {...field} label="Email address" type="email" />
+                <InputLabel>Email</InputLabel>
+                <OutlinedInput {...field} label="Email" type="email" />
                 {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
               </FormControl>
             )}
@@ -121,13 +120,13 @@ export function SignUpForm(): React.JSX.Element {
             name="password"
             render={({ field }) => (
               <FormControl error={Boolean(errors.password)}>
-                <InputLabel>Password</InputLabel>
-                <OutlinedInput {...field} label="Password" type="password" />
+                <InputLabel>Senha</InputLabel>
+                <OutlinedInput {...field} label="Senha" type="password" />
                 {errors.password ? <FormHelperText>{errors.password.message}</FormHelperText> : null}
               </FormControl>
             )}
           />
-          <Controller
+          {/* <Controller
             control={control}
             name="terms"
             render={({ field }) => (
@@ -143,14 +142,14 @@ export function SignUpForm(): React.JSX.Element {
                 {errors.terms ? <FormHelperText error>{errors.terms.message}</FormHelperText> : null}
               </div>
             )}
-          />
+          /> */}
           {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
           <Button disabled={isPending} type="submit" variant="contained">
-            Sign up
+            Cadastrar
           </Button>
         </Stack>
       </form>
-      <Alert color="warning">Created users are not persisted</Alert>
+      {/* <Alert color="warning">Created users are not persisted</Alert> */}
     </Stack>
   );
 }

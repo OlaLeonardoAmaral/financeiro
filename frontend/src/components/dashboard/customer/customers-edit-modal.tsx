@@ -104,10 +104,9 @@ const getCurrentDateFormatted = (data: string) => {
 
 export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta, onEditCustomer }: CustomersEditModalProps): React.JSX.Element {
   const [tipo, setTipo] = React.useState(selectedConta.tipo);
-  const [categoria, setCategoria] = React.useState(selectedConta.categoria.id);
   const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
   const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
-  const [categoriaId, setCategoriaId] = React.useState('');
+  const [categoriaId, setCategoriaId] = React.useState(selectedConta.categoria.id);
   
   const [values, setValues] = React.useState({
     textmask: getCurrentDateFormatted(selectedConta.data),
@@ -141,7 +140,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
     fetchCategorias();
 
     setTipo(selectedConta.tipo);
-    setCategoria(selectedConta.categoria.id);
+    setCategoriaId(selectedConta.categoria.id);
     setValues({
       textmask: getCurrentDateFormatted(selectedConta.data),
       valor: selectedConta.valor,
@@ -168,7 +167,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
 
     const formData: ITransacaoUpdate = {
       tipo,
-      categoriaId: categoria,
+      categoriaId: categoriaId,
       observacao: values.observacao,
       valor: Number(values.valor),
       data: values.textmask
@@ -180,13 +179,6 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
   };
 
   const handleCancel = () => {
-    setTipo('');
-    setCategoria('');
-    setValues({
-      textmask: '(100) 000-0000',
-      valor: 0.0,
-      observacao: ''
-    });
     setOpenModal(false);
   };
 

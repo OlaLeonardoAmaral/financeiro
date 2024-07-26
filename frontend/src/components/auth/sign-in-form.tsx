@@ -29,7 +29,6 @@ const schema = zod.object({
 
 type Values = zod.infer<typeof schema>;
 
-// const defaultValues = { email: 'mayra@financeiro.io', password: '123456' } satisfies Values;
 const defaultValues = { email: '', password: '' } satisfies Values;
 
 export function SignInForm(): React.JSX.Element {
@@ -54,17 +53,16 @@ export function SignInForm(): React.JSX.Element {
 
       const { error } = await authClient.signInWithPassword(values);
 
+      console.log(error)
+
       if (error) {
         setError('root', { type: 'server', message: error });
         setIsPending(false);
         return;
       }
 
-      // Refresh the auth state
       await checkSession?.();
 
-      // UserProvider, for this case, will not refresh the router
-      // After refresh, GuestGuard will handle the redirect
       router.refresh();
     },
     [checkSession, router, setError]
@@ -74,12 +72,12 @@ export function SignInForm(): React.JSX.Element {
     <Stack spacing={4}>
       <Stack spacing={1}>
         <Typography variant="h4">Login</Typography>
-        {/* <Typography color="text.secondary" variant="body2">
-          Don&apos;t have an account?{' '}
+        <Typography color="text.secondary" variant="body2">
+          Não tem uma conta?{' '}
           <Link component={RouterLink} href={paths.auth.signUp} underline="hover" variant="subtitle2">
-            Sign up
+            Cadastre-se
           </Link>
-        </Typography> */}
+        </Typography>
       </Stack>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
@@ -139,16 +137,6 @@ export function SignInForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      {/* <Alert color="warning">
-        Use{' '}
-        <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          sofia@devias.io
-        </Typography>{' '}
-        with password{' '}
-        <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
-          Secret1
-        </Typography>
-      </Alert> */}
     </Stack>
   );
 }

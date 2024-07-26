@@ -33,12 +33,8 @@ const AuthUserService = async ({
     where: { email }
   });
 
-  if (!user) {
-    throw new AppError("ERR_INVALID_CREDENTIALS", 401);
-  }
-
-  if (!(await user.checkPassword(password))) {
-    throw new AppError("ERR_INVALID_CREDENTIALS", 401);
+  if (!user || !(await user.checkPassword(password))) {
+    throw new AppError("Email ou senha incorretos.", 401);
   }
 
   const token = createAccessToken(user);
