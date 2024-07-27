@@ -13,7 +13,7 @@ module.exports = {
       titulo: {
         type: DataTypes.STRING,
         allowNull: false
-      },     
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false

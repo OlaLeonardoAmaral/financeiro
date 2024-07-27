@@ -16,6 +16,7 @@ import {
     BelongsToMany
 } from "sequelize-typescript";
 import Transacoes from "./Transacoes";
+import User from "./User";
 
 @Table
 class Categorias extends Model<Categorias> {
@@ -23,6 +24,13 @@ class Categorias extends Model<Categorias> {
     @Default(DataType.UUIDV4)
     @Column(DataType.UUID)
     id: string;   
+
+    @ForeignKey(() => User)
+    @Column(DataType.UUID)
+    userId: string;
+
+    @BelongsTo(() => User)
+    user: User
 
     @Column
     titulo: string;

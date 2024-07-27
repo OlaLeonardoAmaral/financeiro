@@ -5,17 +5,13 @@ import {
     UpdatedAt,
     Model,
     DataType,
-    BeforeCreate,
-    BeforeUpdate,
     PrimaryKey,
     ForeignKey,
-    AutoIncrement,
     Default,
-    HasMany,
     BelongsTo,
-    BelongsToMany
 } from "sequelize-typescript";
 import Categorias from "./Categorias";
+import User from "./User";
 
 @Table
 class Transacoes extends Model<Transacoes> {
@@ -34,6 +30,13 @@ class Transacoes extends Model<Transacoes> {
 
     @BelongsTo(() => Categorias)
     categoria: Categorias;
+
+    @ForeignKey(() => User)
+    @Column(DataType.UUID)
+    userId: string;
+
+    @BelongsTo(() => User)
+    user: User
 
     @Column
     tipo: string;

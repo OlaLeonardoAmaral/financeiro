@@ -21,7 +21,7 @@ module.exports = {
         onDelete: "RESTRICT"
       },
       observacao: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT
       },
       valor: {
         type: DataTypes.DECIMAL,

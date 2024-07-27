@@ -16,6 +16,8 @@ import {
     BelongsToMany
 } from "sequelize-typescript";
 import { hash, compare } from "bcryptjs";
+import Transacoes from "./Transacoes";
+import Categorias from "./Categorias";
 
 @Table
 class User extends Model<User> {
@@ -23,6 +25,12 @@ class User extends Model<User> {
     @Default(DataType.UUIDV4)
     @Column(DataType.UUID)
     id: string;
+
+    @HasMany(() => Transacoes)
+    transacoes: Transacoes[];
+
+    @HasMany(() => Categorias)
+    categorias: Categorias[];
 
     @Column
     name: string;
@@ -39,12 +47,6 @@ class User extends Model<User> {
     @Default(0)
     @Column
     tokenVersion: number;
-
-    // @Column
-    // profile: string;
-
-    // @Column
-    // profilePic: string;
 
     @Column
     firstName: string;
