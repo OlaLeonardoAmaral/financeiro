@@ -5,17 +5,17 @@ import * as TransacaoController from "../controllers/TransacaoController";
 
 const router = Router();
 
-router.get("/categoria", TransacaoController.findAllCategoria);
-router.get("/list", TransacaoController.listTransacao);
-router.get("/list/:id", TransacaoController.getTransacaoById);
-router.get("/totaismes", TransacaoController.getTotaisMes);
-router.get("/totaiscadames", TransacaoController.getTotaisCadaMes);
+router.get("/categoria", isAuth, TransacaoController.findAllCategoria);
+router.get("/list", isAuth, TransacaoController.listTransacao);
+router.get("/list/:id", isAuth, TransacaoController.getTransacaoById);
+router.get("/totaismes", isAuth, TransacaoController.getTotaisMes);
+router.get("/totaiscadames", isAuth, TransacaoController.getTotaisCadaMes);
 
-router.post("/categoria/add", TransacaoController.createCategoria);
-router.post("/add", TransacaoController.createTransacao);
+router.post("/categoria/add", isAuth, TransacaoController.createCategoria);
+router.post("/add", isAuth, TransacaoController.createTransacao);
 
-router.put("/update/:id", TransacaoController.updateTransacao);
+router.put("/update/:id", isAuth, TransacaoController.updateTransacao);
 
-router.delete("/remove/:id", TransacaoController.deleteTransacao);
+router.delete("/remove/:id", isAuth, TransacaoController.deleteTransacao);
 
 export default router;

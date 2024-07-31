@@ -6,8 +6,7 @@ import Transacoes from "../../models/Transacoes";
 
 
 
-const GetTotaisMes = async () => {
-
+const GetTotaisMes = async (userId: string) => {
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
@@ -15,14 +14,13 @@ const GetTotaisMes = async () => {
     const endOfMonth = new Date(startOfMonth);
     endOfMonth.setMonth(endOfMonth.getMonth() + 1);
 
-
-
     const totals = await Transacoes.findAll({
         attributes: [
             [Sequelize.fn('SUM', Sequelize.col('valor')), 'total'],
             'tipo',
         ],
         where: {
+            userId,
             data: {
                 [Op.gte]: startOfMonth,
                 [Op.lte]: endOfMonth,

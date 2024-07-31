@@ -14,8 +14,14 @@ interface SerializedTransacao {
 }
 
 
-const UpdateTransacaoService = async (id: string, transacao: SerializedTransacao) => {
-    const findTransacao = await Transacoes.findByPk(id);
+const UpdateTransacaoService = async (id: string, userId: string, transacao: SerializedTransacao) => {
+    const findTransacao = await Transacoes.findOne({
+        where: {
+            id,
+            userId
+        }
+    });
+
     if (!findTransacao) throw new AppError('Transação não encontrada!');
 
     let updateDate = transacao.data

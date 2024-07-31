@@ -8,6 +8,7 @@ interface SerializedTransacao {
     observacao: string;
     valor: number;
     data?: string;
+    userId: string;
 }
 
 const CreateTransacaoService = async (transacao: SerializedTransacao) => {
@@ -21,9 +22,9 @@ const CreateTransacaoService = async (transacao: SerializedTransacao) => {
             data: createdAtDate
         });
 
-        const { tipo, categoriaId, observacao, valor, data } = novaTransacao;
+        const { tipo, categoriaId, observacao, valor, data, userId } = novaTransacao;
 
-        return { tipo, categoriaId, observacao, valor, data };
+        return { tipo, categoriaId, observacao, valor, data, userId };
     } catch (err: any) {
         console.log(err);
         throw new AppError("Create error", 403);

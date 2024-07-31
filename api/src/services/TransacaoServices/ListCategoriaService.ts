@@ -3,10 +3,10 @@
 import AppError from "../../errors/AppError";
 import Categorias from "../../models/Categorias";
 
-const ListCategoriaService = async () => {
+const ListCategoriaService = async (userId: string) => {
     try {
         const categorias = await Categorias.findAll({
-            attributes: ['id', 'titulo']
+            where: { userId }
         });
         return categorias;
     } catch (err: any) {

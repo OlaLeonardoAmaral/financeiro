@@ -38,15 +38,6 @@ const createCategoria = async (dataToCreate: ICategoriaCreate): Promise<ICategor
     }
 }
 
-// const getById = async (id: string): Promise<ITransacao | ApiException> => {
-//     try {
-//         const { data } = await Api().get(`/transacoes/${id}`);
-//         return data;
-//     } catch (error: any) {
-//         return new ApiException(error.message || 'Erro ao bustar por id');
-//     }
-// };
-
 const create = async (dataToCreate: ITransacaoCreate): Promise<ITransacaoCreate | ApiException> => {
     try {
         const { data } = await Api().post<any>('/transacoes/add', dataToCreate);
@@ -78,7 +69,6 @@ export const TransacoesService = {
     listAll,
     listAllCategorias,
     createCategoria,
-    // getById,
     create,
     updateById,
     deleteById,

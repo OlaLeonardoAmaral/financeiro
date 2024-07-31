@@ -47,7 +47,7 @@ class AuthClient {
       }
 
       const token = response.token;
-      localStorage.setItem('custom-auth-token', token);
+      localStorage.setItem('token', token);
       this._user = response.user;
 
       return {};
@@ -66,14 +66,12 @@ class AuthClient {
 
     const response = await AuthService.singIn(email, password);
 
-    console.log(response)
-
     if (response instanceof ApiException) {
       return { error: response.message };
     }
 
     const token = response.token;
-    localStorage.setItem('custom-auth-token', token);
+    localStorage.setItem('token', token);
 
     return {};
   }
@@ -87,7 +85,7 @@ class AuthClient {
   }
 
   async getUser(): Promise<{ data?: User | null; error?: string }> {
-    const token = localStorage.getItem('custom-auth-token');
+    const token = localStorage.getItem('token');
 
     if (!token) {
       return { data: null };
@@ -108,7 +106,7 @@ class AuthClient {
   }
 
   async signOut(): Promise<{ error?: string }> {
-    localStorage.removeItem('custom-auth-token');
+    localStorage.removeItem('token');
     return {};
   }
 }

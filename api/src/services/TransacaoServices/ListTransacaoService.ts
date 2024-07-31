@@ -10,21 +10,20 @@ interface ListTransacaoServiceProps {
     categoria?: string;
 }
 
-const ListTransacaoService = async ({ page, limit, categoria }: ListTransacaoServiceProps) => {
+const ListTransacaoService = async (userId: string, { page, limit, categoria }: ListTransacaoServiceProps) => {
     const offset = (page - 1) * limit;
-    
+
     const { rows: transacoes, count: total } = await Transacoes.findAndCountAll({
         limit,
         offset,
         order: [['createdAt', 'DESC']],
-        attributes: ['id', 'data', 'tipo', 'observacao', 'valor', 'createdAt', 'updatedAt'],
+        where: { userId },
         include: [{
             model: Categorias,
-            attributes: ['id', 'titulo'],
-            where: categoria ? { titulo: { [Op.like]: `%${categoria}%` } } : undefined
+            where: categoria ? { titulo: { [Op.like]: `%${categoria}%` }, userId } : undefined
         }],
     });
-   
+
     return {
         transacoes,
         total,

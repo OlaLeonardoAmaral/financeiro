@@ -1,4 +1,4 @@
-import { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
 import AppError from "../errors/AppError";
@@ -12,6 +12,10 @@ interface TokenPayload {
   exp: number;
 }
 
+export interface AuthenticatedRequest extends Request {
+  userId?: string;
+}
+
 const isAuth = (req: Request | any, res: Response, next: NextFunction): void => {
 
   const authHeader = req.headers.authorization;
@@ -20,21 +24,15 @@ const isAuth = (req: Request | any, res: Response, next: NextFunction): void => 
     throw new AppError("ERR_SESSION_EXPIRED", 401);
   }
 
-  const [, token] = authHeader.split(" ");
+  const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = verify(token, authConfig.secret);
+    const decoded = jwt.verify(token, authConfig.secret);
     const { id, profile } = decoded as TokenPayload;
 
-    req.user = {
-      id,
-      profile
-    };
+    req.userId = id;
   } catch (err) {
-    throw new AppError(
-      "Invalid token. We'll try to assign a new one on next request",
-      403
-    );
+    throw new AppError("Invalid token. We'll try to assign a new one on next request", 403);
   }
 
   return next();

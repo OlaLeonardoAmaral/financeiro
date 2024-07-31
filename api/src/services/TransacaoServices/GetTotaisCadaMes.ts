@@ -8,7 +8,7 @@ interface SerializedTotaisCadaMes {
     total: number;
 }
 
-const GetTotaisCadaMes = async (): Promise<SerializedTotaisCadaMes[]> => {
+const GetTotaisCadaMes = async (userId: string): Promise<SerializedTotaisCadaMes[]> => {
     const year = new Date().getFullYear();
     const startOfYear = new Date(year, 0, 1);
     const endOfYear = new Date(year + 1, 0, 1);
@@ -36,6 +36,7 @@ const GetTotaisCadaMes = async (): Promise<SerializedTotaisCadaMes[]> => {
             ],
         ],
         where: {
+            userId,
             data: {
                 [Op.gte]: startOfYear,
                 [Op.lt]: endOfYear,
