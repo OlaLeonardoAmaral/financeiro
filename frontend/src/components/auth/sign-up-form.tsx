@@ -39,7 +39,7 @@ const defaultValues = { firstName: '', secondName: '', email: '', password: '', 
 export function SignUpForm(): React.JSX.Element {
   const router = useRouter();
 
-  const { checkSession } = useUser();
+  // const { checkSession } = useUser();
 
   const [isPending, setIsPending] = React.useState<boolean>(false);
 
@@ -54,19 +54,19 @@ export function SignUpForm(): React.JSX.Element {
     async (values: Values): Promise<void> => {
       setIsPending(true);
 
-      const { error } = await authClient.signUp(values);
+      // const { error } = await authClient.signUp(values);
 
-      if (error) {
-        setError('root', { type: 'server', message: error });
-        setIsPending(false);
-        return;
-      }
+      // if (error) {
+      //   setError('root', { type: 'server', message: error });
+      //   setIsPending(false);
+      //   return;
+      // }
 
-      await checkSession?.();
+      // await checkSession?.();
 
       router.refresh();
     },
-    [checkSession, router, setError]
+    [router, setError]
   );
 
   return (

@@ -35,14 +35,15 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
     const { name, email, firstName, secondName, password } = req.body as SerializedUser;
-    const user = await SignUpUserService({ name,  firstName, secondName, email, password });
+    const user = await SignUpUserService({ name, firstName, secondName, email, password });
     return res.status(200).json(user);
 }
 
 export const show = async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
-    const user = await GetUserByIdService(Number(id));
-    return res.json(user);
+    const user = await GetUserByIdService(id);
+    const { name, email, firstName, secondName } = user;
+    return res.json({user: {id, name, email, firstName, secondName }});
 }
 
 export const update = async (req: Request, res: Response): Promise<Response> => {

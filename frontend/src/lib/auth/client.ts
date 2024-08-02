@@ -3,7 +3,6 @@
 import type { User } from '@/types/user';
 import { AuthService } from '@/services/api/auth/AuthService';
 import { ApiException } from '@/services/api/ApiException';
-import { jwtDecode } from 'jwt-decode';
 
 export interface SignUpParams {
   firstName: string;
@@ -70,8 +69,8 @@ class AuthClient {
       return { error: response.message };
     }
 
-    const token = response.token;
-    localStorage.setItem('token', token);
+    localStorage.setItem('token', response.token);
+    this._user = response.user;
 
     return {};
   }
@@ -84,25 +83,27 @@ class AuthClient {
     return { error: 'Update reset not implemented' };
   }
 
-  async getUser(): Promise<{ data?: User | null; error?: string }> {
+  async getUser(): Promise<{ data?: User | null; error?: string }> { // aqui
     const token = localStorage.getItem('token');
 
     if (!token) {
-      return { data: null };
+      return { data: null }; 
     }
 
-    const decodedToken = jwtDecode<any>(token);
+    try {
+      const response = await AuthService.refreshToken();
 
-    if (decodedToken) {
-      this._user = {
-        id: decodedToken.id,
-        name: decodedToken.username,
-        firstName: decodedToken.firstName,
-        secondName: decodedToken.secondName,
-        email: decodedToken.email,
-      };
+      if (response instanceof ApiException) {
+        return { error: response.message };
+      }
+
+      localStorage.setItem('token', response.token);
+      this._user = response.user;
+
+      return { data: this._user };
+    } catch (error: any) {
+      return { error: error.message || 'Failed to get user' };
     }
-    return { data: this._user };
   }
 
   async signOut(): Promise<{ error?: string }> {

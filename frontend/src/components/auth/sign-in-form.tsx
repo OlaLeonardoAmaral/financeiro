@@ -19,8 +19,9 @@ import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
 
 import { paths } from '@/paths';
-import { authClient } from '@/lib/auth/client';
+// import { authClient } from '@/lib/auth/client';
 import { useUser } from '@/hooks/use-user';
+import { AuthContext } from '@/contexts/AuthContext';
 
 const schema = zod.object({
   email: zod.string().min(1, { message: 'Email is required' }).email(),
@@ -34,7 +35,8 @@ const defaultValues = { email: '', password: '' } satisfies Values;
 export function SignInForm(): React.JSX.Element {
   const router = useRouter();
 
-  const { checkSession } = useUser();
+  const { singIn } = useUser();
+  // const { singIn } = React.useContext(AuthContext);
 
   const [showPassword, setShowPassword] = React.useState<boolean>();
 
@@ -51,9 +53,9 @@ export function SignInForm(): React.JSX.Element {
     async (values: Values): Promise<void> => {
       setIsPending(true);
 
-      const { error } = await authClient.signInWithPassword(values);
+      const { error } = await singIn(values);
 
-      console.log(error)
+      console.log('Error: ' + error)
 
       if (error) {
         setError('root', { type: 'server', message: error });
@@ -61,11 +63,9 @@ export function SignInForm(): React.JSX.Element {
         return;
       }
 
-      await checkSession?.();
-
       router.refresh();
     },
-    [checkSession, router, setError]
+    [router, setError]
   );
 
   return (

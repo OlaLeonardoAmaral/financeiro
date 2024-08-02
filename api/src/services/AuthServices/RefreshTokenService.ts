@@ -11,7 +11,7 @@ import {
 } from "../../helpers/CreateTokens";
 
 interface RefreshTokenPayload {
-  id: number;
+  id: string;
   tokenVersion: number;
 }
 
@@ -28,11 +28,14 @@ export const RefreshTokenService = async (
   try {
     const decoded = verify(token, authConfig.refreshSecret);
     const { id, tokenVersion } = decoded as RefreshTokenPayload;
+   
     const user = await GetUserByIdService(id);
+
     if (user.tokenVersion !== tokenVersion) {
       res.clearCookie("jrt");
       throw new AppError("ERR_SESSION_EXPIRED", 401);
     }
+    
     const newToken = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
     return { user, newToken, refreshToken };

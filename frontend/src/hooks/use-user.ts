@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import type { UserContextValue } from '@/contexts/user-context';
-import { UserContext } from '@/contexts/user-context';
+import { AuthContextType } from '@/contexts/AuthContext';
+import { AuthContext } from '@/contexts/AuthContext';
 
-export function useUser(): UserContextValue {
-  const context = React.useContext(UserContext);
+export function useUser(): AuthContextType {
+  const context = React.useContext(AuthContext);
 
   if (!context) {
     throw new Error('useUser must be used within a UserProvider');

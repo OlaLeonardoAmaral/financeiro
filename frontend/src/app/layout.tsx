@@ -3,7 +3,7 @@ import type { Viewport } from 'next';
 
 import '@/styles/global.css';
 
-import { UserProvider } from '@/contexts/user-context';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { LocalizationProvider } from '@/components/core/localization-provider';
 import { ThemeProvider } from '@/components/core/theme-provider/theme-provider';
 
@@ -15,12 +15,12 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps): React.JSX.Element {
   return (
-    <html lang="en">
+    <html lang="pt-br">
       <body>
         <LocalizationProvider>
-          <UserProvider>
+          <AuthProvider>
             <ThemeProvider>{children}</ThemeProvider>
-          </UserProvider>
+          </AuthProvider>
         </LocalizationProvider>
       </body>
     </html>

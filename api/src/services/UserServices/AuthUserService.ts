@@ -10,7 +10,8 @@ interface SerializedUser {
   id: string;
   name: string;
   email: string;
-  profile?: string;
+  firsthName?: string;
+  secondName?: string;
   tokenVersion?: number;
 }
 

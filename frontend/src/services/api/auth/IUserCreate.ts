@@ -19,3 +19,14 @@ export interface IUserResponse {
     }
 }
 
+export interface IUserResponseById {
+    user: {
+        id: string,
+        name: string,
+        email: string,
+        firstName: string,
+        secondName: string,
+        avatar: '/assets/avatar.png'
+    }
+}
+

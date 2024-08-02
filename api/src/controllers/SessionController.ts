@@ -29,14 +29,12 @@ export const update = async (
   if (!token) {
     throw new AppError("ERR_SESSION_EXPIRED", 401);
   }
-  const { user, newToken, refreshToken } = await RefreshTokenService(
-    res,
-    token
-  );
+  const { user, newToken, refreshToken } = await RefreshTokenService(res, token);
+  const { id, name, email, firstName, secondName } = user;
 
   SendRefreshToken(res, refreshToken);
 
-  return res.json({ token: newToken, user });
+  return res.json({ token: newToken, user: { id, name, email, firstName, secondName } });
 };
 
 export const remove = async (
