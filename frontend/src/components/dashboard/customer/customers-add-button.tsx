@@ -17,22 +17,29 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
   const [openModal, setOpenModal] = useState(false);
   const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
 
-  const fetchCategorias = () => {
-    TransacoesService.listAllCategorias()
-      .then((result) => {
-        if (result instanceof ApiException) {
-          alert(result.message);
-        } else {
-          setCategorias(result);
-        }
-      })
-      .catch((error) => alert(error.message))
+  const fetchCategorias = async () => {
+    try {
+      const response = await TransacoesService.listAllCategorias();
+
+      if (response instanceof ApiException) {
+        alert(response.message);
+        return;
+      }
+
+      setCategorias(response)
+    } catch (error: any) {
+      alert(error.message || 'An unexpected error occurred');
+    }
   };
 
   const handleAddClick = () => {
     fetchCategorias();
     setOpenModal(true);
   }
+
+  const handleCategoriaCreated = (newCategoria: ICategoria) => {
+    setCategorias(prevCategorias => [...prevCategorias, newCategoria]);
+  };
 
   return (
     <>
@@ -44,6 +51,7 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
         setOpenModal={() => setOpenModal(!openModal)}
         onAddCustomer={onAddCustomer}
         categorias={categorias}
+        onCategoriaCreated={handleCategoriaCreated}
       />
     </>
   );

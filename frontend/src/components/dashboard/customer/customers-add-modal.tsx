@@ -38,6 +38,7 @@ interface CustomersAddModalProps {
     setOpenModal: any;
     categorias: ICategoria[];
     onAddCustomer: () => void;
+    onCategoriaCreated: (newCategoria: ICategoria) => void;
 }
 
 interface CustomProps {
@@ -98,7 +99,7 @@ const getCurrentDateFormatted = () => {
     return `${day}/${month}/${year}`;
 };
 
-export default function CustomersAddModal({ isOpen, setOpenModal, categorias, onAddCustomer }: CustomersAddModalProps): React.JSX.Element {
+export default function CustomersAddModal({ isOpen, setOpenModal, categorias, onAddCustomer, onCategoriaCreated }: CustomersAddModalProps): React.JSX.Element {
     const [tipo, setTipo] = React.useState('');
     const [categoriaId, setCategoriaId] = React.useState('');
     const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
@@ -109,7 +110,7 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
     }
 
     const handleCategoriaCreated = (newCategoria: ICategoria) => {
-        categorias.push(newCategoria);
+        onCategoriaCreated(newCategoria);
         setCategoriaId(newCategoria.id);
     };
 

@@ -59,10 +59,10 @@ export default function CategoriaAddModal({ isOpen, setOpenModal, onCategoriaCre
 
         if (response instanceof ApiException) {
             alert(response.message);
-        } else {
-            onCategoriaCreated(response);
+            return
         }
 
+        onCategoriaCreated(response);
         setOpenModal(false);
     };
 

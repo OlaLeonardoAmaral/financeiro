@@ -49,19 +49,19 @@ interface CustomProps {
 
 const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
   function TextMaskCustom(props, ref) {
-      const { onChange, ...other } = props;
-      return (
-          <IMaskInput
-              {...other}
-              mask="00/00/0000"
-              definitions={{
-                  '0': /[0-9]/,
-              }}
-              inputRef={ref}
-              onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
-              overwrite
-          />
-      );
+    const { onChange, ...other } = props;
+    return (
+      <IMaskInput
+        {...other}
+        mask="00/00/0000"
+        definitions={{
+          '0': /[0-9]/,
+        }}
+        inputRef={ref}
+        onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
+        overwrite
+      />
+    );
   },
 );
 
@@ -107,45 +107,57 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
   const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
   const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
   const [categoriaId, setCategoriaId] = React.useState(selectedConta.categoria.id);
-  
+
   const [values, setValues] = React.useState({
     textmask: getCurrentDateFormatted(selectedConta.data),
     valor: selectedConta.valor,
     observacao: selectedConta.observacao,
   });
 
+
+
   const handleAddCategoria = () => {
     setOpenModalAddCategoria(true);
   }
 
   const handleCategoriaCreated = (newCategoria: ICategoria) => {
-    categorias.push(newCategoria);
+    setCategorias(prevCategorias => [...prevCategorias, newCategoria]);
     setCategoriaId(newCategoria.id);
   };
 
-  const fetchCategorias = () => {
-    TransacoesService.listAllCategorias()
-      .then((result) => {
-        if (result instanceof ApiException) {
-          alert(result.message);
-        } else {
-          setCategorias(result);
-        }
-      })
-      .catch((error) => alert(error.message))
+  const fetchCategorias = async () => {
+    try {
+      const response = await TransacoesService.listAllCategorias();
+
+      if (response instanceof ApiException) {
+        alert(response.message);
+        return;
+      }
+      setCategorias(response)
+    } catch (error: any) {
+      alert(error.message || 'An unexpected error occurred');
+    }
   };
 
 
   React.useEffect(() => {
-    fetchCategorias();
 
-    setTipo(selectedConta.tipo);
-    setCategoriaId(selectedConta.categoria.id);
-    setValues({
-      textmask: getCurrentDateFormatted(selectedConta.data),
-      valor: selectedConta.valor,
-      observacao: selectedConta.observacao,
-    });
+    const loadCategoriasAndUpdateState = async () => {
+      try {
+        await fetchCategorias();
+        setTipo(selectedConta.tipo);
+        setCategoriaId(selectedConta.categoria.id);
+        setValues({
+          textmask: getCurrentDateFormatted(selectedConta.data),
+          valor: selectedConta.valor,
+          observacao: selectedConta.observacao,
+        });
+      } catch (error) {
+        console.error('Erro ao carregar categorias ou atualizar estado', error);
+      }
+    };
+
+    loadCategoriasAndUpdateState();
   }, [selectedConta]);
 
   const handleChangeTipo = (event: SelectChangeEvent) => {
@@ -236,7 +248,7 @@ export default function CustomersEditModal({ isOpen, setOpenModal, selectedConta
                   sx={{ borderRadius: '8px 0 0 8px' }}
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={categoriaId}
+                  value={categoriaId || ''}
                   label="Categoria"
                   onChange={handleChangeCategoria}
                 >
