@@ -35,7 +35,7 @@ const defaultValues = { email: '', password: '' } satisfies Values;
 export function SignInForm(): React.JSX.Element {
   const router = useRouter();
 
-  const { singIn } = useUser();
+  const { singIn, checkSession } = useUser();
   // const { singIn } = React.useContext(AuthContext);
 
   const [showPassword, setShowPassword] = React.useState<boolean>();
@@ -55,13 +55,13 @@ export function SignInForm(): React.JSX.Element {
 
       const { error } = await singIn(values);
 
-      console.log('Error: ' + error)
-
       if (error) {
         setError('root', { type: 'server', message: error });
         setIsPending(false);
         return;
       }
+
+      await checkSession?.();
 
       router.refresh();
     },

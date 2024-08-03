@@ -17,7 +17,7 @@ export function AuthGuard({ children }: AuthGuardProps): React.JSX.Element | nul
   const { user, isAutenticated, error, isLoading } = useUser();
   const [isChecking, setIsChecking] = React.useState<boolean>(true);
 
-  const checkPermissions = async (): Promise<void> => {
+  const checkPermissions = async (): Promise<void> => {    
     if (isLoading) {
       return;
     }

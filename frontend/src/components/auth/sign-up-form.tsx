@@ -19,7 +19,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
 
 import { paths } from '@/paths';
-import { authClient } from '@/lib/auth/client';
 import { useUser } from '@/hooks/use-user';
 import { AuthService } from '@/services/api/auth/AuthService';
 import { ApiException } from '@/services/api/ApiException';
@@ -39,7 +38,7 @@ const defaultValues = { firstName: '', secondName: '', email: '', password: '', 
 export function SignUpForm(): React.JSX.Element {
   const router = useRouter();
 
-  // const { checkSession } = useUser();
+  const { checkSession, signUp } = useUser();
 
   const [isPending, setIsPending] = React.useState<boolean>(false);
 
@@ -54,15 +53,15 @@ export function SignUpForm(): React.JSX.Element {
     async (values: Values): Promise<void> => {
       setIsPending(true);
 
-      // const { error } = await authClient.signUp(values);
+      const { error } = await signUp(values);
 
-      // if (error) {
-      //   setError('root', { type: 'server', message: error });
-      //   setIsPending(false);
-      //   return;
-      // }
+      if (error) {
+        setError('root', { type: 'server', message: error });
+        setIsPending(false);
+        return;
+      }
 
-      // await checkSession?.();
+      await checkSession?.();
 
       router.refresh();
     },

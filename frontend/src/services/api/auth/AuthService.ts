@@ -27,7 +27,7 @@ const refreshToken = async (): Promise<IUserResponse | ApiException> => {
         const { data } = await Api().post("/auth/refresh_token");
         return data;
     } catch (error: any) {
-        const errorMessage = error.response?.data?.error || 'Erro ao fazer login';
+        const errorMessage = error.response?.data?.error || 'Erro ao fazer refresh token';
         return new ApiException(errorMessage);
     }
 }

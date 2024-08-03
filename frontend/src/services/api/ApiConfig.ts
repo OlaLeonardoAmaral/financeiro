@@ -26,16 +26,17 @@ export const Api = () => {
             const originalRequest = error.config;
             if (error.response.status === 403 && !originalRequest._retry) {
                 originalRequest._retry = true;
+
                 const refreshResponse = await AuthService.refreshToken();
 
                 if (!(refreshResponse instanceof ApiException)) {
                     localStorage.setItem('financeiro_token', refreshResponse.token);
                     originalRequest.headers.Authorization = `Bearer ${refreshResponse.token}`;
                     return api(originalRequest);
-                } else {
-                    localStorage.removeItem('financeiro_token');
-                    Router.push(paths.auth.signIn)
                 }
+
+                localStorage.removeItem('financeiro_token');
+                Router.replace(paths.auth.signIn);
             }
             return Promise.reject(error);
         }
