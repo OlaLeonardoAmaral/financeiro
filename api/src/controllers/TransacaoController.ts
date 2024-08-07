@@ -18,7 +18,7 @@ interface SerializedCategoria {
     titulo: string;
 }
 
-interface SerializedTransacao { // isso aqui pode ser um DTO
+interface SerializedTransacao {
     tipo: string;
     categoriaId: string;
     observacao: string;
