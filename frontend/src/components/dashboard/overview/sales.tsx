@@ -14,10 +14,15 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 import type { ApexOptions } from 'apexcharts';
 import { EstatisticasService } from '@/services/api/estatisticas/EstatisticasService';
 import Skeleton from '@mui/material/Skeleton';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { Chart } from '@/components/core/chart';
 import { ApiException } from '@/services/api/ApiException';
 import { Box, ButtonGroup } from '@mui/material';
+import { RelatorioServices } from '@/services/api/relatorio/RelatorioService';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 export interface SalesProps {
   sx?: SxProps;
@@ -27,7 +32,8 @@ export interface SalesProps {
 export function Sales({ sx, loading }: SalesProps): React.JSX.Element {
   const chartOptions = useChartOptions();
   const [series, setSeries] = React.useState<{ name: string; data: number[] }[]>([]);
-
+  const [selectedDateIni, setSelectedDateIni] = React.useState<dayjs.Dayjs | null>(null);
+  const [selectedDateFim, setSelectedDateFim] = React.useState<dayjs.Dayjs | null>(null);
 
   const handleSync = async () => {
     const mesesAno = await EstatisticasService.getTotaisAnoPorMes();
@@ -54,10 +60,34 @@ export function Sales({ sx, loading }: SalesProps): React.JSX.Element {
     }
   };
 
+  const handleReport = async () => {
+    try {
+      const formattedDateIni = selectedDateIni?.format('DD/MM/YYYY');
+      const formattedDateFim = selectedDateFim?.format('DD/MM/YYYY');
+      setSelectedDateIni(null);
+      setSelectedDateFim(null);
+
+      if (formattedDateIni === undefined || formattedDateFim === undefined) {
+        throw new Error('Datas vazias');
+      }
+
+      const blob = await RelatorioServices.listAll(formattedDateIni, formattedDateFim);
+      const url = window.URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+      const newTab = window.open();
+      if (newTab) {
+        newTab.location.href = url;
+      } else {
+        console.error('Não foi possível abrir uma nova aba.');
+      }
+    } catch (error) {
+      console.error('Erro ao gerar relatório:', error);
+    }
+  }
+
   React.useEffect(() => {
     handleSync();
   }, [])
-
+  
 
   return (
     <Card sx={sx}>
@@ -72,8 +102,8 @@ export function Sales({ sx, loading }: SalesProps): React.JSX.Element {
 
       {loading
         ? (
-          <div style={{display: 'flex', justifyContent: 'center', marginBottom: "20px"}}>
-            <Skeleton variant='rounded' animation='wave' width="90%" height="10rem"/>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: "20px" }}>
+            <Skeleton variant='rounded' animation='wave' width="90%" height="10rem" />
           </div>
         )
         : (
@@ -84,8 +114,21 @@ export function Sales({ sx, loading }: SalesProps): React.JSX.Element {
 
       <Divider />
 
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button color="inherit" endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} size="small">
+      <CardActions sx={{ justifyContent: 'space-around' }}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Início"
+            value={selectedDateIni}
+            format='DD/MM/YYYY'
+            onChange={(newDate) => setSelectedDateIni(newDate)} />
+
+          <DatePicker
+            label="Fim"
+            value={selectedDateFim}
+            format='DD/MM/YYYY'
+            onChange={(newDate) => setSelectedDateFim(newDate)} />
+        </LocalizationProvider>
+        <Button onClick={handleReport} color="inherit" endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} size="small">
           Relatório
         </Button>
       </CardActions>
