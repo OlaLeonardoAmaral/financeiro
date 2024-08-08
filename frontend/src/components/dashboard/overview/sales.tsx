@@ -18,12 +18,10 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { Chart } from '@/components/core/chart';
 import { ApiException } from '@/services/api/ApiException';
-import { Box, ButtonGroup } from '@mui/material';
 import { RelatorioServices } from '@/services/api/relatorio/RelatorioService';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import PdfViewer from '../report/pdf-previewer';
 
 export interface SalesProps {
   sx?: SxProps;
@@ -35,8 +33,6 @@ export function Sales({ sx, loading }: SalesProps): React.JSX.Element {
   const [series, setSeries] = React.useState<{ name: string; data: number[] }[]>([]);
   const [selectedDateIni, setSelectedDateIni] = React.useState<dayjs.Dayjs | null>(null);
   const [selectedDateFim, setSelectedDateFim] = React.useState<dayjs.Dayjs | null>(null);
-  const [pdfUrl, setPdfUrl] = React.useState<string | null>(null);
-  const [isPdfViewerOpen, setIsPdfViewerOpen] = React.useState(false);
 
   const handleSync = async () => {
     const mesesAno = await EstatisticasService.getTotaisAnoPorMes();
@@ -63,7 +59,7 @@ export function Sales({ sx, loading }: SalesProps): React.JSX.Element {
     }
   };
 
-  const handleReport = async () => {
+  const handleDownload = async () => {
     try {
       const formattedDateIni = selectedDateIni?.format('DD/MM/YYYY');
       const formattedDateFim = selectedDateFim?.format('DD/MM/YYYY');
@@ -73,15 +69,24 @@ export function Sales({ sx, loading }: SalesProps): React.JSX.Element {
       if (formattedDateIni === undefined || formattedDateFim === undefined) {
         throw new Error('Datas vazias');
       }
-
-      const blob = await RelatorioServices.listAll(formattedDateIni, formattedDateFim);
+      
+      const blob = await RelatorioServices.listAll(formattedDateIni, formattedDateFim);      
       const url = window.URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
-      setPdfUrl(url);
-      setIsPdfViewerOpen(true);
+  
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `relatorio_${formattedDateIni}_${formattedDateFim}.pdf`);
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode?.removeChild(link);
+      
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Erro ao gerar relatório:', error);
     }
-  }
+  };
 
   React.useEffect(() => {
     handleSync();
@@ -127,11 +132,10 @@ export function Sales({ sx, loading }: SalesProps): React.JSX.Element {
             format='DD/MM/YYYY'
             onChange={(newDate) => setSelectedDateFim(newDate)} />
         </LocalizationProvider>
-        <Button onClick={handleReport} color="inherit" endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} size="small">
+        <Button onClick={handleDownload} color="inherit" endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} size="small">
           Relatório
         </Button>
       </CardActions>
-      <PdfViewer open={isPdfViewerOpen} onClose={() => setIsPdfViewerOpen(false)} pdfUrl={pdfUrl || ''} />
     </Card>
   );
 }

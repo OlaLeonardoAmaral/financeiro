@@ -16,8 +16,9 @@ const ListTransacaoByDataService = async (userId: string, startDate: string, end
             data: {
                 [Op.gte]: start,
                 [Op.lte]: end
-            }
+            },
         },
+        order: [['data', 'DESC']],
         include: [{ model: Categorias }],
     })
 
