@@ -32,9 +32,6 @@ export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: M
     const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);
     const [currentPage, setCurrentPage] = useState(10);
     const [openCustomersModal, setOpenCustomersModal] = React.useState(false);
-    const [openSwipe, setOpenSwipe] = useState<string | null>(null); 
-    const listRef = useRef<HTMLDivElement>(null);
-
 
     useEffect(() => {
         onRowsPerPageChange(currentPage);
@@ -65,25 +62,9 @@ export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: M
         setOpenCustomersModal(true);
     };
 
-    const handleDocumentClick = (event: MouseEvent) => {
-        const target = event.target as HTMLElement;
-        if (openSwipe && listRef.current && !listRef.current.contains(target)) {
-            setOpenSwipe(null);
-        }
-    };
-
-
-    useEffect(() => {
-        document.addEventListener('click', handleDocumentClick);
-
-        return () => {
-            document.removeEventListener('click', handleDocumentClick);
-        };
-    }, [openSwipe]);
-
 
     return (
-        <Box sx={{ padding: 2 }} ref={listRef}>
+        <Box sx={{ padding: 2 }}>
             {rows.map((row, index) => (
                 <SwipeToDelete
                     key={row.id}
@@ -92,14 +73,12 @@ export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: M
                     onDelete={() => handleDelete(row.id)}
                     deleteColor="red"
                     deleteWidth={75}
-                    height={79.5}
+                    height={79}
                     disabled={false}
-                    onDeleteConfirm={() => setOpenSwipe(null)}
                 >
                     <Box
                         sx={{ display: 'flex', alignItems: 'center', gap: 2, marginBottom: '0.1px', padding: 2, backgroundColor: 'white' }}
                         onClick={() => handleEditClick(row)}
-                        onTouchStart={() => setOpenSwipe(row.id)}
                     >
                         {row.tipo.toUpperCase() === 'RECEITA' ? (
                             <ArrowCircleUp size={35} color='#1AA918' weight="fill" />
@@ -118,7 +97,6 @@ export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: M
                             {`R$ ${row.valor}`}
                         </Typography>
                     </Box>
-                    {index < rows.length - 1 && <Divider sx={{ backgroundColor: '#333' }} />}
                 </SwipeToDelete>
             ))}
             <div id="sentinela" />
