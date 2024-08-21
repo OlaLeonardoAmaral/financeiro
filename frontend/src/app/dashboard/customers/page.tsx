@@ -82,6 +82,7 @@ export default function Page(): React.JSX.Element {
         <MobileList
           rows={transacoes}
           onRowsPerPageChange={handleRowsPerPageChange}
+          onEditCustomer={() => fetchContas(page, limit)}
         />
       ) : <CustomersTable
         count={total}

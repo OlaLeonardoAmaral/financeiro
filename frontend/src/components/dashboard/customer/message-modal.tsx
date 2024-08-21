@@ -62,7 +62,7 @@ const styleButtonCancel = {
 interface MessageModalProps {
   isOpen: boolean;
   setOpenModal: () => void;
-  onDeleteCostumer: () => void;
+  onDeleteCostumer?: () => void;
   selectedId: string;
   // children: React.ReactNode;
 }
@@ -76,7 +76,9 @@ export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, s
 
   const handleDelete = async () => {
     await TransacoesService.deleteById(selectedId);
-    onDeleteCostumer();
+    if (onDeleteCostumer) {
+      onDeleteCostumer();
+    }
     handleClose();
   }
 

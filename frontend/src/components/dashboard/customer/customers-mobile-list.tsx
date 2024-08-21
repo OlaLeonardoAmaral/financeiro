@@ -3,17 +3,37 @@
 import { ApiException } from '@/services/api/ApiException';
 import { ITransacao } from '@/services/api/transacoes/ITransacao';
 import { Box, Card, Typography, Divider } from '@mui/material';
-import { ArrowCircleDown, ArrowCircleUp } from '@phosphor-icons/react';
-import React, { use, useEffect, useState } from 'react';
+import { ArrowCircleDown, ArrowCircleUp, Trash } from '@phosphor-icons/react';
+import React, { use, useEffect, useRef, useState } from 'react';
+import SwipeToDelete from 'react-swipe-to-delete-ios';
+import MessageModal from './message-modal';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
+import CustomersEditModal from './customers-edit-modal';
 
 interface MobileListProps {
     rows?: ITransacao[];
     onRowsPerPageChange: (newLimit: number) => void;
+    onEditCustomer: () => void;
 }
 
-export function MobileList({ rows = [], onRowsPerPageChange }: MobileListProps): React.JSX.Element {
+export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: MobileListProps): React.JSX.Element {
+
+
+    const selectedContaData: ITransacao = {
+        id: '',
+        tipo: '',
+        categoria: { id: '', titulo: '' },
+        observacao: '',
+        createdAt: '',
+        valor: 0,
+        data: ''
+    };
+
+    const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);
     const [currentPage, setCurrentPage] = useState(10);
+    const [openCustomersModal, setOpenCustomersModal] = React.useState(false);
+    const [openSwipe, setOpenSwipe] = useState<string | null>(null); 
+    const listRef = useRef<HTMLDivElement>(null);
 
 
     useEffect(() => {
@@ -26,23 +46,61 @@ export function MobileList({ rows = [], onRowsPerPageChange }: MobileListProps):
                 setCurrentPage((currentValue) => currentValue + 10);
             }
         })
-        
+
         const sentinelaElement = document.querySelector('#sentinela');
-        
+
         if (sentinelaElement) {
             intersectionObserver.observe(sentinelaElement);
         }
-        
+
         return () => intersectionObserver.disconnect();
     }, []);
 
+    const handleDelete = async (id: string) => {
+        await TransacoesService.deleteById(id);
+    };
+
+    const handleEditClick = (transacao: ITransacao) => {
+        setSelectedConta(transacao);
+        setOpenCustomersModal(true);
+    };
+
+    const handleDocumentClick = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+        if (openSwipe && listRef.current && !listRef.current.contains(target)) {
+            setOpenSwipe(null);
+        }
+    };
+
+
+    useEffect(() => {
+        document.addEventListener('click', handleDocumentClick);
+
+        return () => {
+            document.removeEventListener('click', handleDocumentClick);
+        };
+    }, [openSwipe]);
 
 
     return (
-        <Box sx={{ padding: 2 }}>
+        <Box sx={{ padding: 2 }} ref={listRef}>
             {rows.map((row, index) => (
-                <React.Fragment key={row.id}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, margin: '2px 0px', padding: 2 }}>
+                <SwipeToDelete
+                    key={row.id}
+                    id={row.id}
+                    deleteComponent={<Trash size={35} />}
+                    onDelete={() => handleDelete(row.id)}
+                    deleteColor="red"
+                    deleteWidth={75}
+                    height={79.5}
+                    disabled={false}
+                    onDeleteConfirm={() => setOpenSwipe(null)}
+                >
+                    <Box
+                        sx={{ display: 'flex', alignItems: 'center', gap: 2, marginBottom: '0.1px', padding: 2, backgroundColor: 'white' }}
+                        onClick={() => handleEditClick(row)}
+                        onTouchStart={() => setOpenSwipe(row.id)}
+                    >
                         {row.tipo.toUpperCase() === 'RECEITA' ? (
                             <ArrowCircleUp size={35} color='#1AA918' weight="fill" />
                         ) : (
@@ -61,9 +119,15 @@ export function MobileList({ rows = [], onRowsPerPageChange }: MobileListProps):
                         </Typography>
                     </Box>
                     {index < rows.length - 1 && <Divider sx={{ backgroundColor: '#333' }} />}
-                </React.Fragment>
+                </SwipeToDelete>
             ))}
             <div id="sentinela" />
+            <CustomersEditModal
+                isOpen={openCustomersModal}
+                setOpenModal={() => setOpenCustomersModal(!openCustomersModal)}
+                onEditCustomer={onEditCustomer}
+                selectedConta={selectedConta}
+            />
         </Box>
     );
 }
