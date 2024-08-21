@@ -65,6 +65,8 @@ const deleteById = async (id: string): Promise<undefined | ApiException> => {
     }
 };
 
+
+
 export const TransacoesService = {
     listAll,
     listAllCategorias,

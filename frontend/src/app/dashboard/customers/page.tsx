@@ -16,7 +16,8 @@ import { ITransacao } from '@/services/api/transacoes/ITransacao';
 import { ApiException } from '@/services/api/ApiException';
 // import { TransacoesService } from '@/services/mockapi/transacoes/TransacoesService';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
-import Skeleton from '@mui/material/Skeleton';
+import { useMediaQuery } from '@mui/material';
+import { MobileList } from '@/components/dashboard/customer/customers-mobile-list';
 
 
 
@@ -27,10 +28,11 @@ export default function Page(): React.JSX.Element {
   const [page, setPage] = React.useState(1);
   const [limit, setLimit] = React.useState(10);
   const [categoria, setCategoria] = React.useState('');
-  const [loading, setLoading] = React.useState(true);
+
+  // const isMobile = useMediaQuery('(max-width:1199px)');
+  const isMobile = useMediaQuery('(max-width:850px)');
 
   const fetchContas = (page = 1, limit = 10, categoria = '') => {
-    setLoading(true);
 
     TransacoesService.listAll({ page, limit, categoria })
       .then((result) => {
@@ -44,7 +46,6 @@ export default function Page(): React.JSX.Element {
         }
       })
       .catch((error) => alert(error.message));
-    setLoading(false);
   };
 
   React.useEffect(() => {
@@ -76,22 +77,22 @@ export default function Page(): React.JSX.Element {
         </div>
       </Stack>
       <CustomersFilters onFilterChange={handleFilterChange} />
-      {loading
-        ? (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Skeleton variant='rounded' animation='wave' width="95%" height="20rem" />
-          </div>
-        )
-        : <CustomersTable
-          count={total}
+
+      {isMobile ? (
+        <MobileList
           rows={transacoes}
-          page={page - 1}
-          rowsPerPage={limit}
-          onDeleteCustomer={() => fetchContas(page, limit)}
-          onEditCustomer={() => fetchContas(page, limit)}
-          onPageChange={handlePageChange}
           onRowsPerPageChange={handleRowsPerPageChange}
-        />}
+        />
+      ) : <CustomersTable
+        count={total}
+        rows={transacoes}
+        page={page - 1}
+        rowsPerPage={limit}
+        onDeleteCustomer={() => fetchContas(page, limit)}
+        onEditCustomer={() => fetchContas(page, limit)}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
+      />}
     </Stack>
   );
 }
