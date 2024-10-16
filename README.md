@@ -31,14 +31,15 @@ Durante o desenvolvimento do **Financeiro**, adquiri diversas habilidades e conh
 - **Aprendizado de tecnologias modernas**: Foi meu primeiro contato mais aprofundado com Next.js e Material-UI, além de aprimorar minhas habilidades com Node.js e bancos de dados com Sequelize e MySQL.
 - **Gerenciamento de autenticação com JWT**: Implementei autenticação segura para garantir a privacidade dos dados financeiros.
 
-<!-- ## Capturas de Tela e Demonstrações 📸
+## Capturas de Tela e Demonstrações 📸
 Aqui estão algumas capturas de tela do sistema em funcionamento:
 
-![Tela Principal](path/to/screenshot1.png)
-![Gráficos Financeiros](path/to/screenshot2.png)
-![Relatórios](path/to/screenshot3.gif) 
+|  |  |  |
+|--|--|--|
+| <img width="400" alt="tela-inicial" src="https://github.com/user-attachments/assets/b8fb1960-348d-4912-b56c-1dbcb50e65bf"> | <img width="400" alt="Tela secundaria" src="https://github.com/user-attachments/assets/1196c087-e787-4f55-aef9-09758a90f2eb"> | <img width="400" alt="tela-profile" src="https://github.com/user-attachments/assets/73e240a5-20ec-4551-a5bd-e719b55cdecd"> |
 
-Acesse o sistema online: [https://financeiro.atlasoft.com.br/dashboard/customers](https://financeiro.atlasoft.com.br/dashboard/customers) -->
+
+Acesse o sistema online: [https://financeiro.atlasoft.com.br/dashboard/customers](https://financeiro.atlasoft.com.br/dashboard/customers)
 
 ## Contato 📬
 Sinta-se à vontade para entrar em contato ou contribuir!  
