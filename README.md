@@ -22,15 +22,6 @@ O **Financeiro** nasceu da necessidade da minha prima, que precisava de um siste
 - ![Sequelize](https://img.shields.io/badge/Sequelize-52B0E7?logo=sequelize&logoColor=white&style=flat-square) 
 - ![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white&style=flat-square) 
 
-## Como Rodar o Projeto 🛠️
-1. Clone este repositório:
-   git clone https://github.com/OlaLeonardoAmaral/financeiro.git
-2. Instale as dependências:
-   npm install
-3. Execute o projeto:
-   npm run dev
-4. Acesse o sistema em: `http://localhost:3000`
-
 ## Status do Projeto ✅
 O projeto está **finalizado** e em produção.
 
