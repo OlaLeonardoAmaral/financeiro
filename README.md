@@ -39,7 +39,7 @@ Aqui estão algumas capturas de tela do sistema em funcionamento:
 | <img width="400" alt="tela-inicial" src="https://github.com/user-attachments/assets/b8fb1960-348d-4912-b56c-1dbcb50e65bf"> | <img width="400" alt="Tela secundaria" src="https://github.com/user-attachments/assets/1196c087-e787-4f55-aef9-09758a90f2eb"> | <img width="400" alt="tela-profile" src="https://github.com/user-attachments/assets/73e240a5-20ec-4551-a5bd-e719b55cdecd"> |
 
 
-Acesse o sistema online: [https://financeiro.atlasoft.com.br/dashboard/customers](https://financeiro.atlasoft.com.br/dashboard/customers)
+Acesse o sistema online: [financeiro.atlasoft.com](https://financeiro.atlasoft.com.br/auth/sign-in)
 
 ## Contato 📬
 Sinta-se à vontade para entrar em contato ou contribuir!  
