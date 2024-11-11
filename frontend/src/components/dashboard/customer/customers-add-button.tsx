@@ -7,6 +7,8 @@ import CustomersAddModal from './customers-add-modal';
 import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { ApiException } from '@/services/api/ApiException';
+import { AddTransactionModal } from './customers-modal-trasacoes';
+import { useRouter } from 'next/navigation';
 
 interface AddCustomerButtonProps {
   onAddCustomer: () => void;
@@ -16,6 +18,7 @@ interface AddCustomerButtonProps {
 export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): React.JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
+  const router = useRouter();
 
   const fetchCategorias = async () => {
     try {
@@ -41,18 +44,40 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
     setCategorias(prevCategorias => [...prevCategorias, newCategoria]);
   };
 
+
+  const handleIncomeClick = () => {
+    // Lógica para redirecionar para a página de adicionar receitas
+    // router.push('/ ... ') // Ao clicar em receita, eu quero que abra essa nova pagina
+    setOpenModal(false);
+  };
+
+  const handleExpenseClick = () => {
+    // Lógica para redirecionar para a página de adicionar despesas
+    setOpenModal(false);
+  };
+
+
   return (
     <>
       <Button onClick={() => handleAddClick()} startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
         Add
       </Button>
-      <CustomersAddModal
+
+      <AddTransactionModal
+        isOpen={openModal}
+        setOpenModal={() => setOpenModal(!openModal)}
+        onAddIncome={handleIncomeClick}
+        onAddExpense={handleExpenseClick}
+      />
+
+
+      {/* <CustomersAddModal
         isOpen={openModal}
         setOpenModal={() => setOpenModal(!openModal)}
         onAddCustomer={onAddCustomer}
         categorias={categorias}
         onCategoriaCreated={handleCategoriaCreated}
-      />
+      /> */}
     </>
   );
 };
