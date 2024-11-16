@@ -43,7 +43,7 @@ export function AddTransactionModal({
           gap: 2,
         }}
       >
-        <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
+        <Typography variant="h6" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
           Selecione a Transação
         </Typography>
 

@@ -1,239 +1,343 @@
 'use client';
-// pages/AddTransaction.tsx
 
-import React, { useState } from 'react';
-import { Button, Select, MenuItem, Switch, TextField, IconButton, Modal, Typography, Divider } from '@mui/material';
-import { useRouter } from "next/navigation";
-import { ArrowLeft as ArrowBack, 
-  Check, 
-  Shield as Category, 
-  ArrowsClockwise as Loop, 
-  Note as Notes,
-  Calendar as CalendarToday, 
-  CaretDown as ExpandMore } from '@phosphor-icons/react';
-import { styled } from '@mui/system';
+import React, { useState, ChangeEvent } from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  IconButton,
+  Switch,
+  ToggleButtonGroup,
+  ToggleButton,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  InputAdornment,
+  Stack,
+  SelectChangeEvent,
+} from '@mui/material';
+import {
+  X as CloseIcon,
+  Calculator,
+  CalendarBlank,
+  BookmarkSimple,
+  ArrowClockwise,
+} from '@phosphor-icons/react';
 
-const AddTransaction: React.FC = () => {
-  const router = useRouter();
-  const [type, setType] = useState<'income' | 'expense'>('income');
-  const [isReceived, setIsReceived] = useState(true);
-  const [dateOption, setDateOption] = useState('today');
-  const [repeat, setRepeat] = useState(false);
-  const [repeatCount, setRepeatCount] = useState(1);
-  const [repeatFrequency, setRepeatFrequency] = useState('monthly');
-  const [openModal, setOpenModal] = useState(false);
+import { styled } from '@mui/material/styles';
+import DatePickerModal from './DatePickerModal';
+import { ICategoria } from '@/services/api/transacoes/ICategoria';
 
-  const handleSave = () => {
-    // Lógica de salvamento aqui
-    router.push('/'); // Redirecionar após salvar
+interface AddTransactionProps {
+  open: boolean;
+  onClose: () => void;
+  // categorias: ICategoria[];
+}
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialog-paper': {
+    width: '100%',
+    maxWidth: 400,
+    margin: theme.spacing(2),
+    borderRadius: theme.spacing(1),
+  },
+}));
+
+const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+  '& .MuiToggleButton-root': {
+    border: 'none',
+    borderRadius: theme.spacing(1),
+    padding: theme.spacing(1, 2),
+    textTransform: 'none',
+    '&.Mui-selected': {
+      backgroundColor: '#4CAF50',
+      color: 'white',
+      '&:hover': {
+        backgroundColor: '#45a049',
+      },
+    },
+  },
+}));
+
+export const AddTransaction: React.FC<AddTransactionProps> = ({
+  open = true,
+  onClose,
+  // categorias
+}) => {
+
+  const handleDateTypeChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newDateType: string,
+  ) => {
+    if (newDateType !== null) {
+      if (newDateType === 'other') {
+        updateField('isCalendarOpen',true);
+      } else {
+        updateField('dataType', newDateType);
+      }
+    }
   };
 
+
+  const formatDatePtBR = (date: Date) => {
+    const months = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+
+    return `${day} de ${month.slice(0, 3)}`;
+  };
+
+  const handleDateSelect = (date: Date) => {
+    updateField('dataType', 'other');
+    updateField('selectedDate', date);
+
+    console.log('Selected date:', date);
+  };
+
+
+
+  //// Controle da mascara do valor 
+  const [amount, setAmount] = useState<string>('');
+
+  const formatCurrency = (value: string): string => {
+    // Remove tudo que não for dígito
+    const digits = value.replace(/\D/g, '');
+
+    // Converte para número e divide por 100 para ter o valor decimal
+    const numberValue = Number(digits) / 100;
+
+    // Retorna string vazia se não houver valor
+    if (!numberValue) return '';
+
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(numberValue);
+  };
+
+  const handleAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.target.value;
+    // Remove tudo que não for dígito
+    const cleanValue = input.replace(/\D/g, '');
+    setAmount(cleanValue);
+  };
+  ////////////
+
+
+
+    const handleSave = async () => {
+      // setLoading(true);
+      // const formData: ITransacaoCreate = {
+      //     tipo,
+      //     categoriaId,
+      //     observacao: values.observacoes,
+      //     valor: parseFloat(values.numberformat),
+      //     data: values.textmask
+      // };
+
+      // await TransacoesService.create(formData);
+      // setLoading(false);
+      // onAddCustomer();
+      // handleCancel();
+
+      console.log(formState, amount)
+  };
+
+
+  
+  
+  
+  
+  
+  const categorias: ICategoria[] = [
+    { id: '1', titulo: 'Alimentação' },
+    { id: '2', titulo: 'Educação' },
+  ];
+  
+  const [formState, setFormState] = useState({
+    dateType: 'today',
+    isReceived: true,
+    repeat: false,
+    repeatTimes: '2',
+    repeatPeriod: 'months',
+    isCalendarOpen: false,
+    description: '',
+    selectedDate: new Date(),
+    categoriaId: categorias[0]?.id || '',
+  });
+  
+  const updateField = (field: string, value: any) => {
+    setFormState((prev) => ({ ...prev, [field]: value }));
+  };
+
+
+
   return (
-    <Container>
-      {/* Header com botão de Cancelar */}
-      <Header>
-        <IconButton onClick={() => router.back()}>
-          <ArrowBack />
+    <StyledDialog open={open} onClose={onClose} fullWidth>
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        Nova receita
+        <IconButton onClick={onClose} size="medium">
+          <CloseIcon />
         </IconButton>
-        <Select
-          value={type}
-          onChange={(e) => setType(e.target.value as 'income' | 'expense')}
-          variant="outlined"
-          sx={{ color: 'white', bgcolor: type === 'income' ? 'green' : 'red', minWidth: '100px' }}
-        >
-          <MenuItem value="income">Receita</MenuItem>
-          <MenuItem value="expense">Despesa</MenuItem>
-        </Select>
-      </Header>
+      </DialogTitle>
 
-      {/* Input de valor */}
-      <MainInput>
-        <label>Valor da {type === 'income' ? 'Receita' : 'Despesa'}</label>
-        <TextField fullWidth placeholder="R$ 0,00" variant="standard" />
-      </MainInput>
+      <DialogContent>
+        <Stack spacing={3}>
 
-      {/* Recebido e opções de data */}
-      <OptionsRow>
-        <Option>
-          <Check />
-          <span>Recebido</span>
-          <Switch checked={isReceived} onChange={() => setIsReceived(!isReceived)} />
-        </Option>
-      </OptionsRow>
+          {/* Amount Input */}
+          <TextField
+            fullWidth
+            value={formatCurrency(amount)}
+            onChange={handleAmountChange}
+            placeholder="R$ 0,00"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Calculator />
+                </InputAdornment>
+              ),
+            }}
+          />
 
-      <DateOptions>
-        {['today', 'tomorrow', 'other'].map((option) => (
-          <DateOption
-            key={option}
-            selected={dateOption === option}
-            onClick={() => setDateOption(option)}
+          {/* Received Switch */}
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <span>Foi recebida</span>
+            <Switch
+              checked={formState.isReceived}
+              onChange={(e) => updateField('isReceived', e.target.checked)}
+              color="success"
+            />
+          </Stack>
+
+          {/* Date Toggle Buttons */}
+          <StyledToggleButtonGroup
+            value={formState.dateType}
+            exclusive
+            onChange={(e, value) => updateField('dateType', value || formState.dateType)}
+            fullWidth
           >
-            {option === 'today' ? 'Hoje' : option === 'tomorrow' ? 'Amanhã' : 'Outro'}
-          </DateOption>
-        ))}
-        {dateOption === 'other' && (
-          <IconButton>
-            <CalendarToday />
-          </IconButton>
-        )}
-      </DateOptions>
+            <ToggleButton value="today">
+              <CalendarBlank weight="bold" style={{ marginRight: 8 }} />
+              Hoje
+            </ToggleButton>
+            <ToggleButton value="yesterday">Ontem</ToggleButton>
 
-      {/* Descrição */}
-      <DescriptionInput>
-        <IconButton>
-          <Notes />
-        </IconButton>
-        <TextField fullWidth placeholder="Descrição" variant="standard" />
-      </DescriptionInput>
+            <ToggleButton value="other" onClick={ handleDateTypeChange}>
+
+              {formState.dateType === 'other'
+                ? formatDatePtBR(formState.selectedDate)
+                : 'Outros...'}
+
+            </ToggleButton>
+          </StyledToggleButtonGroup>
+
+          <DatePickerModal
+            open={formState.isCalendarOpen}
+            onClose={() => updateField('isCalendarOpen',false)}
+            onDateSelect={handleDateSelect}
+          />
 
 
-      {/* Categoria */}
-      <CategorySelect>
-        <IconButton>
-          <Category />
-        </IconButton>
-        <Select defaultValue="default" variant="standard" fullWidth>
-          <MenuItem value="default">Categoria</MenuItem>
-          <MenuItem value="add" onClick={() => setOpenModal(true)}>Cadastrar Nova</MenuItem>
-        </Select>
-      </CategorySelect>
 
-      {/* Repetir Transação */}
-      <RepeatOption>
-        <IconButton>
-          <Loop />
-        </IconButton>
-        <span>Repetir</span>
-        <Switch checked={repeat} onChange={() => setRepeat(!repeat)} />
-      </RepeatOption>
+          {/* Description Input */}
+          <TextField
+            fullWidth
+            placeholder="Descrição"
+            onChange={(e) => updateField('description', e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <BookmarkSimple />
+                </InputAdornment>
+              ),
+            }}
+          />
 
-      {repeat && (
-        <RepeatModal open>
-          <RepeatOptionRow>
-            <IconButton>
-              <ExpandMore />
-            </IconButton>
-            <Typography>Como sua transação se repete?</Typography>
-            <RepeatFrequency>
-              <label>Quantidade:</label>
-              <Button onClick={() => setRepeatCount(repeatCount - 1)}>-</Button>
-              <span>{repeatCount}</span>
-              <Button onClick={() => setRepeatCount(repeatCount + 1)}>+</Button>
-            </RepeatFrequency>
+          {/* Category Select */}
+          <FormControl fullWidth>
+            <InputLabel>Categoria</InputLabel>
             <Select
-              value={repeatFrequency}
-              onChange={(e) => setRepeatFrequency(e.target.value as 'monthly' | 'weekly')}
-              variant="outlined"
+              label="Categoria"
+              onChange={(e) => updateField('categoriaId', e.target.value)}
+              value={formState.categoriaId}
             >
-              <MenuItem value="monthly">Mensal</MenuItem>
-              <MenuItem value="weekly">Semanal</MenuItem>
-            </Select>
-          </RepeatOptionRow>
-        </RepeatModal>
-      )}
+              {categorias.map(categoria => {
+                return <MenuItem value={categoria.id} key={categoria.id}>
+                  {categoria.titulo}
+                </MenuItem>
+              })};
 
-      {/* Botões de ação */}
-      <ActionButtons>
-        <Button variant="contained" fullWidth color="primary" onClick={handleSave}>
-          Salvar
+            </Select>
+          </FormControl>
+
+          {/* Repeat Section */}
+          <Stack spacing={2}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <ArrowClockwise />
+                <span>Repetir</span>
+              </Stack>
+              <Switch
+                checked={formState.repeat}
+                onChange={(e) => updateField('repeat', e.target.checked)}
+              />
+            </Stack>
+
+            {formState.repeat && (
+              <Stack direction="row" spacing={2} alignItems="center">
+                <TextField
+                  value={formState.repeatTimes}
+                  onChange={(e) => updateField('repeatTimes', e.target.value)}
+                  type="number"
+                  size="small"
+                  sx={{ width: 300 }}
+                />
+                <span>vezes</span>
+                <FormControl fullWidth size="small">
+                  <Select
+                    value={formState.repeatPeriod}
+                    onChange={(e) => updateField('repeatPeriod', e.target.value)}
+                  >
+                    <MenuItem value="months">Meses</MenuItem>
+                    <MenuItem value="weeks">Semanas</MenuItem>
+                  </Select>
+                </FormControl>
+              </Stack>
+            )}
+          </Stack>
+        </Stack>
+      </DialogContent>
+
+      <DialogActions sx={{ p: 2, gap: 1 }}>
+        {/* <Button
+          variant="outlined"
+          color="success"
+          fullWidth
+          onClick={onClose}
+        >
+          SALVAR E CRIAR NOVA
+        </Button> */}
+        <Button
+          variant="contained"
+          color="success"
+          fullWidth
+          onClick={handleSave}
+        >
+          SALVAR
         </Button>
-      </ActionButtons>
-    </Container>
+      </DialogActions>
+    </StyledDialog>
   );
 };
 
 export default AddTransaction;
-
-
-const Container = styled('div')({
-  padding: '1rem',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem',
-  maxWidth: '400px',
-  margin: '0 auto',
-});
-
-const Header = styled('div')({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-});
-
-const MainInput = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  label: {
-    marginBottom: '0.5rem',
-    fontSize: '1.1rem',
-    fontWeight: 'bold',
-  },
-});
-
-const OptionsRow = styled('div')({
-  display: 'flex',
-  justifyContent: 'space-between',
-});
-
-const Option = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-});
-
-const DateOptions = styled('div')({
-  display: 'flex',
-  gap: '0.5rem',
-  justifyContent: 'center',
-  marginTop: '0.5rem',
-});
-
-interface DateOptionProps {
-  selected?: boolean;
-}
-
-const DateOption = styled(Button)<DateOptionProps>(({ selected }) => ({
-  backgroundColor: selected ? '#4caf50' : 'transparent',
-  color: selected ? '#fff' : '#000',
-}));
-
-const DescriptionInput = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-});
-
-const CategorySelect = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-});
-
-const RepeatOption = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-});
-
-const RepeatOptionRow = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-  flexDirection: 'column',
-});
-
-const RepeatFrequency = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-});
-
-const RepeatModal = styled(Modal)({
-  padding: '1rem',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-});
-
-const ActionButtons = styled('div')({
-  display: 'flex',
-  justifyContent: 'space-between',
-});

@@ -46,8 +46,7 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
 
 
   const handleIncomeClick = () => {
-    // Lógica para redirecionar para a página de adicionar receitas
-    // router.push('/ ... ') // Ao clicar em receita, eu quero que abra essa nova pagina
+    router.push('/cadastro/receita')
     setOpenModal(false);
   };
 
