@@ -29,11 +29,11 @@ import {
 } from '@phosphor-icons/react';
 
 import { styled } from '@mui/material/styles';
-import DatePickerModal from './DatePickerModal';
+import DatePickerModal from './datePicker-modal';
 import { ICategoria } from '@/services/api/transacoes/ICategoria';
 
 interface AddTransactionProps {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
   // categorias: ICategoria[];
 }
@@ -63,11 +63,37 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   },
 }));
 
-export const AddTransaction: React.FC<AddTransactionProps> = ({
-  open = true,
-  onClose,
-  // categorias
-}) => {
+const CustomToggleButton = styled(ToggleButton)(({ theme }) => ({
+  borderColor: theme.palette.grey[400],
+  borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(1, 2),
+  '&.Mui-selected': {
+    borderColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.action.hover,
+  },
+}));
+
+
+
+// export function TransactionSelectModal({
+//     isOpen,
+//     setOpenModal,
+//     onAddIncome,
+//     onAddExpense,
+//   }: AddTransactionModalProps): React.JSX.Element {
+
+
+// export const AddTransaction: React.FC<AddTransactionProps> = ({
+//   open = true,
+//   onClose,
+//   // categorias
+// }) => {
+
+export function AddTransactionModal({
+    isOpen,
+    onClose
+    // categorias
+  }: AddTransactionProps): React.JSX.Element {
 
   const handleDateTypeChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -75,12 +101,13 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
   ) => {
     if (newDateType !== null) {
       if (newDateType === 'other') {
-        updateField('isCalendarOpen',true);
+        updateField('isCalendarOpen', true);
       } else {
         updateField('dataType', newDateType);
       }
     }
   };
+
 
 
   const formatDatePtBR = (date: Date) => {
@@ -92,21 +119,28 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
     const day = date.getDate();
     const month = months[date.getMonth()];
 
-    return `${day} de ${month.slice(0, 3)}`;
+    return `${day} de ${month}`;
   };
 
   const handleDateSelect = (date: Date) => {
-    updateField('dataType', 'other');
     updateField('selectedDate', date);
-
-    console.log('Selected date:', date);
   };
 
+  const getCurrentDateFormatted = (dataFormat: Date) => {
+    const day = String(dataFormat.getDate()).padStart(2, '0');
+    const month = String(dataFormat.getMonth() + 1).padStart(2, '0');
+    const year = dataFormat.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
+  function parseCurrency(formattedValue: string): number {
+    let numericValue = formattedValue.replace(/[^\d,.-]/g, '');
+    numericValue = numericValue.replace(/\.(?=\d{3},)/g, '');
+    numericValue = numericValue.replace(',', '.');
+    return parseFloat(numericValue);
+  }
 
   //// Controle da mascara do valor 
-  const [amount, setAmount] = useState<string>('');
-
   const formatCurrency = (value: string): string => {
     // Remove tudo que não for dígito
     const digits = value.replace(/\D/g, '');
@@ -125,46 +159,50 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
     }).format(numberValue);
   };
 
+
   const handleAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value;
-    // Remove tudo que não for dígito
     const cleanValue = input.replace(/\D/g, '');
-    setAmount(cleanValue);
+    updateField('amount', cleanValue)
   };
   ////////////
 
 
 
-    const handleSave = async () => {
-      // setLoading(true);
-      // const formData: ITransacaoCreate = {
-      //     tipo,
-      //     categoriaId,
-      //     observacao: values.observacoes,
-      //     valor: parseFloat(values.numberformat),
-      //     data: values.textmask
-      // };
+  const handleSave = async () => {
+    // setLoading(true);
+    // const formData: ITransacaoCreate = {
+    //     tipo,
+    //     categoriaId,
+    //     observacao: values.observacoes,
+    //     valor: parseFloat(values.numberformat),
+    //     data: values.textmask
+    // };
 
-      // await TransacoesService.create(formData);
-      // setLoading(false);
-      // onAddCustomer();
-      // handleCancel();
+    // await TransacoesService.create(formData);
+    // setLoading(false);
+    // onAddCustomer();
+    // handleCancel();
 
-      console.log(formState, amount)
+    console.log(formState)
+    console.log(parseCurrency(formatCurrency(formState.amount))) // tenis
+    console.log(getCurrentDateFormatted(formState.selectedDate))
+    onClose();
   };
 
 
-  
-  
-  
-  
-  
+
+
+
+
+
   const categorias: ICategoria[] = [
     { id: '1', titulo: 'Alimentação' },
     { id: '2', titulo: 'Educação' },
   ];
-  
+
   const [formState, setFormState] = useState({
+    amount: '',
     dateType: 'today',
     isReceived: true,
     repeat: false,
@@ -175,7 +213,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
     selectedDate: new Date(),
     categoriaId: categorias[0]?.id || '',
   });
-  
+
   const updateField = (field: string, value: any) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
   };
@@ -183,7 +221,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
 
 
   return (
-    <StyledDialog open={open} onClose={onClose} fullWidth>
+    <StyledDialog open={isOpen} onClose={onClose} fullWidth>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         Nova receita
         <IconButton onClick={onClose} size="medium">
@@ -197,7 +235,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
           {/* Amount Input */}
           <TextField
             fullWidth
-            value={formatCurrency(amount)}
+            value={formatCurrency(formState.amount)}
             onChange={handleAmountChange}
             placeholder="R$ 0,00"
             InputProps={{
@@ -209,15 +247,6 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
             }}
           />
 
-          {/* Received Switch */}
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <span>Foi recebida</span>
-            <Switch
-              checked={formState.isReceived}
-              onChange={(e) => updateField('isReceived', e.target.checked)}
-              color="success"
-            />
-          </Stack>
 
           {/* Date Toggle Buttons */}
           <StyledToggleButtonGroup
@@ -226,24 +255,25 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
             onChange={(e, value) => updateField('dateType', value || formState.dateType)}
             fullWidth
           >
-            <ToggleButton value="today">
+            {/* Received Switch */}
+            <Stack direction="row" justifyContent="space-between" alignItems="center" width="20rem">
+              <span>Foi recebida</span>
+              <Switch
+                checked={formState.isReceived}
+                onChange={(e) => updateField('isReceived', e.target.checked)}
+                color="success"
+              />
+            </Stack>
+
+            <ToggleButton value='other' onClick={handleDateTypeChange}>
               <CalendarBlank weight="bold" style={{ marginRight: 8 }} />
-              Hoje
-            </ToggleButton>
-            <ToggleButton value="yesterday">Ontem</ToggleButton>
-
-            <ToggleButton value="other" onClick={ handleDateTypeChange}>
-
-              {formState.dateType === 'other'
-                ? formatDatePtBR(formState.selectedDate)
-                : 'Outros...'}
-
+              {formatDatePtBR(formState.selectedDate)}
             </ToggleButton>
           </StyledToggleButtonGroup>
 
           <DatePickerModal
             open={formState.isCalendarOpen}
-            onClose={() => updateField('isCalendarOpen',false)}
+            onClose={() => updateField('isCalendarOpen', false)}
             onDateSelect={handleDateSelect}
           />
 
@@ -319,14 +349,6 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
       </DialogContent>
 
       <DialogActions sx={{ p: 2, gap: 1 }}>
-        {/* <Button
-          variant="outlined"
-          color="success"
-          fullWidth
-          onClick={onClose}
-        >
-          SALVAR E CRIAR NOVA
-        </Button> */}
         <Button
           variant="contained"
           color="success"
@@ -340,4 +362,4 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
   );
 };
 
-export default AddTransaction;
+export default AddTransactionModal;

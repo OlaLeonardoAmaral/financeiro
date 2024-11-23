@@ -146,7 +146,11 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
             data: values.textmask
         };
 
-        await TransacoesService.create(formData);
+        // await TransacoesService.create(formData);
+
+
+        console.log(formData.data)
+        
         setLoading(false);
         onAddCustomer();
         handleCancel();

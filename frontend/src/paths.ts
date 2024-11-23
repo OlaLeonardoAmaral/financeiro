@@ -11,7 +11,7 @@ export const paths = {
     customers: '/dashboard/customers',
     integrations: '/dashboard/integrations',
     settings: '/dashboard/settings',
-    create_receita: '/cadastro/receita',
+    // create_receita: '/cadastro/receita',
   },
   errors: { notFound: '/errors/not-found' },
 } as const;

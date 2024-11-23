@@ -7,8 +7,9 @@ import CustomersAddModal from './customers-add-modal';
 import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { ApiException } from '@/services/api/ApiException';
-import { AddTransactionModal } from './customers-modal-trasacoes';
+import { TransactionSelectModal } from './modals/transaction-select-modal';
 import { useRouter } from 'next/navigation';
+import AddTransaction, { AddTransactionModal } from './modals/transaction-add-modal';
 
 interface AddCustomerButtonProps {
   onAddCustomer: () => void;
@@ -16,6 +17,7 @@ interface AddCustomerButtonProps {
 
 
 export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): React.JSX.Element {
+  const [openModalOptions, setOpenModalOptions] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
   const router = useRouter();
@@ -37,7 +39,7 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
 
   const handleAddClick = () => {
     fetchCategorias();
-    setOpenModal(true);
+    setOpenModalOptions(true);
   }
 
   const handleCategoriaCreated = (newCategoria: ICategoria) => {
@@ -46,13 +48,15 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
 
 
   const handleIncomeClick = () => {
-    router.push('/cadastro/receita')
-    setOpenModal(false);
+    // router.push('/cadastro/receita')
+    console.log('ta aq')
+    setOpenModal(true);
+    setOpenModalOptions(false);
   };
 
   const handleExpenseClick = () => {
     // Lógica para redirecionar para a página de adicionar despesas
-    setOpenModal(false);
+    setOpenModalOptions(false); // estou muito viciado em modal, tenho que mudar isso
   };
 
 
@@ -62,12 +66,19 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
         Add
       </Button>
 
-      <AddTransactionModal
-        isOpen={openModal}
-        setOpenModal={() => setOpenModal(!openModal)}
+      <TransactionSelectModal
+        isOpen={openModalOptions}
+        onClose={() => setOpenModalOptions(!openModalOptions)}
         onAddIncome={handleIncomeClick}
         onAddExpense={handleExpenseClick}
       />
+
+      <AddTransactionModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(!openModal)}
+      />
+
+
 
 
       {/* <CustomersAddModal

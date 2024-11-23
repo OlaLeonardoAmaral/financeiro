@@ -9,21 +9,21 @@ import { CurrencyDollar, Coins } from '@phosphor-icons/react/dist/ssr'; // Ícon
 
 interface AddTransactionModalProps {
   isOpen: boolean;
-  setOpenModal: () => void;
+  onClose: () => void;
   onAddIncome: () => void;
   onAddExpense: () => void;
 }
 
-export function AddTransactionModal({
+export function TransactionSelectModal({
   isOpen,
-  setOpenModal,
+  onClose,
   onAddIncome,
   onAddExpense,
 }: AddTransactionModalProps): React.JSX.Element {
   return (
     <Dialog
       open={isOpen}
-      onClose={setOpenModal}
+      onClose={onClose}
       PaperProps={{
         sx: {
           padding: 3,
