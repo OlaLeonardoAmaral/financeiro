@@ -78,10 +78,10 @@ export function SaveTransactionModal({
 
     const initialFormState = {
         amount: transactionSelect?.valor?.toString() || '',
-        isReceived: true,
-        repeat: false,
-        repeatTimes: '2',
-        repeatPeriod: 'months',
+        isReceived: transactionSelect?.foiRecebida !== undefined ? transactionSelect.foiRecebida : true,
+        repeat: transactionSelect?.repetir || false,
+        repeatTimes: transactionSelect?.quantidadeRepeticoes || '2',
+        repeatPeriod: transactionSelect?.periodoRepeticao || 'Mensal',
         isCalendarOpen: false,
         description: transactionSelect?.observacao || '',
         selectedDate: transactionSelect?.data ? new Date(transactionSelect.data) : new Date(),
@@ -164,10 +164,10 @@ export function SaveTransactionModal({
     useEffect(() => {
         setFormState({
             amount: transactionSelect?.valor?.toString() || '',
-            isReceived: true,
-            repeat: false,
-            repeatTimes: '2',
-            repeatPeriod: 'months',
+            isReceived: transactionSelect?.foiRecebida !== undefined ? transactionSelect.foiRecebida : true,
+            repeat: transactionSelect?.repetir || false,
+            repeatTimes: transactionSelect?.quantidadeRepeticoes || '2',
+            repeatPeriod: transactionSelect?.periodoRepeticao || 'Mensal',
             isCalendarOpen: false,
             description: transactionSelect?.observacao || '',
             selectedDate: transactionSelect?.data ? new Date(transactionSelect.data) : new Date(),
@@ -182,6 +182,10 @@ export function SaveTransactionModal({
     }, [isOpen]);
 
 
+    enum PeriodoRepeticao {
+        Mensal = "Mensal",
+        Semanal = "Semanal",
+    }
 
     const handleSave = async () => {
         const formData: ITransacaoCreate = {
@@ -189,7 +193,11 @@ export function SaveTransactionModal({
             categoriaId: formState.categoriaId,
             observacao: formState.description,
             valor: parseCurrency(formatCurrency(formState.amount)),
-            data: getCurrentDateFormatted(formState.selectedDate)
+            data: getCurrentDateFormatted(formState.selectedDate),
+            foiRecebida: formState.isReceived,
+            repetir: formState.repeat,
+            quantidadeRepeticoes: formState.repeat ? Number(formState.repeatTimes) : undefined,
+            periodoRepeticao: formState.repeat ? (formState.repeatPeriod as PeriodoRepeticao) : undefined,
         };
 
         if (transactionSelect) {
@@ -260,7 +268,7 @@ export function SaveTransactionModal({
                         <Stack direction="row" justifyContent="space-between" alignItems="center" width="20rem">
                             <span>Foi recebida</span>
                             <Switch
-                                checked={formState.isReceived}
+                                checked={formState.isReceived} // mas o Switch esta sempre vindo marcado (true)
                                 onChange={(e) => updateField('isReceived', e.target.checked)}
                                 color="success"
                             />
@@ -339,8 +347,8 @@ export function SaveTransactionModal({
                                         value={formState.repeatPeriod}
                                         onChange={(e) => updateField('repeatPeriod', e.target.value)}
                                     >
-                                        <MenuItem value="months">Meses</MenuItem>
-                                        <MenuItem value="weeks">Semanas</MenuItem>
+                                        <MenuItem value="Mensal">Meses</MenuItem>
+                                        <MenuItem value="Semanal">Semanas</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Stack>

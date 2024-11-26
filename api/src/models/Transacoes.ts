@@ -47,6 +47,20 @@ class Transacoes extends Model<Transacoes> {
     @Column
     valor: number;
 
+    @Default(true)
+    @Column(DataType.BOOLEAN)
+    foiRecebida: boolean;
+
+    @Default(false)
+    @Column(DataType.BOOLEAN)
+    repetir: boolean;
+
+    @Column(DataType.INTEGER)
+    quantidadeRepeticoes: number;
+
+    @Column(DataType.ENUM('Mensal', 'Semanal'))
+    periodoRepeticao: string;
+
     @CreatedAt
     createdAt: Date;
 

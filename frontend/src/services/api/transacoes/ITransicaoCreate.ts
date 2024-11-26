@@ -1,4 +1,8 @@
 
+enum PeriodoRepeticao {
+    Mensal = "Mensal",
+    Semanal = "Semanal",
+}
 
 export interface ITransacaoCreate {
     tipo: string,
@@ -6,4 +10,11 @@ export interface ITransacaoCreate {
     observacao: string,    
     valor: number
     data: string;
+    foiRecebida: boolean;
+    repetir: boolean;
+    quantidadeRepeticoes?: number;
+    periodoRepeticao?: PeriodoRepeticao;
 }
+
+
+

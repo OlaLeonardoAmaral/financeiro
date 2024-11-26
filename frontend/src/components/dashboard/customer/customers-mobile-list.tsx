@@ -25,7 +25,11 @@ export function MobileList({ rows = [], onRowsPerPageChange, refreshTable }: Mob
         observacao: '',
         createdAt: '',
         valor: 0,
-        data: new Date()
+        data: new Date(),
+        foiRecebida: true,
+        repetir: false,
+        periodoRepeticao: undefined,
+        quantidadeRepeticoes: undefined
     };
 
     const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);
@@ -57,9 +61,7 @@ export function MobileList({ rows = [], onRowsPerPageChange, refreshTable }: Mob
         await TransacoesService.deleteById(id);
     };
 
-    const handleEditClick = (transacao: ITransacao) => {
-        
-        
+    const handleEditClick = (transacao: ITransacao) => {        
         fetchCategorias();
         setSelectedConta(transacao);
         setOpenSaveTransactionModal(true);

@@ -18,12 +18,21 @@ interface SerializedCategoria {
     titulo: string;
 }
 
+enum PeriodoRepeticao {
+    Mensal = "Mensal",
+    Semanal = "Semanal",
+}
+
 interface SerializedTransacao {
     tipo: string;
     categoriaId: string;
     observacao: string;
     valor: number;
     data?: string;
+    foiRecebida: boolean;
+    repetir: boolean;
+    quantidadeRepeticoes?: number;
+    periodoRepeticao?: PeriodoRepeticao;
 }
 
 export const createCategoria = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
@@ -40,9 +49,30 @@ export const findAllCategoria = async (req: AuthenticatedRequest, res: Response)
 }
 
 export const createTransacao = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
-    const { tipo, categoriaId, observacao, valor, data } = req.body as SerializedTransacao;
+    const {
+        tipo,
+        categoriaId,
+        observacao,
+        valor,
+        data,
+        foiRecebida,
+        repetir,
+        periodoRepeticao,
+        quantidadeRepeticoes
+    } = req.body as SerializedTransacao;
     const userId = req.userId!;
-    const transacao = await CreateTransacaoService({ tipo, categoriaId, observacao, valor, data, userId });
+    const transacao = await CreateTransacaoService({
+        tipo,
+        categoriaId,
+        observacao,
+        valor,
+        data,
+        foiRecebida,
+        repetir,
+        periodoRepeticao,
+        quantidadeRepeticoes,
+        userId
+    });
     return res.status(200).json(transacao);
 }
 
@@ -70,10 +100,30 @@ export const getTransacaoById = async (req: Request, res: Response): Promise<Res
 }
 
 export const updateTransacao = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
-    const { tipo, categoriaId, observacao, valor, data } = req.body as SerializedTransacao;
+    const {
+        tipo,
+        categoriaId,
+        observacao,
+        valor,
+        data,
+        foiRecebida,
+        repetir,
+        periodoRepeticao,
+        quantidadeRepeticoes
+    } = req.body as SerializedTransacao;
     const { id } = req.params;
     const userId = req.userId!;
-    const transacao = await UpdateTransacaoService(id, userId, { tipo, categoriaId, observacao, valor, data });
+    const transacao = await UpdateTransacaoService(id, userId, {
+        tipo,
+        categoriaId,
+        observacao,
+        valor,
+        data,
+        foiRecebida,
+        repetir,
+        periodoRepeticao,
+        quantidadeRepeticoes
+    });
     return res.status(200).json(transacao);
 }
 

@@ -51,8 +51,12 @@ export function CustomersTable({
     observacao: '',
     createdAt: '',
     valor: 0,
-    data: new Date()
-  };
+    data: new Date(),
+    foiRecebida: true,
+    repetir: false,
+    periodoRepeticao: undefined,
+    quantidadeRepeticoes: undefined
+};
 
   const [selectedId, setSelectedId] = React.useState('');
   const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);

@@ -1,5 +1,10 @@
 import { ICategoria } from "./ICategoria";
 
+enum PeriodoRepeticao {
+    Mensal = "Mensal",
+    Semanal = "Semanal",
+}
+
 export interface ITransacao {
     id: string,
     tipo: string,
@@ -7,6 +12,9 @@ export interface ITransacao {
     observacao: string,
     createdAt: string,
     valor: number
-    // data: string,
     data: Date,
+    foiRecebida: boolean;
+    repetir: boolean;
+    quantidadeRepeticoes?: number;
+    periodoRepeticao?: PeriodoRepeticao;
 }
