@@ -1,21 +1,21 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import { NumericFormat, NumericFormatProps } from 'react-number-format';
-import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { ITransacaoCreate } from '@/services/api/transacoes/ITransicaoCreate';
-import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
-import CategoriaAddModal from './categoria-add-modal';
-import { IMaskInput } from 'react-imask';
+import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import LoadingButton from '@mui/lab/LoadingButton';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Modal from '@mui/material/Modal';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
+import * as React from 'react';
+import { IMaskInput } from 'react-imask';
+import { NumericFormat, NumericFormatProps } from 'react-number-format';
+import CategoriaAddModal from './categoria-add-modal';
 
 
 const style = {
@@ -37,7 +37,7 @@ interface CustomersAddModalProps {
     isOpen: boolean;
     setOpenModal: any;
     categorias: ICategoria[];
-    onAddCustomer: () => void;
+    refreshTable: () => void;
     onCategoriaCreated: (newCategoria: ICategoria) => void;
 }
 
@@ -99,7 +99,7 @@ const getCurrentDateFormatted = () => {
     return `${day}/${month}/${year}`;
 };
 
-export default function CustomersAddModal({ isOpen, setOpenModal, categorias, onAddCustomer, onCategoriaCreated }: CustomersAddModalProps): React.JSX.Element {
+export default function CustomersAddModal({ isOpen, setOpenModal, categorias, refreshTable, onCategoriaCreated }: CustomersAddModalProps): React.JSX.Element {
     const [tipo, setTipo] = React.useState('');
     const [categoriaId, setCategoriaId] = React.useState('');
     const [openModalAddCategoria, setOpenModalAddCategoria] = React.useState(false);
@@ -146,13 +146,10 @@ export default function CustomersAddModal({ isOpen, setOpenModal, categorias, on
             data: values.textmask
         };
 
-        // await TransacoesService.create(formData);
-
-
-        console.log(formData.data)
+        await TransacoesService.create(formData);
         
         setLoading(false);
-        onAddCustomer();
+        refreshTable();
         handleCancel();
     };
 

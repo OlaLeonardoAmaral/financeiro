@@ -1,62 +1,34 @@
 'use client';
 
-import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr';
-import CustomersAddModal from './customers-add-modal';
-import { ICategoria } from '@/services/api/transacoes/ICategoria';
-import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
-import { ApiException } from '@/services/api/ApiException';
+import React, { useState } from 'react';
+import { SaveTransactionModal } from './modals/transaction-save-modal';
 import { TransactionSelectModal } from './modals/transaction-select-modal';
-import { useRouter } from 'next/navigation';
-import AddTransaction, { AddTransactionModal } from './modals/transaction-add-modal';
+import { useCategorias } from '@/contexts/CategoriaContext';
 
 interface AddCustomerButtonProps {
-  onAddCustomer: () => void;
+  refreshTable: () => void;
 }
 
+type TransactionType = 'Receita' | 'Despesa';
 
-export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): React.JSX.Element {
+export function AddCustomerButton({ refreshTable }: AddCustomerButtonProps): React.JSX.Element {
   const [openModalOptions, setOpenModalOptions] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [categorias, setCategorias] = React.useState<ICategoria[]>([]);
-  const router = useRouter();
 
-  const fetchCategorias = async () => {
-    try {
-      const response = await TransacoesService.listAllCategorias();
-
-      if (response instanceof ApiException) {
-        alert(response.message);
-        return;
-      }
-
-      setCategorias(response)
-    } catch (error: any) {
-      alert(error.message || 'An unexpected error occurred');
-    }
-  };
+  const [transactionType, setTransactionType] = useState<TransactionType>('Receita');
+  const { categorias, fetchCategorias } = useCategorias();
 
   const handleAddClick = () => {
     fetchCategorias();
     setOpenModalOptions(true);
   }
 
-  const handleCategoriaCreated = (newCategoria: ICategoria) => {
-    setCategorias(prevCategorias => [...prevCategorias, newCategoria]);
-  };
-
-
-  const handleIncomeClick = () => {
-    // router.push('/cadastro/receita')
-    console.log('ta aq')
+  const handleAddTransactionClick = (type: TransactionType) => {
+    setTransactionType(type);
     setOpenModal(true);
     setOpenModalOptions(false);
-  };
-
-  const handleExpenseClick = () => {
-    // Lógica para redirecionar para a página de adicionar despesas
-    setOpenModalOptions(false); // estou muito viciado em modal, tenho que mudar isso
   };
 
 
@@ -69,25 +41,17 @@ export function AddCustomerButton({ onAddCustomer }: AddCustomerButtonProps): Re
       <TransactionSelectModal
         isOpen={openModalOptions}
         onClose={() => setOpenModalOptions(!openModalOptions)}
-        onAddIncome={handleIncomeClick}
-        onAddExpense={handleExpenseClick}
+        onAddIncome={() => handleAddTransactionClick('Receita')}
+        onAddExpense={() => handleAddTransactionClick('Despesa')}
       />
 
-      <AddTransactionModal
+      <SaveTransactionModal
         isOpen={openModal}
         onClose={() => setOpenModal(!openModal)}
-      />
-
-
-
-
-      {/* <CustomersAddModal
-        isOpen={openModal}
-        setOpenModal={() => setOpenModal(!openModal)}
-        onAddCustomer={onAddCustomer}
         categorias={categorias}
-        onCategoriaCreated={handleCategoriaCreated}
-      /> */}
+        refreshTable={refreshTable}
+        transactionType={transactionType}
+      />
     </>
   );
 };

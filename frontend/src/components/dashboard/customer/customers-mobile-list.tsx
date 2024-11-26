@@ -1,22 +1,21 @@
 'use client';
 
-import { ApiException } from '@/services/api/ApiException';
 import { ITransacao } from '@/services/api/transacoes/ITransacao';
-import { Box, Card, Typography, Divider } from '@mui/material';
-import { ArrowCircleDown, ArrowCircleUp, Trash } from '@phosphor-icons/react';
-import React, { use, useEffect, useRef, useState } from 'react';
-import SwipeToDelete from 'react-swipe-to-delete-ios';
-import MessageModal from './message-modal';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
-import CustomersEditModal from './customers-edit-modal';
+import { Box, Typography } from '@mui/material';
+import { ArrowCircleDown, ArrowCircleUp, Trash } from '@phosphor-icons/react';
+import React, { useEffect, useState } from 'react';
+import SwipeToDelete from 'react-swipe-to-delete-ios';
+import SaveTransactionModal from './modals/transaction-save-modal';
+import { useCategorias } from '@/contexts/CategoriaContext';
 
 interface MobileListProps {
     rows?: ITransacao[];
     onRowsPerPageChange: (newLimit: number) => void;
-    onEditCustomer: () => void;
+    refreshTable: () => void;
 }
 
-export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: MobileListProps): React.JSX.Element {
+export function MobileList({ rows = [], onRowsPerPageChange, refreshTable }: MobileListProps): React.JSX.Element {
 
 
     const selectedContaData: ITransacao = {
@@ -26,12 +25,13 @@ export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: M
         observacao: '',
         createdAt: '',
         valor: 0,
-        data: ''
+        data: new Date()
     };
 
     const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);
     const [currentPage, setCurrentPage] = useState(10);
-    const [openCustomersModal, setOpenCustomersModal] = React.useState(false);
+    const [openSaveTransactionModal, setOpenSaveTransactionModal] = React.useState(false);
+    const { categorias, fetchCategorias } = useCategorias();
 
     useEffect(() => {
         onRowsPerPageChange(currentPage);
@@ -58,8 +58,11 @@ export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: M
     };
 
     const handleEditClick = (transacao: ITransacao) => {
+        
+        
+        fetchCategorias();
         setSelectedConta(transacao);
-        setOpenCustomersModal(true);
+        setOpenSaveTransactionModal(true);
     };
 
 
@@ -100,12 +103,16 @@ export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: M
                 </SwipeToDelete>
             ))}
             <div id="sentinela" />
-            <CustomersEditModal
-                isOpen={openCustomersModal}
-                setOpenModal={() => setOpenCustomersModal(!openCustomersModal)}
-                onEditCustomer={onEditCustomer}
-                selectedConta={selectedConta}
+
+            <SaveTransactionModal 
+                isOpen={openSaveTransactionModal}
+                onClose={() => setOpenSaveTransactionModal(!openSaveTransactionModal)}
+                categorias={categorias}
+                refreshTable={refreshTable}
+                transactionType={selectedConta.tipo}
+                transactionSelect={selectedConta} 
             />
+
         </Box>
     );
 }

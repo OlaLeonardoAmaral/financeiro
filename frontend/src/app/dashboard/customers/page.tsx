@@ -1,24 +1,17 @@
 "use client";
 
 import * as React from 'react';
-// import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-// import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
-// import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
-
 
 import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
 import { CustomersTable } from '@/components/dashboard/customer/customers-table';
 import { AddCustomerButton } from '@/components/dashboard/customer/customers-add-button';
-// import type { Customer } from '@/components/dashboard/customer/customers-table';
 import { ITransacao } from '@/services/api/transacoes/ITransacao';
 import { ApiException } from '@/services/api/ApiException';
-// import { TransacoesService } from '@/services/mockapi/transacoes/TransacoesService';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { useMediaQuery } from '@mui/material';
 import { MobileList } from '@/components/dashboard/customer/customers-mobile-list';
-
 
 
 export default function Page(): React.JSX.Element {
@@ -73,7 +66,7 @@ export default function Page(): React.JSX.Element {
           <Typography variant="h4">Transações</Typography>
         </Stack>
         <div>
-          <AddCustomerButton onAddCustomer={() => fetchContas(page, limit)} />
+          <AddCustomerButton refreshTable={() => fetchContas(page, limit)} />
         </div>
       </Stack>
       <CustomersFilters onFilterChange={handleFilterChange} />
@@ -82,7 +75,7 @@ export default function Page(): React.JSX.Element {
         <MobileList
           rows={transacoes}
           onRowsPerPageChange={handleRowsPerPageChange}
-          onEditCustomer={() => fetchContas(page, limit)}
+          refreshTable={() => fetchContas(page, limit)}
         />
       ) : <CustomersTable
         count={total}
@@ -90,7 +83,7 @@ export default function Page(): React.JSX.Element {
         page={page - 1}
         rowsPerPage={limit}
         onDeleteCustomer={() => fetchContas(page, limit)}
-        onEditCustomer={() => fetchContas(page, limit)}
+        refreshTable={() => fetchContas(page, limit)}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
       />}
