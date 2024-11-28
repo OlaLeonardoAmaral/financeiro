@@ -1,7 +1,7 @@
 # Financeiro 💼
 
 ## Descrição Geral
-O **Financeiro** nasceu da necessidade da minha prima, que precisava de um sistema simples para gerenciar as finanças do pet shop dela. Este projeto é um **CRUD** básico que permite cadastrar e acompanhar as finanças, oferecendo uma interface intuitiva para controle financeiro.
+O **Financeiro** é uma ferramenta desenvolvida para simplificar a organização financeira, permitindo o cadastro e acompanhamento de receitas e despesas de forma prática e acessível. Com um design focado em usabilidade, o sistema busca facilitar o gerenciamento diário, ajudando usuários a manterem suas finanças em ordem.
 
 ## Funcionalidades Principais 📊
 - Cadastro de receitas e despesas.
