@@ -1,21 +1,26 @@
 'use client';
 
+import { useCategorias } from '@/contexts/CategoriaContext';
 import { ITransacao } from '@/services/api/transacoes/ITransacao';
-import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
-import { Box, Typography } from '@mui/material';
-import { ArrowCircleDown, ArrowCircleUp, Trash } from '@phosphor-icons/react';
+import { Box, IconButton, Typography } from '@mui/material';
+import { DotOutline, GreaterThan, LessThan, Trash } from '@phosphor-icons/react';
 import React, { useEffect, useState } from 'react';
 import SwipeToDelete from 'react-swipe-to-delete-ios';
+import MessageModal from './modals/message-modal';
 import SaveTransactionModal from './modals/transaction-save-modal';
-import { useCategorias } from '@/contexts/CategoriaContext';
+import dayjs from 'dayjs';
 
 interface MobileListProps {
     rows?: ITransacao[];
     onRowsPerPageChange: (newLimit: number) => void;
     refreshTable: () => void;
+    onMonthChange: (newMonth: number) => void;
+    onYearChange: (newYear: number) => void;
 }
 
-export function MobileList({ rows = [], onRowsPerPageChange, refreshTable }: MobileListProps): React.JSX.Element {
+
+
+export function MobileList({ rows = [], onRowsPerPageChange, refreshTable, onMonthChange, onYearChange }: MobileListProps): React.JSX.Element {
 
 
     const selectedContaData: ITransacao = {
@@ -34,42 +39,97 @@ export function MobileList({ rows = [], onRowsPerPageChange, refreshTable }: Mob
 
     const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);
     const [currentPage, setCurrentPage] = useState(10);
+    const [currentMonth, setCurrentMonth] = useState(dayjs().month() + 1);
+    const [currentYear, setCurrentYear] = useState(dayjs().year());
     const [openSaveTransactionModal, setOpenSaveTransactionModal] = React.useState(false);
     const { categorias, fetchCategorias } = useCategorias();
+    const [selectedId, setSelectedId] = React.useState('');
+    const [openMessageModal, setOpenMessageModal] = React.useState(false);
 
+    
     useEffect(() => {
         onRowsPerPageChange(currentPage);
     }, [currentPage])
-
+    
     useEffect(() => {
         const intersectionObserver = new IntersectionObserver(entries => {
             if (entries.some(entry => entry.isIntersecting)) {
-                setCurrentPage((currentValue) => currentValue + 10);
+                setCurrentPage((currentValue) =>  currentValue + 10);
             }
         })
-
+        
         const sentinelaElement = document.querySelector('#sentinela');
-
+        
         if (sentinelaElement) {
             intersectionObserver.observe(sentinelaElement);
         }
-
+        
         return () => intersectionObserver.disconnect();
     }, []);
+    
+    
+    const months = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+
+    const handleMonthChange = (month: number) => {
+
+        if (month === 13) {
+            month = 1;
+            const year = currentYear + 1;
+            handleYearChange(year)
+        } else if (month === 0) {
+            month = 12;
+            const year = currentYear - 1;
+            handleYearChange(year)
+        }
+
+        setCurrentMonth(month)
+        onMonthChange(month);
+    }
+
+
+    const handleYearChange = (year: number) => {
+        setCurrentYear(year)
+        onYearChange(year);
+    }
+
 
     const handleDelete = async (id: string) => {
-        await TransacoesService.deleteById(id);
+        // await TransacoesService.deleteById(id);
+
+        setSelectedId(id);
+        setOpenMessageModal(true);
     };
 
-    const handleEditClick = (transacao: ITransacao) => {        
+    const handleEditClick = (transacao: ITransacao) => {
         fetchCategorias();
         setSelectedConta(transacao);
         setOpenSaveTransactionModal(true);
     };
 
 
+
     return (
         <Box sx={{ padding: 2 }}>
+
+
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 2 }}>
+                <IconButton onClick={() => handleMonthChange(currentMonth - 1)}>
+                    <LessThan size={28} weight="bold" />
+                </IconButton>
+
+                <Typography variant="h5">
+                    {months[currentMonth - 1]} {currentYear}
+                </Typography>
+
+                <IconButton onClick={() => handleMonthChange(currentMonth + 1)}>
+                    <GreaterThan size={28} weight="bold" />
+                </IconButton>
+            </Box>
+
+
             {rows.map((row, index) => (
                 <SwipeToDelete
                     key={row.id}
@@ -82,14 +142,16 @@ export function MobileList({ rows = [], onRowsPerPageChange, refreshTable }: Mob
                     disabled={false}
                 >
                     <Box
-                        sx={{ display: 'flex', alignItems: 'center', gap: 2, marginBottom: '0.1px', padding: 2, backgroundColor: 'white' }}
+                        sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: '0.1px', padding: 2, backgroundColor: 'white' }}
                         onClick={() => handleEditClick(row)}
                     >
-                        {row.tipo.toUpperCase() === 'RECEITA' ? (
-                            <ArrowCircleUp size={35} color='#1AA918' weight="fill" />
-                        ) : (
-                            <ArrowCircleDown size={35} color='#BF1515' weight="fill" />
-                        )}
+
+                        <DotOutline size={36}
+                            color={row.tipo.toUpperCase() === 'RECEITA'
+                                ? 'green'
+                                : 'red'}
+                            weight={row.foiRecebida ? "fill" : "regular"} />
+
                         <Box sx={{ flexGrow: 1 }}>
                             <Typography variant="subtitle1">
                                 {row.categoria.titulo}
@@ -98,22 +160,28 @@ export function MobileList({ rows = [], onRowsPerPageChange, refreshTable }: Mob
                                 {new Date(row.data).toLocaleDateString('pt-BR')}
                             </Typography>
                         </Box>
-                        <Typography variant="h6">
-                            {`R$ ${row.valor}`}
+                        <Typography variant="h6" sx={{ color: row.tipo.toUpperCase() === 'RECEITA' ? 'green' : 'red' }}>
+                            {row.tipo.toUpperCase() === 'RECEITA' ? `R$ ${row.valor}` : `-R$ ${row.valor}`}
                         </Typography>
                     </Box>
                 </SwipeToDelete>
             ))}
             <div id="sentinela" />
 
-            <SaveTransactionModal 
+            <SaveTransactionModal
                 isOpen={openSaveTransactionModal}
                 onClose={() => setOpenSaveTransactionModal(!openSaveTransactionModal)}
                 categorias={categorias}
                 refreshTable={refreshTable}
                 transactionType={selectedConta.tipo}
-                transactionSelect={selectedConta} 
+                transactionSelect={selectedConta}
             />
+
+            <MessageModal
+                isOpen={openMessageModal}
+                setOpenModal={() => setOpenMessageModal(!openMessageModal)}
+                onDeleteCostumer={refreshTable}
+                selectedId={selectedId} />
 
         </Box>
     );

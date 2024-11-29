@@ -10,17 +10,33 @@ interface ListTransacaoServiceProps {
     categoria?: string;
 }
 
-const ListTransacaoService = async (userId: string, { page, limit, categoria }: ListTransacaoServiceProps) => {
+const ListTransacaoService = async (
+    userId: string,
+    { page, limit, categoria, month, year }: ListTransacaoServiceProps & { month?: number; year?: number }
+) => {
     const offset = (page - 1) * limit;
+
+    const whereConditions: any = {
+        userId,
+    };
+
+
+    if (month && year) {
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 0); 
+        whereConditions.data = {
+            [Op.between]: [startDate, endDate],
+        };
+    }
 
     const { rows: transacoes, count: total } = await Transacoes.findAndCountAll({
         limit,
         offset,
-        order: [['createdAt', 'DESC']],
-        where: { userId },
+        order: [['data', 'DESC']],
+        where: whereConditions,
         include: [{
             model: Categorias,
-            where: categoria ? { titulo: { [Op.like]: `%${categoria}%` }, userId } : undefined
+            where: categoria ? { titulo: { [Op.like]: `%${categoria}%` }, userId } : undefined,
         }],
     });
 
@@ -28,7 +44,7 @@ const ListTransacaoService = async (userId: string, { page, limit, categoria }: 
         transacoes,
         total,
         page,
-        limit
+        limit,
     };
 };
 

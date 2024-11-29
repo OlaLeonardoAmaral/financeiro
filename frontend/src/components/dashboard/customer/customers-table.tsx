@@ -1,5 +1,6 @@
 'use client';
 
+import { useCategorias } from '@/contexts/CategoriaContext';
 import { type ITransacao } from '@/services/api/transacoes/ITransacao';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -14,9 +15,8 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { ArrowCircleDown, ArrowCircleUp, PencilSimple, TrashSimple } from '@phosphor-icons/react/dist/ssr';
 import * as React from 'react';
-import MessageModal from './message-modal';
+import MessageModal from './modals/message-modal';
 import SaveTransactionModal from './modals/transaction-save-modal';
-import { useCategorias } from '@/contexts/CategoriaContext';
 // import CustomersEditModal from './modals/customers-edit-modal';
 
 interface CustomersTableProps {
@@ -24,7 +24,6 @@ interface CustomersTableProps {
   rows?: ITransacao[];
   page: number;
   rowsPerPage: number;
-  onDeleteCustomer: () => void;
   refreshTable: () => void;
   onPageChange: (newPage: number) => void;
   onRowsPerPageChange: (newLimit: number) => void;
@@ -38,7 +37,6 @@ export function CustomersTable({
   rows = [],
   page,
   rowsPerPage,
-  onDeleteCustomer,
   refreshTable,
   onPageChange,
   onRowsPerPageChange
@@ -60,7 +58,7 @@ export function CustomersTable({
 
   const [selectedId, setSelectedId] = React.useState('');
   const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);
-
+  
   const [openSaveTransactionModal, setOpenSaveTransactionModal] = React.useState(false);
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
 
@@ -165,7 +163,7 @@ export function CustomersTable({
         <MessageModal
           isOpen={openMessageModal}
           setOpenModal={() => setOpenMessageModal(!openMessageModal)}
-          onDeleteCostumer={onDeleteCustomer}
+          onDeleteCostumer={refreshTable}
           selectedId={selectedId} />
       </div>
     </Card>

@@ -12,6 +12,7 @@ import { ApiException } from '@/services/api/ApiException';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { useMediaQuery } from '@mui/material';
 import { MobileList } from '@/components/dashboard/customer/customers-mobile-list';
+import dayjs from 'dayjs';
 
 
 export default function Page(): React.JSX.Element {
@@ -22,12 +23,20 @@ export default function Page(): React.JSX.Element {
   const [limit, setLimit] = React.useState(10);
   const [categoria, setCategoria] = React.useState('');
 
-  // const isMobile = useMediaQuery('(max-width:1199px)');
+  const [month, setMonth] = React.useState(dayjs().month() + 1);
+  const [year, setYear] = React.useState(dayjs().year());
+
+
   const isMobile = useMediaQuery('(max-width:850px)');
 
-  const fetchContas = (page = 1, limit = 10, categoria = '') => {
-
-    TransacoesService.listAll({ page, limit, categoria })
+  const fetchContas = (
+    page = 1,
+    limit = 10,
+    categoria = '',
+    month = dayjs().month() + 1,
+    year = dayjs().year()
+  ) => {
+    TransacoesService.listAll({ page, limit, categoria, month, year })
       .then((result) => {
         if (result instanceof ApiException) {
           alert(result.message);
@@ -41,9 +50,24 @@ export default function Page(): React.JSX.Element {
       .catch((error) => alert(error.message));
   };
 
+
   React.useEffect(() => {
-    fetchContas(page, limit, categoria);
-  }, [page, limit, categoria]);
+    fetchContas(page, limit, categoria, month, year);
+  }, [page, limit, categoria, month, year]);
+
+
+
+  const handleMonthChange = (newMonth: number) => {
+    setMonth(newMonth);
+    setPage(1);
+  };
+
+  const handleYearChange = (newYear: number) => {
+    setYear(newYear);
+    setPage(1);
+  };
+
+
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage + 1);
@@ -76,13 +100,14 @@ export default function Page(): React.JSX.Element {
           rows={transacoes}
           onRowsPerPageChange={handleRowsPerPageChange}
           refreshTable={() => fetchContas(page, limit)}
+          onMonthChange={handleMonthChange}
+          onYearChange={handleYearChange}
         />
       ) : <CustomersTable
         count={total}
         rows={transacoes}
         page={page - 1}
         rowsPerPage={limit}
-        onDeleteCustomer={() => fetchContas(page, limit)}
         refreshTable={() => fetchContas(page, limit)}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}

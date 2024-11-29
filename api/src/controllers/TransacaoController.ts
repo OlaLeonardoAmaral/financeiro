@@ -77,21 +77,31 @@ export const createTransacao = async (req: AuthenticatedRequest, res: Response):
 }
 
 export const listTransacao = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
-    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
-    const categoria = req.query.categoria as string;
-    const userId = req.userId!;
+    try {
+        const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+        const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
+        const categoria = req.query.categoria as string;
+        const month = req.query.month ? parseInt(req.query.month as string, 10) : undefined;
+        const year = req.query.year ? parseInt(req.query.year as string, 10) : undefined;
+        const userId = req.userId!;
 
-    const { transacoes, total } = await ListTransacaoService(userId, { page, limit, categoria });
-    const totalPages = Math.ceil(total / limit);
-    return res.status(200).json({
-        transacoes,
-        total,
-        page,
-        limit,
-        totalPages
-    });
-}
+        const { transacoes, total } = await ListTransacaoService(userId, { page, limit, categoria, month, year });
+        const totalPages = Math.ceil(total / limit);
+        
+        return res.status(200).json({
+            transacoes,
+            total,
+            page,
+            limit,
+            totalPages,
+            currentMonth: month,
+            currentYear: year
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Erro ao listar transações" });
+    }
+};
 
 export const getTransacaoById = async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;

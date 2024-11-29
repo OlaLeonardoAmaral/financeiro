@@ -4,11 +4,36 @@ import { ICategoria, ICategoriaCreate } from "./ICategoria";
 import { ITransacao } from "./ITransacao";
 import { ITransacaoCreate } from "./ITransicaoCreate";
 import { ITransacaoUpdate } from "./ITransicaoUpdate";
+import dayjs from 'dayjs';
 
-const listAll = async (params: { page: number, limit: number, categoria: string }): Promise<{ transacoes: ITransacao[]; total: number; page: number; limit: number; totalPages: number } | ApiException> => {
+const listAll = async (params: { 
+    page: number; 
+    limit: number; 
+    categoria?: string; 
+    month?: number; 
+    year?: number; 
+}): Promise<{
+    transacoes: ITransacao[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    currentMonth: number;
+    currentYear: number;
+} | ApiException> => {
     try {
-        const { page, limit, categoria } = params;
-        const queryParams = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+        const { page, limit, categoria, month, year } = params;
+
+        const currentMonth = month || dayjs().month() + 1; 
+        const currentYear = year || dayjs().year();
+
+        const queryParams = new URLSearchParams({
+            page: page.toString(),
+            limit: limit.toString(),
+            month: currentMonth.toString(),
+            year: currentYear.toString(),
+        });
+
         if (categoria) {
             queryParams.append('categoria', categoria);
         }
@@ -16,7 +41,7 @@ const listAll = async (params: { page: number, limit: number, categoria: string 
         const { data } = await Api().get(`/transacoes/list?${queryParams.toString()}`);
         return data;
     } catch (error: any) {
-        return new ApiException(error.message || 'Erro ao buscar todos');
+        return new ApiException(error.message || 'Erro ao buscar transações');
     }
 };
 
