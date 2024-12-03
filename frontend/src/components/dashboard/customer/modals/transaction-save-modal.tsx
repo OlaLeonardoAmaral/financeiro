@@ -32,6 +32,7 @@ import { ICategoria } from '@/services/api/transacoes/ICategoria';
 import { ITransacaoCreate } from '@/services/api/transacoes/ITransicaoCreate';
 import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
 import { ITransacao } from '@/services/api/transacoes/ITransacao';
+import MessageModal from './message-modal';
 
 interface AddTransactionProps {
     isOpen: boolean;
@@ -40,6 +41,12 @@ interface AddTransactionProps {
     refreshTable: () => void;
     transactionType: string;
     transactionSelect?: ITransacao;
+}
+
+const styleButtonDelete = {
+    backgroundColor: '#F11414',
+    color: 'white',
+    font: 'semibold',
 }
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -87,7 +94,6 @@ export function SaveTransactionModal({
         selectedDate: transactionSelect?.data ? new Date(transactionSelect.data) : new Date(),
         categoriaId: transactionSelect?.categoria?.id || categorias[0]?.id || '',
     };
-
 
     const handleDateTypeChange = (
         event: React.MouseEvent<HTMLElement>,
@@ -211,6 +217,15 @@ export function SaveTransactionModal({
         onClose();
     };
 
+    const [selectedId, setSelectedId] = React.useState('');
+    const [openMessageModal, setOpenMessageModal] = React.useState(false);
+
+    const handleDelete = async (id: string) => {
+        setSelectedId(id);
+        setOpenMessageModal(true);
+    };
+
+
     const updateField = (field: string, value: any) => {
         setFormState((prev) => ({ ...prev, [field]: value }));
     };
@@ -244,7 +259,6 @@ export function SaveTransactionModal({
             <DialogContent>
                 <Stack spacing={3}>
 
-                    {/* Amount Input */}
                     <TextField
                         fullWidth
                         value={formatCurrency(formState.amount)}
@@ -259,8 +273,6 @@ export function SaveTransactionModal({
                         }}
                     />
 
-
-                    {/* Date Toggle Buttons */}
                     <StyledToggleButtonGroup
                         exclusive
                         fullWidth
@@ -268,7 +280,7 @@ export function SaveTransactionModal({
                         <Stack direction="row" justifyContent="space-between" alignItems="center" width="20rem">
                             <span>Foi recebida</span>
                             <Switch
-                                checked={formState.isReceived} // mas o Switch esta sempre vindo marcado (true)
+                                checked={formState.isReceived}
                                 onChange={(e) => updateField('isReceived', e.target.checked)}
                                 color="success"
                             />
@@ -286,9 +298,6 @@ export function SaveTransactionModal({
                         onDateSelect={handleDateSelect}
                     />
 
-
-
-                    {/* Description Input */}
                     <TextField
                         fullWidth
                         placeholder="Descrição"
@@ -303,7 +312,6 @@ export function SaveTransactionModal({
                         }}
                     />
 
-                    {/* Category Select */}
                     <FormControl fullWidth>
                         <InputLabel>Categoria</InputLabel>
                         <Select
@@ -319,8 +327,7 @@ export function SaveTransactionModal({
                         </Select>
                     </FormControl>
 
-                    {/* Repeat Section */}
-                    <Stack spacing={2}>
+                    {!transactionSelect && (<Stack spacing={2}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
                             <Stack direction="row" alignItems="center" spacing={1}>
                                 <ArrowClockwise />
@@ -353,7 +360,7 @@ export function SaveTransactionModal({
                                 </FormControl>
                             </Stack>
                         )}
-                    </Stack>
+                    </Stack>)}
                 </Stack>
             </DialogContent>
 
@@ -364,8 +371,28 @@ export function SaveTransactionModal({
                     fullWidth
                     onClick={handleSave}
                 >
-                    SALVAR
+                    Salvar
                 </Button>
+
+
+                {transactionSelect &&
+                    <Button
+                        variant="contained"
+                        fullWidth
+                        onClick={() => handleDelete(transactionSelect.id)}
+                        sx={{ ...styleButtonDelete }}
+                    >
+                        Excluir
+                    </Button>}
+
+
+                <MessageModal
+                    isOpen={openMessageModal}
+                    setOpenModal={() => setOpenMessageModal(!openMessageModal)}
+                    onDeleteCostumer={refreshTable}
+                    onCloseSaveModal={onClose}
+                    selectedId={selectedId}
+                />
             </DialogActions>
         </StyledDialog>
     );

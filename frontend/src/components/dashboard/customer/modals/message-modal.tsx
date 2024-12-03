@@ -64,10 +64,10 @@ interface MessageModalProps {
   setOpenModal: () => void;
   onDeleteCostumer?: () => void;
   selectedId: string;
-  // children: React.ReactNode;
+  onCloseSaveModal: () => void;
 }
 
-export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, selectedId }: MessageModalProps): React.JSX.Element {
+export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, selectedId, onCloseSaveModal }: MessageModalProps): React.JSX.Element {
 
 
   const handleClose = () => {
@@ -79,6 +79,7 @@ export default function MessageModal({ isOpen, setOpenModal, onDeleteCostumer, s
     if (onDeleteCostumer) {
       onDeleteCostumer();
     }
+    onCloseSaveModal();
     handleClose();
   }
 

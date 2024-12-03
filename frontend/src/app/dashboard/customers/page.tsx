@@ -90,7 +90,7 @@ export default function Page(): React.JSX.Element {
           <Typography variant="h4">Transações</Typography>
         </Stack>
         <div>
-          <AddCustomerButton refreshTable={() => fetchContas(page, limit)} />
+          <AddCustomerButton refreshTable={() => fetchContas(page, limit, categoria, month, year)} />
         </div>
       </Stack>
       <CustomersFilters onFilterChange={handleFilterChange} />
@@ -99,7 +99,7 @@ export default function Page(): React.JSX.Element {
         <MobileList
           rows={transacoes}
           onRowsPerPageChange={handleRowsPerPageChange}
-          refreshTable={() => fetchContas(page, limit)}
+          refreshTable={() => fetchContas(page, limit, categoria, month, year)}
           onMonthChange={handleMonthChange}
           onYearChange={handleYearChange}
         />
@@ -108,7 +108,7 @@ export default function Page(): React.JSX.Element {
         rows={transacoes}
         page={page - 1}
         rowsPerPage={limit}
-        refreshTable={() => fetchContas(page, limit)}
+        refreshTable={() => fetchContas(page, limit, categoria, month, year)}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
       />}
