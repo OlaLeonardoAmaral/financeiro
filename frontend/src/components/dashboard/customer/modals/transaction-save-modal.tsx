@@ -17,6 +17,8 @@ import {
     InputAdornment,
     Stack,
     SelectChangeEvent,
+    Typography,
+    Box,
 } from '@mui/material';
 import {
     X as CloseIcon,
@@ -24,6 +26,8 @@ import {
     CalendarBlank,
     BookmarkSimple,
     ArrowClockwise,
+    Minus,
+    Plus,
 } from '@phosphor-icons/react';
 
 import { styled } from '@mui/material/styles';
@@ -87,7 +91,7 @@ export function SaveTransactionModal({
         amount: transactionSelect?.valor?.toString() || '',
         isReceived: transactionSelect?.foiRecebida !== undefined ? transactionSelect.foiRecebida : true,
         repeat: transactionSelect?.repetir || false,
-        repeatTimes: transactionSelect?.quantidadeRepeticoes || '2',
+        repeatTimes: transactionSelect?.quantidadeRepeticoes || 2,
         repeatPeriod: transactionSelect?.periodoRepeticao || 'Mensal',
         isCalendarOpen: false,
         description: transactionSelect?.observacao || '',
@@ -172,7 +176,7 @@ export function SaveTransactionModal({
             amount: transactionSelect?.valor?.toString() || '',
             isReceived: transactionSelect?.foiRecebida !== undefined ? transactionSelect.foiRecebida : true,
             repeat: transactionSelect?.repetir || false,
-            repeatTimes: transactionSelect?.quantidadeRepeticoes || '2',
+            repeatTimes: transactionSelect?.quantidadeRepeticoes || 2,
             repeatPeriod: transactionSelect?.periodoRepeticao || 'Mensal',
             isCalendarOpen: false,
             description: transactionSelect?.observacao || '',
@@ -227,6 +231,9 @@ export function SaveTransactionModal({
 
 
     const updateField = (field: string, value: any) => {
+
+
+
         setFormState((prev) => ({ ...prev, [field]: value }));
     };
 
@@ -341,18 +348,24 @@ export function SaveTransactionModal({
 
                         {formState.repeat && (
                             <Stack direction="row" spacing={2} alignItems="center">
+
                                 <TextField
                                     value={formState.repeatTimes}
                                     onChange={(e) => updateField('repeatTimes', e.target.value)}
                                     type="number"
+                                    label="Quantidade"
                                     size="small"
                                     sx={{ width: 300 }}
+                                    inputProps={{ min: 2 }}
                                 />
-                                <span>vezes</span>
+
                                 <FormControl fullWidth size="small">
+                                    <InputLabel id="label-periodo">Período</InputLabel>
                                     <Select
+                                        labelId='label-periodo'
                                         value={formState.repeatPeriod}
                                         onChange={(e) => updateField('repeatPeriod', e.target.value)}
+                                        label="Período"
                                     >
                                         <MenuItem value="Mensal">Meses</MenuItem>
                                         <MenuItem value="Semanal">Semanas</MenuItem>
