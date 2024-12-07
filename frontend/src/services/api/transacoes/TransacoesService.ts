@@ -74,7 +74,10 @@ const create = async (dataToCreate: ITransacaoCreate): Promise<ITransacaoCreate 
 
  const updateById = async (id: string, dataToUpdate: ITransacaoUpdate): Promise<ITransacaoUpdate | ApiException> => {
     try {
-        const { data } = await Api().put<any>(`/transacoes/update${dataToUpdate.isParcela && '/parcela'}/${id}`, dataToUpdate);
+
+        const routeUpdate = `/transacoes/update${dataToUpdate.isParcela ? '/parcela' : ''}/${id}`
+
+        const { data } = await Api().put<any>(routeUpdate, dataToUpdate);
         return data;
     } catch (error: any) {
         return new ApiException(error.message || 'Erro ao atualizar uma receita');
@@ -83,7 +86,8 @@ const create = async (dataToCreate: ITransacaoCreate): Promise<ITransacaoCreate 
 
 const deleteById = async (id: string, isParcela?: boolean): Promise<undefined | ApiException> => {
     try {
-        await Api().delete(`/transacoes/remove${isParcela && '/parcela'}/${id}`);
+        const routeDelete = `/transacoes/remove${isParcela ? '/parcela' : ''}/${id}`; 
+        await Api().delete(routeDelete);
         return undefined;
     } catch (error: any) {
         return new ApiException(error.message || 'Erro ao apagar o registro');
