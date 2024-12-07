@@ -11,13 +11,15 @@ import {
     Default,
 } from "sequelize-typescript";
 import Transacoes from "./Transacoes";
+import Categorias from "./Categorias";
 import User from "./User";
 
 @Table
 class Parcelas extends Model<Parcelas> {
     @PrimaryKey
-    @Column(DataType.INTEGER)
-    id: number;
+    @Default(DataType.UUIDV4)
+    @Column(DataType.UUID)
+    id: string;
 
     @ForeignKey(() => Transacoes)
     @Column(DataType.INTEGER)
@@ -48,6 +50,19 @@ class Parcelas extends Model<Parcelas> {
 
     @Column(DataType.INTEGER)
     totalParcelas: number;
+
+    @ForeignKey(() => Categorias)
+    @Column(DataType.UUID)
+    categoriaId: string;
+
+    @BelongsTo(() => Categorias)
+    categoria: Categorias;
+
+    @Column(DataType.STRING)
+    observacao: string;
+
+    @Column(DataType.ENUM("Receita", "Despesa"))
+    tipo: string;
 
     @CreatedAt
     createdAt: Date;

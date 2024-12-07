@@ -97,6 +97,7 @@ export function SaveTransactionModal({
         description: transactionSelect?.observacao || '',
         selectedDate: transactionSelect?.data ? new Date(transactionSelect.data) : new Date(),
         categoriaId: transactionSelect?.categoria?.id || categorias[0]?.id || '',
+        isParcela: transactionSelect?.isParcela
     };
 
     const handleDateTypeChange = (
@@ -182,6 +183,7 @@ export function SaveTransactionModal({
             description: transactionSelect?.observacao || '',
             selectedDate: transactionSelect?.data ? new Date(transactionSelect.data) : new Date(),
             categoriaId: transactionSelect?.categoria?.id || categorias[0]?.id || '',
+            isParcela: transactionSelect?.isParcela
         });
     }, [transactionSelect, categorias]);
 
@@ -208,6 +210,7 @@ export function SaveTransactionModal({
             repetir: formState.repeat,
             quantidadeRepeticoes: formState.repeat ? Number(formState.repeatTimes) : undefined,
             periodoRepeticao: formState.repeat ? (formState.repeatPeriod as PeriodoRepeticao) : undefined,
+            isParcela: formState.isParcela || false
         };
 
         if (transactionSelect) {
@@ -222,10 +225,12 @@ export function SaveTransactionModal({
     };
 
     const [selectedId, setSelectedId] = React.useState('');
+    const [selectedIsParcela, setSelectedIsParcela] = React.useState(false);
     const [openMessageModal, setOpenMessageModal] = React.useState(false);
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (id: string, isParcela: boolean) => {
         setSelectedId(id);
+        setSelectedIsParcela(isParcela)
         setOpenMessageModal(true);
     };
 
@@ -392,7 +397,7 @@ export function SaveTransactionModal({
                     <Button
                         variant="contained"
                         fullWidth
-                        onClick={() => handleDelete(transactionSelect.id)}
+                        onClick={() => handleDelete(transactionSelect.id, transactionSelect.isParcela)}
                         sx={{ ...styleButtonDelete }}
                     >
                         Excluir
@@ -405,6 +410,7 @@ export function SaveTransactionModal({
                     onDeleteCostumer={refreshTable}
                     onCloseSaveModal={onClose}
                     selectedId={selectedId}
+                    isParcela={selectedIsParcela}
                 />
             </DialogActions>
         </StyledDialog>

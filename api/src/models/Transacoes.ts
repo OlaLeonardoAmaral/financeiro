@@ -9,9 +9,11 @@ import {
     ForeignKey,
     Default,
     BelongsTo,
+    HasMany,
 } from "sequelize-typescript";
 import Categorias from "./Categorias";
 import User from "./User";
+import Parcelas from "./Parcelas";
 
 @Table
 class Transacoes extends Model<Transacoes> {
@@ -37,6 +39,9 @@ class Transacoes extends Model<Transacoes> {
 
     @BelongsTo(() => User)
     user: User
+
+    @HasMany(() => Parcelas)
+    parcelas: Parcelas[];
 
     @Column
     tipo: string;

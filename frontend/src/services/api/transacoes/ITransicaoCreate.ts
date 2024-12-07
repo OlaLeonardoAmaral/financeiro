@@ -14,6 +14,7 @@ export interface ITransacaoCreate {
     repetir: boolean;
     quantidadeRepeticoes?: number;
     periodoRepeticao?: PeriodoRepeticao;
+    isParcela: boolean;
 }
 
 

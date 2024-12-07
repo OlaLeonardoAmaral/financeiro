@@ -11,11 +11,17 @@ import GetTransacaoByIdService from "../services/TransacaoServices/GetTransacaoB
 import GetTotaisMes from "../services/TransacaoServices/GetTotaisMes";
 import GetTotaisCadaMes from "../services/TransacaoServices/GetTotaisCadaMes";
 import { AuthenticatedRequest } from "../middleware/isAuth";
+import UpdateParcelaService from "../services/ParcelaService/UpdateParcelaService";
 
 
 
 interface SerializedCategoria {
     titulo: string;
+}
+
+enum TipoTransacao {
+    Receita = "Receita",
+    Despesa = "Despesa",
 }
 
 enum PeriodoRepeticao {
@@ -24,7 +30,7 @@ enum PeriodoRepeticao {
 }
 
 interface SerializedTransacao {
-    tipo: string;
+    tipo: TipoTransacao;
     categoriaId: string;
     observacao: string;
     valor: number;
@@ -60,7 +66,9 @@ export const createTransacao = async (req: AuthenticatedRequest, res: Response):
         periodoRepeticao,
         quantidadeRepeticoes
     } = req.body as SerializedTransacao;
+
     const userId = req.userId!;
+
     const transacao = await CreateTransacaoService({
         tipo,
         categoriaId,
@@ -87,7 +95,7 @@ export const listTransacao = async (req: AuthenticatedRequest, res: Response): P
 
         const { transacoes, total } = await ListTransacaoService(userId, { page, limit, categoria, month, year });
         const totalPages = Math.ceil(total / limit);
-        
+
         return res.status(200).json({
             transacoes,
             total,
@@ -119,10 +127,16 @@ export const updateTransacao = async (req: AuthenticatedRequest, res: Response):
         foiRecebida,
         repetir,
         periodoRepeticao,
-        quantidadeRepeticoes
+        quantidadeRepeticoes,
     } = req.body as SerializedTransacao;
+
+
+
     const { id } = req.params;
     const userId = req.userId!;
+
+
+
     const transacao = await UpdateTransacaoService(id, userId, {
         tipo,
         categoriaId,
@@ -134,6 +148,9 @@ export const updateTransacao = async (req: AuthenticatedRequest, res: Response):
         periodoRepeticao,
         quantidadeRepeticoes
     });
+
+
+
     return res.status(200).json(transacao);
 }
 

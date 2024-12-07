@@ -93,7 +93,8 @@ export function MobileList({ rows = [], onRowsPerPageChange, refreshTable, onMon
         foiRecebida: true,
         repetir: false,
         periodoRepeticao: undefined,
-        quantidadeRepeticoes: undefined
+        quantidadeRepeticoes: undefined,
+        isParcela: false
     };
 
     const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);
@@ -204,7 +205,7 @@ export function MobileList({ rows = [], onRowsPerPageChange, refreshTable, onMon
                         <Typography variant="subtitle1">
                             {((row.observacao || row.categoria.titulo).length > 17
                                 ? (row.observacao || row.categoria.titulo).slice(0, 17) + "..."
-                                : row.observacao || row.categoria.titulo)}
+                                : row.observacao || row.categoria.titulo)} {row.isParcela && `(${row.numeroParcela}/${row.totalParcelas})`}
                         </Typography>
                         <Typography variant="body2">
                             {row.categoria.titulo} - {formatDate(row.data)}

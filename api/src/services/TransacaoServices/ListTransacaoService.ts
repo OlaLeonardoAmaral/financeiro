@@ -1,5 +1,6 @@
 import AppError from "../../errors/AppError";
 import Categorias from "../../models/Categorias";
+import Parcelas from "../../models/Parcelas";
 import Transacoes from "../../models/Transacoes";
 import { Op } from "sequelize";
 
@@ -23,7 +24,7 @@ const ListTransacaoService = async (
 
     if (month && year) {
         const startDate = new Date(year, month - 1, 1);
-        const endDate = new Date(year, month, 0); 
+        const endDate = new Date(year, month, 0);
         whereConditions.data = {
             [Op.between]: [startDate, endDate],
         };
@@ -40,9 +41,33 @@ const ListTransacaoService = async (
         }],
     });
 
+    const { rows: parcelas, count: totalParcelas } = await Parcelas.findAndCountAll({
+        limit,
+        offset,
+        order: [['data', 'DESC']],
+        where: whereConditions,
+        include: [{
+            model: Categorias,
+            where: categoria ? { titulo: { [Op.like]: `%${categoria}%` }, userId } : undefined,
+        }],
+    });
+
+    const parcelasComFlag = parcelas.map((parcela) => ({
+        ...parcela.get(), 
+        isParcela: true, 
+    }));
+
+
+    const transacoesComFlag = transacoes.map((transacao) => ({
+        ...transacao.get(),
+        isParcela: false,
+    }));
+
+    const allItems = [...transacoesComFlag, ...parcelasComFlag];
+
     return {
-        transacoes,
-        total,
+        transacoes: allItems,
+        total: total + totalParcelas, 
         page,
         limit,
     };
