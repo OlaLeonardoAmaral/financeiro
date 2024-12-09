@@ -9,9 +9,11 @@ import {
     ForeignKey,
     Default,
     BelongsTo,
+    HasMany,
 } from "sequelize-typescript";
 import Categorias from "./Categorias";
 import User from "./User";
+import Parcelas from "./Parcelas";
 
 @Table
 class Transacoes extends Model<Transacoes> {
@@ -38,6 +40,9 @@ class Transacoes extends Model<Transacoes> {
     @BelongsTo(() => User)
     user: User
 
+    @HasMany(() => Parcelas)
+    parcelas: Parcelas[];
+
     @Column
     tipo: string;
 
@@ -46,6 +51,20 @@ class Transacoes extends Model<Transacoes> {
 
     @Column
     valor: number;
+
+    @Default(true)
+    @Column(DataType.BOOLEAN)
+    foiRecebida: boolean;
+
+    @Default(false)
+    @Column(DataType.BOOLEAN)
+    repetir: boolean;
+
+    @Column(DataType.INTEGER)
+    quantidadeRepeticoes: number;
+
+    @Column(DataType.ENUM('Mensal', 'Semanal'))
+    periodoRepeticao: string;
 
     @CreatedAt
     createdAt: Date;

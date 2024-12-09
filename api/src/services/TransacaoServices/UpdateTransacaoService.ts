@@ -5,12 +5,21 @@ import Transacoes from "../../models/Transacoes";
 import moment from "moment-timezone";
 
 
+enum PeriodoRepeticao {
+    Mensal = "Mensal",
+    Semanal = "Semanal",
+}
+
 interface SerializedTransacao {
     tipo: string;
     categoriaId: string;
     observacao: string;
     valor: number;
     data?: string;
+    foiRecebida: boolean;
+    repetir: boolean;
+    quantidadeRepeticoes?: number;
+    periodoRepeticao?: PeriodoRepeticao;
 }
 
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { useCategorias } from '@/contexts/CategoriaContext';
 import { type ITransacao } from '@/services/api/transacoes/ITransacao';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -14,18 +15,18 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { ArrowCircleDown, ArrowCircleUp, PencilSimple, TrashSimple } from '@phosphor-icons/react/dist/ssr';
 import * as React from 'react';
-import CustomersEditModal from './customers-edit-modal';
-import MessageModal from './message-modal';
+import MessageModal from './modals/message-modal';
+import SaveTransactionModal from './modals/transaction-save-modal';
+// import CustomersEditModal from './modals/customers-edit-modal';
 
 interface CustomersTableProps {
   count?: number;
   rows?: ITransacao[];
   page: number;
   rowsPerPage: number;
-  onDeleteCustomer: () => void;
-  onEditCustomer: () => void;
+  refreshTable: () => void;
   onPageChange: (newPage: number) => void;
-  onRowsPerPageChange: (newLimit: number) => void;  
+  onRowsPerPageChange: (newLimit: number) => void;
 }
 
 
@@ -36,8 +37,7 @@ export function CustomersTable({
   rows = [],
   page,
   rowsPerPage,
-  onDeleteCustomer,
-  onEditCustomer,
+  refreshTable,
   onPageChange,
   onRowsPerPageChange
 }: CustomersTableProps): React.JSX.Element {
@@ -49,14 +49,20 @@ export function CustomersTable({
     observacao: '',
     createdAt: '',
     valor: 0,
-    data: ''
-  };
+    data: new Date(),
+    foiRecebida: true,
+    repetir: false,
+    periodoRepeticao: undefined,
+    quantidadeRepeticoes: undefined
+};
 
   const [selectedId, setSelectedId] = React.useState('');
   const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);
-
-  const [openCustomersModal, setOpenCustomersModal] = React.useState(false);
+  
+  const [openSaveTransactionModal, setOpenSaveTransactionModal] = React.useState(false);
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
+
+  const { categorias, fetchCategorias } = useCategorias();
 
   const handlePageChange = (event: unknown, newPage: number) => {
     onPageChange(newPage);
@@ -72,8 +78,9 @@ export function CustomersTable({
   };
 
   const handleEditClick = (transacao: ITransacao) => {
+    fetchCategorias();
     setSelectedConta(transacao);
-    setOpenCustomersModal(true);
+    setOpenSaveTransactionModal(true);
   };
 
   return (
@@ -91,7 +98,7 @@ export function CustomersTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows              
+            {rows
               .map((row) => {
                 return (
                   <TableRow hover key={row.id}>
@@ -145,16 +152,18 @@ export function CustomersTable({
         onRowsPerPageChange={handleRowsPerPageChange}
       />
       <div>
-        <CustomersEditModal
-          isOpen={openCustomersModal}
-          setOpenModal={() => setOpenCustomersModal(!openCustomersModal)}
-          onEditCustomer={onEditCustomer}
-          selectedConta={selectedConta}
+        <SaveTransactionModal
+          isOpen={openSaveTransactionModal}
+          onClose={() => setOpenSaveTransactionModal(!openSaveTransactionModal)}
+          categorias={categorias}
+          refreshTable={refreshTable}
+          transactionType={selectedConta.tipo}
+          transactionSelect={selectedConta}
         />
         <MessageModal
           isOpen={openMessageModal}
           setOpenModal={() => setOpenMessageModal(!openMessageModal)}
-          onDeleteCostumer={onDeleteCustomer}
+          onDeleteCostumer={refreshTable}
           selectedId={selectedId} />
       </div>
     </Card>
