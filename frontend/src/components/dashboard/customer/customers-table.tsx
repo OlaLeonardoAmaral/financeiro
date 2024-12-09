@@ -53,7 +53,8 @@ export function CustomersTable({
     foiRecebida: true,
     repetir: false,
     periodoRepeticao: undefined,
-    quantidadeRepeticoes: undefined
+    quantidadeRepeticoes: undefined,
+    isParcela: false
 };
 
   const [selectedId, setSelectedId] = React.useState('');
@@ -160,11 +161,13 @@ export function CustomersTable({
           transactionType={selectedConta.tipo}
           transactionSelect={selectedConta}
         />
-        <MessageModal
+        {/* <MessageModal
           isOpen={openMessageModal}
           setOpenModal={() => setOpenMessageModal(!openMessageModal)}
           onDeleteCostumer={refreshTable}
-          selectedId={selectedId} />
+          selectedId={selectedId} 
+          isParcela={}
+          /> */}
       </div>
     </Card>
 
