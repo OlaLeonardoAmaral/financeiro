@@ -1,22 +1,85 @@
 'use client';
 
-import { ApiException } from '@/services/api/ApiException';
+import { useCategorias } from '@/contexts/CategoriaContext';
 import { ITransacao } from '@/services/api/transacoes/ITransacao';
-import { Box, Card, Typography, Divider } from '@mui/material';
-import { ArrowCircleDown, ArrowCircleUp, Trash } from '@phosphor-icons/react';
-import React, { use, useEffect, useRef, useState } from 'react';
-import SwipeToDelete from 'react-swipe-to-delete-ios';
-import MessageModal from './message-modal';
-import { TransacoesService } from '@/services/api/transacoes/TransacoesService';
-import CustomersEditModal from './customers-edit-modal';
+import { Box, Button, IconButton, Typography } from '@mui/material';
+import { DotOutline, GreaterThan, LessThan, Trash } from '@phosphor-icons/react';
+import React, { useEffect, useState } from 'react';
+import { MonthYearSelectorModal } from './modals/month-year-select-modal';
+import SaveTransactionModal from './modals/transaction-save-modal';
+import dayjs from 'dayjs';
+dayjs.locale("pt-br");
 
 interface MobileListProps {
     rows?: ITransacao[];
     onRowsPerPageChange: (newLimit: number) => void;
-    onEditCustomer: () => void;
+    refreshTable: () => void;
+    onMonthChange: (newMonth: number) => void;
+    onYearChange: (newYear: number) => void;
 }
 
-export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: MobileListProps): React.JSX.Element {
+
+const boxContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'background.paper',
+    padding: '16px',
+    borderRadius: '8px',
+    boxShadow: 2,
+    marginBottom: 2,
+};
+
+const iconButtonStyle = {
+    backgroundColor: 'primary.main',
+    color: 'common.white',
+    '&:hover': {
+        backgroundColor: 'primary.dark',
+    },
+};
+
+const buttonStyle = {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    textTransform: 'none',
+    color: 'text.primary',
+    '&:hover': {
+        color: 'primary.main',
+    },
+};
+
+const cardStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 1,
+    marginBottom: '0.1px',
+    padding: 2,
+    backgroundColor: 'white',
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    '&:hover': {
+        transform: 'scale(1.02)',
+        boxShadow: 3,
+        borderRadius: 1
+    },
+};
+
+const iconStyle = (tipo: string, foiRecebida: boolean) => ({
+    color: tipo.toUpperCase() === 'RECEITA' ? 'green' : 'red',
+    weight: foiRecebida ? 'fill' as const : 'regular' as const,
+});
+
+const amountStyle = (tipo: string) => ({
+    color: tipo.toUpperCase() === 'RECEITA' ? 'green' : 'red',
+});
+
+const formatDate = (date: Date) => {
+    const formattedDate = dayjs(date).format("ddd, DD");
+    return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+};
+
+
+export function MobileList({ rows = [], onRowsPerPageChange, refreshTable, onMonthChange, onYearChange }: MobileListProps): React.JSX.Element {
 
 
     const selectedContaData: ITransacao = {
@@ -26,16 +89,34 @@ export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: M
         observacao: '',
         createdAt: '',
         valor: 0,
-        data: ''
+        data: new Date(),
+        foiRecebida: true,
+        repetir: false,
+        periodoRepeticao: undefined,
+        quantidadeRepeticoes: undefined,
+        isParcela: false
     };
 
     const [selectedConta, setSelectedConta] = React.useState<ITransacao>(selectedContaData);
     const [currentPage, setCurrentPage] = useState(10);
+<<<<<<< HEAD
     const [openCustomersModal, setOpenCustomersModal] = React.useState(false);
+=======
+    const [currentMonth, setCurrentMonth] = useState(dayjs().month() + 1);
+    const [currentYear, setCurrentYear] = useState(dayjs().year());
+    const [openSaveTransactionModal, setOpenSaveTransactionModal] = React.useState(false);
+    const { categorias, fetchCategorias } = useCategorias();
+
+>>>>>>> a0525ca590027ea177ff0d8f9cb376c54d864134
 
     useEffect(() => {
         onRowsPerPageChange(currentPage);
     }, [currentPage])
+
+    useEffect(() => {
+        onMonthChange(currentMonth);
+        onYearChange(currentYear);
+    }, [currentMonth, currentYear])
 
     useEffect(() => {
         const intersectionObserver = new IntersectionObserver(entries => {
@@ -53,21 +134,77 @@ export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: M
         return () => intersectionObserver.disconnect();
     }, []);
 
-    const handleDelete = async (id: string) => {
-        await TransacoesService.deleteById(id);
-    };
+    const months = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+
+    const handleMonthChange = (month: number) => {
+
+        if (month === 13) {
+            month = 1;
+            const year = currentYear + 1;
+            setCurrentYear(year)
+        } else if (month === 0) {
+            month = 12;
+            const year = currentYear - 1;
+            setCurrentYear(year)
+        }
+
+        setCurrentMonth(month)
+    }
 
     const handleEditClick = (transacao: ITransacao) => {
+        fetchCategorias();
         setSelectedConta(transacao);
-        setOpenCustomersModal(true);
+        setOpenSaveTransactionModal(true);
     };
+
+<<<<<<< HEAD
+
+    return (
+        <Box sx={{ padding: 2 }}>
+=======
+    const [isModalMonthYearSelectOpen, setIsModalMonthYearSelectOpen] = React.useState(false);
+
+    const handleOpenModal = () => setIsModalMonthYearSelectOpen(true);
+    const handleCloseModal = () => setIsModalMonthYearSelectOpen(false);
+
+    const handleSelectMonthYear = (month: number, year: number) => {
+        setCurrentMonth(month);
+        setCurrentYear(year);
+    };
+
 
 
     return (
         <Box sx={{ padding: 2 }}>
+            <Box sx={boxContainerStyle}>
+                <IconButton onClick={() => handleMonthChange(currentMonth - 1)} sx={iconButtonStyle}>
+                    <LessThan size={24} weight="bold" />
+                </IconButton>
+
+                <Button
+                    variant="text"
+                    onClick={handleOpenModal}
+                    sx={buttonStyle}
+                >
+                    {months[currentMonth - 1]} {currentYear}
+                </Button>
+
+                <IconButton onClick={() => handleMonthChange(currentMonth + 1)} sx={iconButtonStyle}>
+                    <GreaterThan size={24} weight="bold" />
+                </IconButton>
+            </Box>
+
+
+>>>>>>> a0525ca590027ea177ff0d8f9cb376c54d864134
             {rows.map((row, index) => (
-                <SwipeToDelete
+                <Box
+                    sx={cardStyle}
+                    onClick={() => handleEditClick(row)}
                     key={row.id}
+<<<<<<< HEAD
                     id={row.id}
                     deleteComponent={<Trash size={35} />}
                     onDelete={() => handleDelete(row.id)}
@@ -95,18 +232,49 @@ export function MobileList({ rows = [], onRowsPerPageChange, onEditCustomer }: M
                         </Box>
                         <Typography variant="h6">
                             {`R$ ${row.valor}`}
+=======
+                >
+                    <DotOutline size={36}
+                        color={iconStyle(row.tipo, row.foiRecebida).color}
+                        weight={iconStyle(row.tipo, row.foiRecebida).weight}
+
+                    />
+
+                    <Box sx={{ flexGrow: 1 }}>
+                        <Typography variant="subtitle1">
+                            {((row.observacao || row.categoria.titulo).length > 17
+                                ? (row.observacao || row.categoria.titulo).slice(0, 17) + "..."
+                                : row.observacao || row.categoria.titulo)} {row.isParcela && `(${row.numeroParcela}/${row.totalParcelas})`}
+                        </Typography>
+                        <Typography variant="body2">
+                            {row.categoria.titulo} - {formatDate(row.data)}
+>>>>>>> a0525ca590027ea177ff0d8f9cb376c54d864134
                         </Typography>
                     </Box>
-                    {index < rows.length - 1 && <Divider sx={{ backgroundColor: '#333' }} />}
-                </SwipeToDelete>
+                    <Typography variant="h6" sx={amountStyle(row.tipo)}>
+                        {row.tipo.toUpperCase() === 'RECEITA' ? `R$ ${row.valor}` : `-R$ ${row.valor}`}
+                    </Typography>
+                </Box>
             ))}
             <div id="sentinela" />
-            <CustomersEditModal
-                isOpen={openCustomersModal}
-                setOpenModal={() => setOpenCustomersModal(!openCustomersModal)}
-                onEditCustomer={onEditCustomer}
-                selectedConta={selectedConta}
+
+            <SaveTransactionModal
+                isOpen={openSaveTransactionModal}
+                onClose={() => setOpenSaveTransactionModal(!openSaveTransactionModal)}
+                categorias={categorias}
+                refreshTable={refreshTable}
+                transactionType={selectedConta.tipo}
+                transactionSelect={selectedConta}
             />
+
+            <MonthYearSelectorModal
+                open={isModalMonthYearSelectOpen}
+                currentMonth={currentMonth}
+                currentYear={currentYear}
+                onClose={handleCloseModal}
+                onSelect={handleSelectMonthYear}
+            />
+
         </Box>
     );
 }
