@@ -1,19 +1,15 @@
 import {
-    Table,
-    Column,
-    CreatedAt,
-    UpdatedAt,
-    Model,
-    DataType,
-    BeforeCreate,
-    BeforeUpdate,
-    PrimaryKey,
-    ForeignKey,
-    AutoIncrement,
-    Default,
-    HasMany,
-    BelongsTo,
-    BelongsToMany
+  Table,
+  Column,
+  CreatedAt,
+  UpdatedAt,
+  Model,
+  DataType,
+  BeforeCreate,
+  BeforeUpdate,
+  PrimaryKey,
+  Default,
+  HasMany
 } from "sequelize-typescript";
 import { hash, compare } from "bcryptjs";
 import Transacoes from "./Transacoes";
@@ -21,56 +17,56 @@ import Categorias from "./Categorias";
 
 @Table
 class User extends Model<User> {
-    @PrimaryKey
-    @Default(DataType.UUIDV4)
-    @Column(DataType.UUID)
-    id: string;
+  @PrimaryKey
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
+  id: string;
 
-    @HasMany(() => Transacoes)
-    transacoes: Transacoes[];
+  @HasMany(() => Transacoes)
+  transacoes: Transacoes[];
 
-    @HasMany(() => Categorias)
-    categorias: Categorias[];
+  @HasMany(() => Categorias)
+  categorias: Categorias[];
 
-    @Column
-    name: string;
+  @Column
+  name: string;
 
-    @Column
-    email: string;
+  @Column
+  email: string;
 
-    @Column(DataType.VIRTUAL)
-    password: string;
+  @Column(DataType.VIRTUAL)
+  password: string;
 
-    @Column
-    passwordHash: string;
+  @Column
+  passwordHash: string;
 
-    @Default(0)
-    @Column
-    tokenVersion: number;
+  @Default(0)
+  @Column
+  tokenVersion: number;
 
-    @Column
-    firstName: string;
-    
-    @Column
-    secondName: string;
+  @Column
+  firstName: string;
 
-    @CreatedAt
-    createdAt: Date;
+  @Column
+  secondName: string;
 
-    @UpdatedAt
-    updatedAt: Date;
+  @CreatedAt
+  createdAt: Date;
 
-    @BeforeUpdate
-    @BeforeCreate
-    static hashPassword = async (instance: User): Promise<void> => {
-        if (instance.password) {
-            instance.passwordHash = await hash(instance.password, 8);
-        }
-    };
+  @UpdatedAt
+  updatedAt: Date;
 
-    public checkPassword = async (password: string): Promise<boolean> => {
-        return compare(password, this.getDataValue("passwordHash"));
-    };
+  @BeforeUpdate
+  @BeforeCreate
+  static hashPassword = async (instance: User): Promise<void> => {
+    if (instance.password) {
+      instance.passwordHash = await hash(instance.password, 8);
+    }
+  };
+
+  public checkPassword = async (password: string): Promise<boolean> => {
+    return compare(password, this.getDataValue("passwordHash"));
+  };
 }
 
 export default User;

@@ -4,7 +4,7 @@ import User from "../models/User";
 
 export const createAccessToken = (user: User): string => {
   const { secret, expiresIn } = authConfig;
-  const { id, name, email, firstName, secondName, createdAt, updatedAt } = user
+  const { id, name, email, firstName, secondName, createdAt, updatedAt } = user;
   return sign(
     { username: name, id, email, firstName, secondName, createdAt, updatedAt },
     secret,

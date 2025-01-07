@@ -18,10 +18,7 @@ import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlas
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
 
-import { paths } from '@/paths';
-// import { authClient } from '@/lib/auth/client';
 import { useUser } from '@/hooks/use-user';
-import { AuthContext } from '@/contexts/AuthContext';
 
 const schema = zod.object({
   email: zod.string().min(1, { message: 'Email is required' }).email(),
@@ -34,12 +31,9 @@ const defaultValues = { email: '', password: '' } satisfies Values;
 
 export function SignInForm(): React.JSX.Element {
   const router = useRouter();
-
   const { singIn, checkSession } = useUser();
-  // const { singIn } = React.useContext(AuthContext);
 
   const [showPassword, setShowPassword] = React.useState<boolean>();
-
   const [isPending, setIsPending] = React.useState<boolean>(false);
 
   const {
@@ -56,6 +50,8 @@ export function SignInForm(): React.JSX.Element {
       const { error } = await singIn(values);
 
       if (error) {
+        console.log('aaaaa');
+
         setError('root', { type: 'server', message: error });
         setIsPending(false);
         return;
@@ -65,20 +61,15 @@ export function SignInForm(): React.JSX.Element {
 
       router.refresh();
     },
-    [router, setError]
+    [checkSession, router, setError, singIn]
   );
 
   return (
     <Stack spacing={4}>
       <Stack spacing={1}>
         <Typography variant="h4">Login</Typography>
-        <Typography color="text.secondary" variant="body2">
-          Não tem uma conta?{' '}
-          <Link component={RouterLink} href={paths.auth.signUp} underline="hover" variant="subtitle2">
-            Cadastre-se
-          </Link>
-        </Typography>
       </Stack>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
           <Controller

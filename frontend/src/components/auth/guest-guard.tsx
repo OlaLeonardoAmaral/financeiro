@@ -48,9 +48,5 @@ export function GuestGuard({ children }: GuestGuardProps): React.JSX.Element | n
     return null;
   }
 
-  if (error) {
-    return <Alert color="error">{error}</Alert>;
-  }
-
   return <React.Fragment>{children}</React.Fragment>;
 }

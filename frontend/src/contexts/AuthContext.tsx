@@ -47,6 +47,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const checkSession = useCallback(async (): Promise<void> => {
 
         const token = localStorage.getItem('financeiro_token');
+        
         if (!token || isTokenExpired(token)) {
             setIsAutenticated(false);
             setUser(null);
