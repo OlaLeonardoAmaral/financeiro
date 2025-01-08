@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
+import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { CurrencyDollar, Coins } from '@phosphor-icons/react/dist/ssr'; // Ícones Phosphor
+import { Coins, CurrencyDollar } from '@phosphor-icons/react/dist/ssr'; // Ícones Phosphor
 
 interface AddTransactionModalProps {
   isOpen: boolean;
@@ -47,7 +47,6 @@ export function TransactionSelectModal({
           Selecione a Transação
         </Typography>
 
-        {/* Botão para Receita */}
         <Button
           onClick={onAddIncome}
           fullWidth
@@ -67,7 +66,6 @@ export function TransactionSelectModal({
           Receita
         </Button>
 
-        {/* Botão para Despesa */}
         <Button
           onClick={onAddExpense}
           fullWidth

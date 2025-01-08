@@ -1,4 +1,6 @@
+
 import type { Icon } from '@phosphor-icons/react/dist/lib/types';
+import { CloudArrowUp as CloudArrowUpIcon } from '@phosphor-icons/react/dist/ssr';
 import { ChartPie as ChartPieIcon } from '@phosphor-icons/react/dist/ssr/ChartPie';
 import { GearSix as GearSixIcon } from '@phosphor-icons/react/dist/ssr/GearSix';
 import { PlugsConnected as PlugsConnectedIcon } from '@phosphor-icons/react/dist/ssr/PlugsConnected';
@@ -13,4 +15,5 @@ export const navIcons = {
   'x-square': XSquare,
   user: UserIcon,
   users: UsersIcon,
+  'cloud-arrow-up': CloudArrowUpIcon
 } as Record<string, Icon>;
