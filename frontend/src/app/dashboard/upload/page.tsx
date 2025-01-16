@@ -1,20 +1,24 @@
+'use client';
+
 import * as React from 'react';
-import type { Metadata } from 'next';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { config } from '@/config';
-import { UploadOFXForm } from '@/components/dashboard/upload/upload-ofx';
-
-export const metadata = { title: `Settings | Dashboard | ${config.site.name}` } satisfies Metadata;
+import UploadOFXForm from '@/components/dashboard/upload/upload-ofx';
 
 export default function Page(): React.JSX.Element {
+  const [titlePage, setTitlePage] = React.useState<JSX.Element>(
+    <div>
+      <Typography variant="h4">Importar Extrato</Typography>
+    </div>
+  );
+
+  const handleTitlePage = (component: JSX.Element) => setTitlePage(component);
+
   return (
     <Stack spacing={3}>
-      <div>
-        <Typography variant="h4">Importar Extrato</Typography>
-      </div>
-      <UploadOFXForm />
+      {titlePage}
+      <UploadOFXForm onSendComponent={handleTitlePage}/>
     </Stack>
   );
 }

@@ -2,29 +2,30 @@ import { Sequelize, Op } from "sequelize";
 import User from "../../models/User";
 
 interface Request {
-    searchParam?: string;
+  searchParam?: string;
 }
 
-const ListUsersService = async ({ searchParam = "", }: Request): Promise<User[]> => {
+const ListUsersService = async ({
+  searchParam = ""
+}: Request): Promise<User[]> => {
+  const whereCondition = {
+    [Op.or]: [
+      {
+        "$User.name$": Sequelize.where(
+          Sequelize.fn("LOWER", Sequelize.col("User.name")),
+          "LIKE",
+          `%${searchParam.toLowerCase()}%`
+        )
+      },
+      { email: { [Op.like]: `%${searchParam.toLowerCase()}%` } }
+    ]
+  };
 
-    let whereCondition = {
-        [Op.or]: [
-            {
-                "$User.name$": Sequelize.where(
-                    Sequelize.fn("LOWER", Sequelize.col("User.name")),
-                    "LIKE",
-                    `%${searchParam.toLowerCase()}%`
-                )
-            },
-            { email: { [Op.like]: `%${searchParam.toLowerCase()}%` } }
-        ]
-    };
-
-
-    return await User.findAll({
-        where: whereCondition,
-        order: [["createdAt", "DESC"]],
-    });
-}
+  // eslint-disable-next-line no-return-await
+  return await User.findAll({
+    where: whereCondition,
+    order: [["createdAt", "DESC"]]
+  });
+};
 
 export default ListUsersService;

@@ -18,8 +18,6 @@ export interface ITransacao {
     quantidadeRepeticoes?: number;
     periodoRepeticao?: PeriodoRepeticao;
     isParcela: boolean;
-
     numeroParcela?: number,
     totalParcelas?: number,
-
 }
