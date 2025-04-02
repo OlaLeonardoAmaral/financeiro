@@ -13,6 +13,7 @@ router.get("/totaiscadames", isAuth, TransacaoController.getTotaisCadaMes);
 
 router.post("/categoria/add", isAuth, TransacaoController.createCategoria);
 router.post("/add", isAuth, TransacaoController.createTransacao);
+router.post("/addAll", isAuth, TransacaoController.saveAllTransacao);
 
 router.put("/update/:id", isAuth, TransacaoController.updateTransacao);
 

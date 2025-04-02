@@ -10,6 +10,8 @@ import GetTransacaoByIdService from "../services/TransacaoServices/GetTransacaoB
 import GetTotaisMes from "../services/TransacaoServices/GetTotaisMes";
 import GetTotaisCadaMes from "../services/TransacaoServices/GetTotaisCadaMes";
 import { AuthenticatedRequest } from "../middleware/isAuth";
+import moment from "moment-timezone";
+import SaveAllTransacaoService from "../services/TransacaoServices/SaveAllTransacaoService";
 
 interface SerializedCategoria {
   titulo: string;
@@ -27,6 +29,19 @@ enum PeriodoRepeticao {
 
 interface SerializedTransacao {
   id?: string;
+  tipo: TipoTransacao;
+  categoriaId: string;
+  observacao: string;
+  valor: number;
+  data?: string;
+  foiRecebida: boolean;
+  repetir: boolean;
+  quantidadeRepeticoes?: number;
+  periodoRepeticao?: PeriodoRepeticao;
+}
+
+interface SerializedImportTransacao {
+  id: string;
   tipo: TipoTransacao;
   categoriaId: string;
   observacao: string;
@@ -96,6 +111,29 @@ export const createTransacao = async (
   });
 
   return res.status(200).json(transacao);
+};
+
+export const saveAllTransacao = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<Response> => {
+  const transacoes = req.body as SerializedImportTransacao[];
+  const userId = req.userId!;
+
+  const transacoesFormatadas = transacoes.map(transacao => ({
+    ...transacao,
+    userId,
+    data: transacao.data
+      ? moment
+          .tz(transacao.data, "DD/MM/YYYY", "America/Sao_Paulo")
+          .utc()
+          .toDate()
+      : moment().utc().toDate()
+  }));
+
+  await SaveAllTransacaoService(transacoesFormatadas);
+
+  return res.status(200).json(transacoes);
 };
 
 export const listTransacao = async (

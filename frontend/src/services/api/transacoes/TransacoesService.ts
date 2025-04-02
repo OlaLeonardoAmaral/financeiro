@@ -72,6 +72,15 @@ const create = async (dataToCreate: ITransacaoCreate): Promise<ITransacaoCreate 
     }
 };
 
+const saveAll = async (dataToCreate: ITransacaoCreate[]): Promise<ITransacaoCreate | ApiException> => {
+    try {
+        const { data } = await Api().post<any>('/transacoes/addAll', dataToCreate);
+        return data;
+    } catch (error: any) {
+        return new ApiException(error.message || 'Erro ao criar uma receita');
+    }
+};
+
  const updateById = async (id: string, dataToUpdate: ITransacaoUpdate): Promise<ITransacaoUpdate | ApiException> => {
     try {
 
@@ -101,6 +110,7 @@ export const TransacoesService = {
     listAllCategorias,
     createCategoria,
     create,
+    saveAll,
     updateById,
     deleteById,
 };

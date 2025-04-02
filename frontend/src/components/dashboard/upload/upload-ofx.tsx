@@ -85,7 +85,7 @@ const UploadOFXForm: React.FC<UploadOFXFormProps> = ({ onSendComponent }) => {
         id: idMatch?.[1],
         tipo: parseFloat(amountMatch?.[1] || '0') < 0 ? 'Despesa' : 'Receita',
         data: dateMatch ? convertDate(dateMatch[1]) : 'Unknown',
-        valor: parseFloat(amountMatch?.[1] || '0'),
+        valor: Math.abs(parseFloat(amountMatch?.[1] || '0')), // eu nao quero que o valor tenha o sinal de negativo
         observacao: memoMatch ? processMemo(memoMatch[1]) : 'Unknown',
 
         categoriaId: categorias[0].id,
@@ -130,7 +130,9 @@ const UploadOFXForm: React.FC<UploadOFXFormProps> = ({ onSendComponent }) => {
 
   const handleSave = () => {
     const selected = transactions.filter((t) => selectedTransactions.has(t.id!));
-    console.log('Transações selecionadas:', selected);
+
+    TransacoesService.saveAll(selected);
+
     handleBack();
   };
 
